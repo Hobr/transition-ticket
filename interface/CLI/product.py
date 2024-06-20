@@ -32,6 +32,10 @@ class ProductCli:
             # 价格ID
             "skuId": 0,
         }
+        
+        # 颜色代码
+        self.YELLOW = "\033[93m"
+        self.RESET = "\033[0m"
 
     @logger.catch
     def Select(self, selects: list) -> dict:
@@ -84,7 +88,13 @@ class ProductCli:
             projectInfo = self.info.Project()
             screenInfo = self.info.Screen()
 
-            lists = {f"{screenInfo[i]['name']} ({screenInfo[i]['display_name']})": screenInfo[i]["id"] for i in screenInfo}
+            lists = {
+                f"{self.YELLOW if screenInfo[i]['display_name'] == '预售中' else ''}"
+                f"{screenInfo[i]['name']} ({screenInfo[i]['display_name']})"
+                f"{self.RESET if screenInfo[i]['display_name'] == '预售中' else ''}"
+                : screenInfo[i]["id"]
+                for i in range(len(screenInfo))
+            }
             select = self.data.Inquire(
                 type="List",
                 message=f"您选择的活动是:{projectInfo['name']}, 接下来请选择场次",
@@ -100,7 +110,12 @@ class ProductCli:
             screenId: 场次ID
             """
             skuInfo = self.info.Sku(screenId)
-            lists = {(f"{skuInfo[i]['name']} {skuInfo[i]['price']}元 " f"({skuInfo[i]['display_name']})"): skuInfo[i]["id"] for i in skuInfo}
+            lists = {
+                f"{self.YELLOW if skuInfo[i]['display_name'] == '预售中' else ''}"
+                f"{skuInfo[i]['name']} {skuInfo[i]['price']}元 ({skuInfo[i]['display_name']})"
+                f"{self.RESET}": skuInfo[i]["id"]
+                for i in range(len(skuInfo))
+            }
             select = self.data.Inquire(
                 type="List",
                 message="请选择价位",
