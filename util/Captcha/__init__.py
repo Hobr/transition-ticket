@@ -1,5 +1,6 @@
 import time
-import os
+import sys
+from os import getcwd, path
 
 import browsers
 from selenium import webdriver
@@ -43,8 +44,8 @@ class Captcha:
         try:
             base_path = sys._MEIPASS  # type: ignore
         except AttributeError:
-            base_path = os.getcwd()
-        return os.path.join(base_path, dir)
+            base_path = getcwd()
+        return path.join(base_path, dir)
 
     @logger.catch
     def Geetest(self, challenge: str) -> str:

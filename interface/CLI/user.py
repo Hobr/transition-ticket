@@ -3,6 +3,7 @@ from sys import exit
 from loguru import logger
 
 from util import Config, Data, Info, Login, Request
+from util.Login import LoginException
 
 
 class UserCli:
@@ -69,31 +70,31 @@ class UserCli:
                 choices=["扫描二维码", "浏览器登录", "账号密码登录", "手机验证码登录", "手动输入Cookie"],
             )
 
-            match mode:
-                case "扫描二维码":
-                    print("请使用B站手机客户端扫描二维码, 如果命令行内二维码无法正常显示, 请打开软件目录下的 qr.jpg 进行扫描")
-                    return login.QRCode()
+            try:
+                match mode:
+                    case "扫描二维码":
+                        print("请使用B站手机客户端扫描二维码, 如果命令行内二维码无法正常显示, 请打开软件目录下的 qr.jpg 进行扫描")
+                        return login.QRCode()
 
-                case "浏览器登录":
-                    return login.Selenium()
+                    case "浏览器登录":
+                        return login.Selenium()
 
-                case "账号密码登录":
-                    username = self.data.Inquire(
-                        type="Text",
-                        message="请输入B站账号",
-                    )
-                    password = self.data.Inquire(
-                        type="Password",
-                        message="请输入B站密码",
-                    )
-                    return login.Password(username=username, password=password)
+                    case "账号密码登录":
+                        username = self.data.Inquire(
+                            type="Text",
+                            message="请输入B站账号",
+                        )
+                        password = self.data.Inquire(
+                            type="Password",
+                            message="请输入B站密码",
+                        )
+                        return login.Password(username=username, password=password)
 
-                case "手机验证码登录":
-                    tel = self.data.Inquire(
-                        type="Text",
-                        message="请输入手机号",
-                    )
-                    try:
+                    case "手机验证码登录":
+                        tel = self.data.Inquire(
+                            type="Text",
+                            message="请输入手机号",
+                        )
                         captcha_key = login.SMSSend(tel)
                         if captcha_key:
                             code = self.data.Inquire(
@@ -102,21 +103,21 @@ class UserCli:
                             )
                             return login.SMSVerify(tel=tel, code=code, captcha_key=captcha_key)
                         else:
-                            raise Exception("验证码发送失败!")
-                    except Exception as e:
-                        logger.exception(f"【登录】登录错误 {e}")
-                        return LoginStep()
+                            raise LoginException("验证码发送失败!")
 
-                case "手动输入Cookie":
-                    cookie = self.data.Inquire(
-                        type="Text",
-                        message="请输入Cookie",
-                    )
-                    return login.Cookie(cookie=cookie)
+                    case "手动输入Cookie":
+                        cookie = self.data.Inquire(
+                            type="Text",
+                            message="请输入Cookie",
+                        )
+                        return login.Cookie(cookie=cookie)
 
-                case _:
-                    logger.error("【登录】未知登录模式!")
-                    exit()
+                    case _:
+                        raise LoginException("未知登录模式, 请重新选择!")
+
+            except LoginException:
+                logger.info("登录失败, 请重新选择登录模式!")
+                return LoginStep()
 
         @logger.catch
         def BuyerStep() -> dict:

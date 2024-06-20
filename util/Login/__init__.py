@@ -9,8 +9,18 @@ from selenium import webdriver
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.support.ui import WebDriverWait
+from selenium.common.exceptions import WebDriverException
 
 from util import Captcha, Data, Request
+
+
+class LoginException(Exception):
+    """
+    登录异常
+    """
+    def __init__(self, message):
+        self.message = message
+        logger.error(f"【登录】{message}")
 
 
 class Login:
@@ -40,7 +50,6 @@ class Login:
 
         self.source = "main_web"
 
-    @logger.catch
     def QRCode(self) -> dict:
         """
         扫码登录
@@ -60,8 +69,10 @@ class Login:
 
             while True:
                 time.sleep(1.5)
-                url = "https://passport.bilibili.com/x/passport-login/web/qrcode/poll?source=main-fe-header&qrcode_key=" + resp["data"]["qrcode_key"]
-                respQR = self.net.Response(method="get", url=url).json()
+                respQR = self.net.Response(
+                    method="get",
+                    url="https://passport.bilibili.com/x/passport-login/web/qrcode/poll?source=main-fe-header&qrcode_key=" + resp["data"]["qrcode_key"],
+                ).json()
 
                 check = respQR["data"]
                 if check["code"] == 0:
@@ -72,15 +83,15 @@ class Login:
                     return self.Status()
 
                 # 未扫描:86101 扫描未确认:86090
-                elif check["code"] not in (86101, 86090):
-                    logger.error(f"【登录】{check['code']}: {check['message']}")
-                    exit()
+                elif check["code"] in [86101, 86090]:
+                    logger.info("【登录】等待扫码...")
+
+                else:
+                    raise LoginException(f"{check['code']}: {check['message']}")
 
         else:
-            logger.error(f"【登录】服务器不知道送来啥东西{json.dumps(resp, indent=4)}")
-            exit()
+            raise LoginException(f"服务器不知道送来啥东西{json.dumps(resp, indent=4)}")
 
-    @logger.catch
     def Selenium(self) -> dict:
         """
         Selenium登录
@@ -112,15 +123,13 @@ class Login:
                         driver.execute_script("arguments[0].click();", event)
                         break
 
-                    except Exception as e:
-                        logger.exception(f"【登录】{e}")
-                        driver.quit()
+                    except WebDriverException:
+                        raise LoginException("浏览器/WebDriver启动失败")
 
                 else:
-                    logger.error("【登录】所有浏览器/WebDriver尝试登录均失败")
+                    raise LoginException("所有浏览器/WebDriver尝试登录均失败")
         else:
-            logger.error("【登录】未找到可用浏览器/WebDriver! 建议选择其他方式登录")
-            exit()
+            raise LoginException("未找到可用浏览器/WebDriver!建议选择其他方式登录")
 
         while True:
             time.sleep(0.5)
@@ -177,7 +186,6 @@ class Login:
         else:
             raise
 
-    @logger.catch
     def Password(self, username: str, password: str) -> dict:
         """
         账号密码登录
@@ -257,8 +265,7 @@ class Login:
                     ).json()
 
                     if resend["code"] != 0:
-                        logger.error(f"【登录】验证码发送失败: {resend['code']} {resend['message']}")
-                        exit()
+                        raise LoginException(f"验证码发送失败: {resend['code']} {resend['message']}")
 
                     logger.info("【登录】验证码发送成功")
                     resend_token = resend["data"]["captcha_key"]
@@ -283,52 +290,27 @@ class Login:
                         url = "https://passport.bilibili.com/x/safecenter/login/tel/verify"
 
                     else:
-                        logger.error(f"【登录】未知错误: {resp['data']['status']}")
+                        raise LoginException(f"未知错误: {resp['data']['status']}")
 
                     reverify = self.net.Response(method="post", url=url, params=data).json()
 
                     if reverify["code"] != 0:
-                        logger.error(f"【登录】验证码登录失败: {reverify['code']} {reverify['message']}")
-                        exit()
-                    else:
-                        logger.info("【登录】验证码登录成功")
-                        self.net.Response(
-                            method="post",
-                            url="https://passport.bilibili.com/x/passport-login/web/exchange_cookie",
-                            params={"source": "risk", "code": reverify["data"]["code"]},
-                        ).json()
-                        self.cookie = self.net.GetCookie()
-                        return self.Status()
-                else:
-                    logger.info("【登录】手机号未绑定, 请重新选择登录方式")
-                    exit()
-        else:
-            match int(resp["code"]):
-                case -105:
-                    logger.error("【登录】验证码错误")
-                case -400:
-                    logger.error("【登录】请求错误")
-                case -629:
-                    logger.error("【登录】账号或密码错误")
-                case -653:
-                    logger.error("【登录】用户名或密码不能为空")
-                case -662:
-                    logger.error("【登录】提交超时,请重新提交")
-                case -2001:
-                    logger.error("【登录】缺少必要的参数")
-                case -2100:
-                    logger.error("【登录】需验证手机号或邮箱")
-                case 2400:
-                    logger.error("【登录】登录秘钥错误")
-                case 2406:
-                    logger.error("【登录】验证极验服务出错")
-                case 86000:
-                    logger.error("【登录】RSA解密失败")
-                case _:
-                    logger.error(f"【发送验证码】{resp['code']} {resp['message']}")
-            exit()
+                        raise LoginException(f"验证码登录失败 {reverify['code']}: {reverify['message']}")
 
-    @logger.catch
+                    logger.info("【登录】验证码登录成功")
+                    self.net.Response(
+                        method="post",
+                        url="https://passport.bilibili.com/x/passport-login/web/exchange_cookie",
+                        params={"source": "risk", "code": reverify["data"]["code"]},
+                    ).json()
+                    self.cookie = self.net.GetCookie()
+                    return self.Status()
+
+                else:
+                    raise LoginException("手机号未绑定, 请重新选择登录方式")
+        else:
+            raise LoginException(f"登录失败 {resp['code']}: {resp['message']}")
+
     def SMSSend(self, tel: str) -> str:
         """
         手机号登录 - 发送验证码
@@ -361,24 +343,8 @@ class Login:
             captcha_key = resp["data"]["captcha_key"]
             return captcha_key
         else:
-            match int(resp["code"]):
-                case -400:
-                    logger.error("【发送验证码】请求错误")
-                case 1002:
-                    logger.error("【发送验证码】手机号码格式错误")
-                case 1003:
-                    logger.error("【发送验证码】验证码已经发送")
-                case 86203:
-                    logger.error("【发送验证码】短信发送次数已达上限")
-                case 2406:
-                    logger.error("【发送验证码】验证极验服务出错")
-                case 2400:
-                    logger.error("【发送验证码】登录秘钥错误")
-                case _:
-                    logger.error(f"【发送验证码】{resp['code']} {resp['message']}")
-            return ""
+            raise LoginException(f"验证码发送失败 {resp['code']}: {resp['message']}")
 
-    @logger.catch
     def SMSVerify(self, tel: str, code: str, captcha_key: str) -> dict:
         """
         手机号登录 - 发送验证码
@@ -407,16 +373,7 @@ class Login:
         if resp["code"] == 0:
             logger.info("【登录】登录成功")
         else:
-            match int(resp["code"]):
-                case 1006:
-                    logger.error("【登录】请输入正确的短信验证码")
-                case 1007:
-                    logger.error("【登录】短信验证码已过期")
-                case -400:
-                    logger.error("【登录】请求错误")
-                case _:
-                    logger.error(f"【发送验证码】{resp['code']} {resp['message']}")
-            raise Exception("手机号验证码登录失败")
+            raise LoginException(f"验证码登录失败 {resp['code']}: {resp['message']}")
 
         self.cookie = self.net.GetCookie()
         return self.Status()
