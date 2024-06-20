@@ -44,8 +44,6 @@ python cli.py
 
 - 1.0.0 Release (BW开票前)
   - [ ] 抢票流程细节补充/修复
-  - [ ] Header补充
-  - [ ] GitHub Action打包
 
 - 1.1.0 (BW开票期间)
   - [ ] 命令行账号密码/短信验证登录
@@ -64,6 +62,7 @@ python cli.py
   - [ ] Pylint
 
 - 1.4.0
+  - [ ] Header补充
   - [ ] 注销Cookie
   - [ ] Docker(Headless)
 
@@ -90,19 +89,4 @@ pre-commit autoupdate
 
 # 打包
 pyinstaller --clean --noconfirm --log-level WARN cli.spec
-
-# 同步到公开仓库
-git config user.name "bilibili-ticket"
-git config user.email "<>"
-git config commit.gpgsign false
-
-git checkout --orphan 0.x.0
-rm API.md
-git add -A
-git commit -am "0.x.0"
-git tag v0.x.0
-
-git remote add bilibili-ticket git@github.com:bilibili-ticket/bilibili-ticket-python.git
-git push -u bilibili-ticket 0.x.0
-git push -u bilibili-ticket v0.x.0
 ```
