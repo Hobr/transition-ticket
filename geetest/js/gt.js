@@ -351,4 +351,3 @@ window.initGeetest = function (userConfig, callback) {
 
 
 })(window);
-

@@ -32,7 +32,7 @@ class ProductCli:
             # 价格ID
             "skuId": 0,
         }
-        
+
         # 颜色代码
         self.YELLOW = "\033[93m"
         self.RESET = "\033[0m"
@@ -91,8 +91,7 @@ class ProductCli:
             lists = {
                 f"{self.YELLOW if screenInfo[i]['display_name'] == '预售中' else ''}"
                 f"{screenInfo[i]['name']} ({screenInfo[i]['display_name']})"
-                f"{self.RESET if screenInfo[i]['display_name'] == '预售中' else ''}"
-                : screenInfo[i]["id"]
+                f"{self.RESET if screenInfo[i]['display_name'] == '预售中' else ''}": screenInfo[i]["id"]
                 for i in range(len(screenInfo))
             }
             select = self.data.Inquire(

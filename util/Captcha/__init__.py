@@ -1,15 +1,13 @@
-import time
 import sys
+import time
 from os import getcwd, path
 
 import browsers
+from loguru import logger
 from selenium import webdriver
 from selenium.webdriver.common.by import By
-from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.support.ui import WebDriverWait
-
-from loguru import logger
 
 
 class Captcha:
@@ -33,7 +31,7 @@ class Captcha:
         self.verify = verify
         self.gt = gt
         self.rt = "abcdefghijklmnop"  # rt固定即可
-        
+
         self.geetest_path = self.AssestDir("geetest/index.html")
 
     @logger.catch
@@ -83,7 +81,7 @@ class Captcha:
         返回: validate
         """
         from bili_ticket_gt_python import ClickPy
-        
+
         try:
             validate = ClickPy().simple_match_retry(self.gt, challenge)  # type: ignore
             return validate
@@ -99,7 +97,7 @@ class Captcha:
         返回: validate
         """
         from bili_ticket_gt_python import ClickPy
-        
+
         try:
             c, s, args = ClickPy().get_new_c_s_args(self.gt, challenge)  # type: ignore
             before_calculate_key = time.time()
@@ -124,7 +122,7 @@ class Captcha:
         返回: validate
         """
         from bili_ticket_gt_python import SlidePy
-        
+
         try:
             c, s, args = SlidePy().get_new_c_s_args(self.gt, challenge)  # type: ignore
             # 注意滑块验证码这里要刷新challenge
@@ -172,7 +170,7 @@ class Captcha:
                 filepath = "file://" + self.geetest_path + "?gt=" + self.gt + "&challenge=" + challenge
                 driver.get(filepath)
                 wait = WebDriverWait(driver, 30)
-                
+
                 event_btn = wait.until(EC.element_to_be_clickable((By.ID, "btn-gen")))
                 driver.execute_script("arguments[0].click();", event_btn)
 

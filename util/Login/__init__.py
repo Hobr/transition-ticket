@@ -6,10 +6,10 @@ from sys import exit
 import browsers
 from loguru import logger
 from selenium import webdriver
+from selenium.common.exceptions import WebDriverException
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.support.ui import WebDriverWait
-from selenium.common.exceptions import WebDriverException
 
 from util import Captcha, Data, Request
 
@@ -18,6 +18,7 @@ class LoginException(Exception):
     """
     登录异常
     """
+
     def __init__(self, message):
         self.message = message
         logger.error(f"【登录】{message}")
