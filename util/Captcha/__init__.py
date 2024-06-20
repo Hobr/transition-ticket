@@ -1,7 +1,6 @@
 import time
 import os
 
-import pyperclip
 import browsers
 from selenium import webdriver
 from selenium.webdriver.common.by import By
@@ -9,7 +8,6 @@ from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.support.ui import WebDriverWait
 
-from bili_ticket_gt_python import ClickPy, SlidePy
 from loguru import logger
 
 
@@ -21,7 +19,7 @@ class Captcha:
     @logger.catch
     def __init__(
         self,
-        verify: SlidePy | ClickPy | None = None,
+        verify: str = "Auto",
         gt: str = "ac597a4506fee079629df5d8b66dd4fe",
     ):
         """
@@ -46,12 +44,23 @@ class Captcha:
         challenge: 流水号
         返回: validate
         """
-        if isinstance(self.verify, ClickPy):
-            return self.Auto(challenge)
-        elif isinstance(self.verify, SlidePy):
-            return self.Slide(challenge)
-        else:
-            raise Exception("未指定验证码实例或实例类型不正确")
+        try:
+            from bili_ticket_gt_python import ClickPy, SlidePy
+        except ImportError:
+            logger.error("【登录】导入 bili_ticket_gt_python 库失败, 已自动选择手动验证码验证")
+            self.verify = "Manual"
+
+        match self.verify:
+            case "Auto":
+                return self.Auto(challenge)
+            case "Manual":
+                return self.Manual(challenge)
+            case ClickPy.__name__:
+                return self.Auto(challenge)
+            case SlidePy.__name__:
+                return self.Slide(challenge)
+            case _:
+                raise Exception("未指定验证码实例或实例类型不正确")
 
     @logger.catch
     def Auto(self, challenge: str) -> str:

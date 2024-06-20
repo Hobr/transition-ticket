@@ -2,7 +2,6 @@ import os
 import shutil
 import threading
 
-from bili_ticket_gt_python import ClickPy
 from loguru import logger
 
 from interface import ProductCli, SettingCli, UserCli
@@ -51,8 +50,7 @@ if __name__ == "__main__":
     productData = Config(dir="product")
     settingData = Config(dir="setting")
     # 验证
-    verify = ClickPy()
-    cap = Captcha(verify=verify)
+    cap = Captcha(verify="Auto")
 
     # 检测配置文件情况
     userList = userData.List()
