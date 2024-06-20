@@ -1,7 +1,7 @@
 import time
-import os
+import sys
+from os import getcwd, path
 
-import pyperclip
 import browsers
 from selenium import webdriver
 from selenium.webdriver.common.by import By
@@ -9,7 +9,6 @@ from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.support.ui import WebDriverWait
 
-from bili_ticket_gt_python import ClickPy, SlidePy
 from loguru import logger
 
 
@@ -21,7 +20,7 @@ class Captcha:
     @logger.catch
     def __init__(
         self,
-        verify: SlidePy | ClickPy | None = None,
+        verify: str = "Auto",
         gt: str = "ac597a4506fee079629df5d8b66dd4fe",
     ):
         """
@@ -33,9 +32,20 @@ class Captcha:
         """
         self.verify = verify
         self.gt = gt
-        self.geetest_path = os.path.join(os.getcwd() + "/geetest")
-
         self.rt = "abcdefghijklmnop"  # rt固定即可
+        
+        self.geetest_path = self.AssestDir("geetest/index.html")
+
+    @logger.catch
+    def AssestDir(self, dir: str):
+        """
+        获取资源文件夹(涉及到Pyinstaller)
+        """
+        try:
+            base_path = sys._MEIPASS  # type: ignore
+        except AttributeError:
+            base_path = getcwd()
+        return path.join(base_path, dir)
 
     @logger.catch
     def Geetest(self, challenge: str) -> str:
@@ -46,12 +56,23 @@ class Captcha:
         challenge: 流水号
         返回: validate
         """
-        if isinstance(self.verify, ClickPy):
-            return self.Auto(challenge)
-        elif isinstance(self.verify, SlidePy):
-            return self.Slide(challenge)
-        else:
-            raise Exception("未指定验证码实例或实例类型不正确")
+        try:
+            from bili_ticket_gt_python import ClickPy, SlidePy
+        except ImportError:
+            logger.error("【登录】导入 bili_ticket_gt_python 库失败, 已自动选择手动验证码验证")
+            self.verify = "Manual"
+
+        match self.verify:
+            case "Auto":
+                return self.Auto(challenge)
+            case "Manual":
+                return self.Manual(challenge)
+            case ClickPy.__name__:
+                return self.Auto(challenge)
+            case SlidePy.__name__:
+                return self.Slide(challenge)
+            case _:
+                raise Exception("未指定验证码实例或实例类型不正确")
 
     @logger.catch
     def Auto(self, challenge: str) -> str:
@@ -61,8 +82,10 @@ class Captcha:
         challenge: 流水号
         返回: validate
         """
+        from bili_ticket_gt_python import ClickPy
+        
         try:
-            validate = self.verify.simple_match_retry(self.gt, challenge)  # type: ignore
+            validate = ClickPy().simple_match_retry(self.gt, challenge)  # type: ignore
             return validate
         except Exception:
             raise
@@ -75,16 +98,18 @@ class Captcha:
         challenge: 流水号
         返回: validate
         """
+        from bili_ticket_gt_python import ClickPy
+        
         try:
-            c, s, args = self.verify.get_new_c_s_args(self.gt, challenge)  # type: ignore
+            c, s, args = ClickPy().get_new_c_s_args(self.gt, challenge)  # type: ignore
             before_calculate_key = time.time()
-            key = self.verify.calculate_key(args)  # type: ignore
-            w = self.verify.generate_w(key, self.gt, challenge, str(c), s, self.rt)  # type: ignore
+            key = ClickPy().calculate_key(args)  # type: ignore
+            w = ClickPy().generate_w(key, self.gt, challenge, str(c), s, self.rt)  # type: ignore
             # 点选验证码生成w后需要等待2秒提交
             w_use_time = time.time() - before_calculate_key
             if w_use_time < 2:
                 time.sleep(2 - w_use_time)
-            msg, validate = self.verify.verify(self.gt, challenge, w)  # type: ignore
+            msg, validate = ClickPy().verify(self.gt, challenge, w)  # type: ignore
             logger.info(f"【验证码】验证结果: {msg}")
             return validate
         except Exception:
@@ -98,13 +123,15 @@ class Captcha:
         challenge: 流水号
         返回: validate
         """
+        from bili_ticket_gt_python import SlidePy
+        
         try:
-            c, s, args = self.verify.get_new_c_s_args(self.gt, challenge)  # type: ignore
+            c, s, args = SlidePy().get_new_c_s_args(self.gt, challenge)  # type: ignore
             # 注意滑块验证码这里要刷新challenge
             challenge = args[0]
-            key = self.verify.calculate_key(args)  # type: ignore
-            w = self.verify.generate_w(key, self.gt, challenge, str(c), s, self.rt)  # type: ignore
-            msg, validate = self.verify.verify(self.gt, challenge, w)  # type: ignore
+            key = SlidePy().calculate_key(args)  # type: ignore
+            w = SlidePy().generate_w(key, self.gt, challenge, str(c), s, self.rt)  # type: ignore
+            msg, validate = SlidePy().verify(self.gt, challenge, w)  # type: ignore
             logger.info(f"【验证码】验证结果: {msg}")
             return validate
         except Exception:
@@ -142,7 +169,7 @@ class Captcha:
 
             driver.maximize_window()
             try:
-                filepath = "file://" + self.geetest_path + "/index.html?gt=" + self.gt + "&challenge=" + challenge
+                filepath = "file://" + self.geetest_path + "?gt=" + self.gt + "&challenge=" + challenge
                 driver.get(filepath)
                 wait = WebDriverWait(driver, 30)
                 
