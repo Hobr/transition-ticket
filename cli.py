@@ -13,7 +13,7 @@ if __name__ == "__main__":
         """
 |=====================================================================
 |
-|  欢迎使用https://github.com/bilibili-ticket/bilibili-ticket-python
+|  欢迎使用 https://github.com/bilibili-ticket/bilibili-ticket-python
 |  本程序仅供学习交流, 不得用于商业用途
 |  使用本程序进行违法操作产生的法律责任由操作者自行承担
 |  对本程序进行二次开发/分发时请注意遵守GPL-3.0开源协议
