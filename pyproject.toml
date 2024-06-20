@@ -1,0 +1,70 @@
+[tool.poetry]
+name = "bilibili-show-python"
+version = "1.0.0"
+description = "B站会员购脚本"
+authors = ["bilibili-ticket"]
+license = "GPL3.0"
+readme = "README.md"
+package-mode = false
+
+[tool.poetry.dependencies]
+python = ">=3.10,<3.13"
+transitions = "^0.9.1"
+httpx = {extras = ["http2", "socks"], version = "^0.27.0"}
+hishel = "^0.0.27"
+fake-useragent = "^1.5.1"
+loguru = "^0.7.2"
+bili-ticket-gt-python = "^0.2.2"
+pycryptodome = "^3.20.0"
+pyyaml = "^6.0.1"
+inquirer = "^3.2.4"
+qrcode = "^7.4.2"
+selenium = "^4.21.0"
+pybrowsers = "^0.6.0"
+py-machineid = "^0.5.1"
+plyer = "^2.1.0"
+pyaudio = "^0.2.14"
+pytz = "^2024.1"
+pyinstaller = "^6.7.0"
+
+[tool.poetry.group.dev]
+optional = true
+
+[tool.poetry.group.dev.dependencies]
+pre-commit = "^3.7.1"
+isort = "^5.13.2"
+black = "^24.4.2"
+flake8 = "^7.0.0"
+pyupgrade = "^3.15.2"
+snakeviz = "^2.2.0"
+
+[tool.poetry.group.graph]
+optional = true
+
+[tool.poetry.group.graph.dependencies]
+graphviz = "^0.20.3"
+pygraphviz = "^1.13"
+
+[tool.poetry.group.doc]
+optional = true
+
+[tool.poetry.group.doc.dependencies]
+sphinx = "^7.3.7"
+recommonmark = "^0.7.1"
+
+[tool.isort]
+profile = "black"
+line_length = 180
+skip = [".git", "__pycache__", ".venv",".direnv"]
+
+[tool.black]
+line-length = 180
+skip = [".git", "__pycache__", ".venv",".direnv"]
+
+[tool.flake8]
+max-line-length = 180
+exclude = [".git", "__pycache__", ".venv",".direnv"]
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
