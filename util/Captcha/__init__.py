@@ -31,9 +31,20 @@ class Captcha:
         """
         self.verify = verify
         self.gt = gt
-        self.geetest_path = os.path.join(os.getcwd() + "/geetest")
-
         self.rt = "abcdefghijklmnop"  # rt固定即可
+        
+        self.geetest_path = self.AssestDir("geetest/index.html")
+
+    @logger.catch
+    def AssestDir(self, dir: str):
+        """
+        获取资源文件夹(涉及到Pyinstaller)
+        """
+        try:
+            base_path = sys._MEIPASS  # type: ignore
+        except AttributeError:
+            base_path = os.getcwd()
+        return os.path.join(base_path, dir)
 
     @logger.catch
     def Geetest(self, challenge: str) -> str:
@@ -157,7 +168,7 @@ class Captcha:
 
             driver.maximize_window()
             try:
-                filepath = "file://" + self.geetest_path + "/index.html?gt=" + self.gt + "&challenge=" + challenge
+                filepath = "file://" + self.geetest_path + "?gt=" + self.gt + "&challenge=" + challenge
                 driver.get(filepath)
                 wait = WebDriverWait(driver, 30)
                 

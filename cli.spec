@@ -15,6 +15,7 @@ elif platform.system() == "Darwin":
     hiddenimports = ["plyer.platforms.macosx.notification"]
 
 datas = [("assest", "assest")]
+datas += [("geetest", "geetest")]
 datas += collect_data_files("fake_useragent")
 datas += copy_metadata("readchar")
 
