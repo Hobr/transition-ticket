@@ -70,8 +70,10 @@ class Captcha:
         challenge: 流水号
         返回: validate
         """
+        from bili_ticket_gt_python import ClickPy
+        
         try:
-            validate = self.verify.simple_match_retry(self.gt, challenge)  # type: ignore
+            validate = ClickPy().simple_match_retry(self.gt, challenge)  # type: ignore
             return validate
         except Exception:
             raise
@@ -84,16 +86,18 @@ class Captcha:
         challenge: 流水号
         返回: validate
         """
+        from bili_ticket_gt_python import ClickPy
+        
         try:
-            c, s, args = self.verify.get_new_c_s_args(self.gt, challenge)  # type: ignore
+            c, s, args = ClickPy().get_new_c_s_args(self.gt, challenge)  # type: ignore
             before_calculate_key = time.time()
-            key = self.verify.calculate_key(args)  # type: ignore
-            w = self.verify.generate_w(key, self.gt, challenge, str(c), s, self.rt)  # type: ignore
+            key = ClickPy().calculate_key(args)  # type: ignore
+            w = ClickPy().generate_w(key, self.gt, challenge, str(c), s, self.rt)  # type: ignore
             # 点选验证码生成w后需要等待2秒提交
             w_use_time = time.time() - before_calculate_key
             if w_use_time < 2:
                 time.sleep(2 - w_use_time)
-            msg, validate = self.verify.verify(self.gt, challenge, w)  # type: ignore
+            msg, validate = ClickPy().verify(self.gt, challenge, w)  # type: ignore
             logger.info(f"【验证码】验证结果: {msg}")
             return validate
         except Exception:
@@ -107,13 +111,15 @@ class Captcha:
         challenge: 流水号
         返回: validate
         """
+        from bili_ticket_gt_python import SlidePy
+        
         try:
-            c, s, args = self.verify.get_new_c_s_args(self.gt, challenge)  # type: ignore
+            c, s, args = SlidePy().get_new_c_s_args(self.gt, challenge)  # type: ignore
             # 注意滑块验证码这里要刷新challenge
             challenge = args[0]
-            key = self.verify.calculate_key(args)  # type: ignore
-            w = self.verify.generate_w(key, self.gt, challenge, str(c), s, self.rt)  # type: ignore
-            msg, validate = self.verify.verify(self.gt, challenge, w)  # type: ignore
+            key = SlidePy().calculate_key(args)  # type: ignore
+            w = SlidePy().generate_w(key, self.gt, challenge, str(c), s, self.rt)  # type: ignore
+            msg, validate = SlidePy().verify(self.gt, challenge, w)  # type: ignore
             logger.info(f"【验证码】验证结果: {msg}")
             return validate
         except Exception:
