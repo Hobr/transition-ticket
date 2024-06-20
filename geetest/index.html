@@ -1,0 +1,138 @@
+<!-- kuresaru.github.io -->
+
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link href="css/style.css" rel="stylesheet" type="text/css">
+</head>
+
+<body>
+    <div>
+        <label for="gt">输入 gt: </label>
+        <input class="inp" id="gt" type="text">
+    </div>
+    <br>
+
+    <div>
+        <label for="challenge">输入 challenge: </label>
+        <input class="inp" id="challenge" type="text">
+    </div>
+    <br>
+
+    <div class="btn" id="btn-gen">点击生成</div>
+    <br><br>
+
+    <div>
+        <label>点击验证: </label>
+        <div id="captcha">
+            <div id="text">
+                请先生成
+            </div>
+            <div id="wait" class="show">
+                <div class="loading">
+                    <div class="loading-dot"></div>
+                    <div class="loading-dot"></div>
+                    <div class="loading-dot"></div>
+                    <div class="loading-dot"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <br>
+
+    <div>
+        <label for="validate">validate: </label>
+        <input class="inp" id="validate" type="text" readonly="readonly">
+    </div>
+    <br>
+
+    <div>
+        <label for="seccode">seccode: </label>
+        <input class="inp" id="seccode" type="text" readonly="readonly">
+    </div>
+    <br>
+    <div id="copy-alert" style="display: none;">validate 已保存到剪贴板</div>
+
+
+    <script src="js/jquery.js"></script>
+    <script src="js/gt.js"></script>
+
+    <script>
+        var handler = function (captchaObj) {
+            captchaObj.appendTo('#captcha');
+            captchaObj.onReady(function () {
+                $("#wait").hide();
+            });
+            captchaObj.onSuccess(function () {
+                var result = captchaObj.getValidate();
+                var validate = $('#validate')[0];
+                var seccode = $('#seccode')[0];
+                validate.value = result.geetest_validate;
+                seccode.value = result.geetest_seccode;
+
+                // 创建一个临时的textarea元素
+                var tempInput = document.createElement("textarea");
+                tempInput.value = result.geetest_validate;
+                document.body.appendChild(tempInput);
+                // 选中并复制到剪贴板
+                tempInput.select();
+                document.execCommand("copy");
+                // 移除临时的textarea元素
+                document.body.removeChild(tempInput);
+                // 显示提示
+                var copyAlert = $('#copy-alert');
+                copyAlert.show();
+                setTimeout(function () {
+                    copyAlert.hide();
+                }, 3000);
+            });
+            // 更多前端接口说明请参见：http://docs.geetest.com/install/client/web-front/
+        };
+
+        $('#btn-gen').click(function () {
+            $('#text').hide();
+            $('#wait').show();
+            var gt = $('#gt')[0].value;
+            var challenge = $('#challenge')[0].value;
+            // 调用 initGeetest 进行初始化
+            // 参数1：配置参数
+            // 参数2：回调，回调的第一个参数验证码对象，之后可以使用它调用相应的接口
+            initGeetest({
+                // 以下 4 个配置参数为必须，不能缺少
+                gt: gt,
+                challenge: challenge,
+                offline: false, // 表示用户后台检测极验服务器是否宕机
+                new_captcha: true, // 用于宕机时表示是新验证码的宕机
+
+                product: "popup", // 产品形式，包括：float，popup
+                width: "300px",
+                https: true
+
+                // 更多前端配置参数说明请参见：http://docs.geetest.com/install/client/web-front/
+            }, handler);
+        });
+        
+        function getQueryString(name) {
+			var reg = new RegExp("(^|&)" + name + "=([^&]*)(&|$)", "i");
+			var reg_rewrite = new RegExp("(^|/)" + name + "/([^/]*)(/|$)", "i");
+			var r = window.location.search.substr(1).match(reg);
+			var q = window.location.pathname.substr(1).match(reg_rewrite);
+			if(r != null){
+				return unescape(r[2]);
+			}else if(q != null){
+				return unescape(q[2]);
+			}else{
+				return null;
+			}
+		}
+		$('#gt')[0].value = getQueryString('gt')
+		$('#challenge')[0].value = getQueryString('challenge')
+        document.getElementById('btn-gen').click();
+    </script>
+</body>
+
+</html>

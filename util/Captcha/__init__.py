@@ -1,4 +1,13 @@
 import time
+import os
+
+import pyperclip
+import browsers
+from selenium import webdriver
+from selenium.webdriver.common.by import By
+from selenium.webdriver.common.keys import Keys
+from selenium.webdriver.support import expected_conditions as EC
+from selenium.webdriver.support.ui import WebDriverWait
 
 from bili_ticket_gt_python import ClickPy, SlidePy
 from loguru import logger
@@ -24,6 +33,7 @@ class Captcha:
         """
         self.verify = verify
         self.gt = gt
+        self.geetest_path = os.path.join(os.getcwd() + "/geetest")
 
         self.rt = "abcdefghijklmnop"  # rt固定即可
 
@@ -101,9 +111,52 @@ class Captcha:
             raise
 
     @logger.catch
-    def Manual(self) -> str:
+    def Manual(self, challenge) -> str:
         """
         手动验证
+
+        challenge: 流水号
+        返回: validate
         """
-        validate = ""
-        return validate
+        browser_list = [i for i in list(browsers.browsers()) if i["browser_type"] != "msie"]
+
+        if not browser_list:
+            logger.error("【登录】未找到可用浏览器/WebDriver! 建议选择其他方式登录")
+            exit()
+
+        selenium_drivers = {
+            "chrome": webdriver.Chrome,
+            "firefox": webdriver.Firefox,
+            "msedge": webdriver.Edge,
+            "safari": webdriver.Safari,
+        }
+
+        for browser in browser_list:
+            browser_type = browser["browser_type"]
+            print("请从打开的浏览器中手动验证，获取极验校验值")
+            driver = selenium_drivers[browser_type]()
+
+            if not driver:
+                logger.error("【登录】所有浏览器/WebDriver尝试登录均失败")
+                exit()
+
+            driver.maximize_window()
+            try:
+                filepath = "file://" + self.geetest_path + "/index.html?gt=" + self.gt + "&challenge=" + challenge
+                driver.get(filepath)
+                wait = WebDriverWait(driver, 30)
+                
+                event_btn = wait.until(EC.element_to_be_clickable((By.ID, "btn-gen")))
+                driver.execute_script("arguments[0].click();", event_btn)
+
+                event_inp = wait.until(EC.visibility_of_element_located((By.ID, "validate")))
+
+                while True:
+                    validate = event_inp.get_attribute("value")
+                    if validate:
+                        break
+                return validate
+
+            except Exception as e:
+                logger.error(f"【登录】{e}")
+                driver.quit()
