@@ -42,33 +42,15 @@ python cli.py
 
 ## 开发计划
 
-- 1.0.0 Release (BW开票前)
-  - [ ] 抢票流程细节补充/修复
-
-- 1.1.0 (BW开票期间)
-  - [ ] 命令行账号密码/短信验证登录
-  - [ ] 账号密码登录 二次手机验证码
-  - [ ] 手机验证码登录
-  - [ ] 文档
-
-- 1.2.0
-  - [ ] 解析JS + biliTicker_gt
-  - [ ] 刷新Cookie
-  - [ ] 手动验证
-
-- 1.3.0
-  - [ ] 多种类型活动抢票
-  - [ ] 图形界面(PySide6)
-  - [ ] Pylint
-
-- 1.4.0
-  - [ ] Header补充
-  - [ ] 注销Cookie
-  - [ ] Docker(Headless)
-
-- 1.5.0
-  - [ ] 网页界面(Gradio)
-  - [ ] UPX
+- [ ] 抢票流程细节补充/修复
+- [ ] 图形界面(PySide6)
+- [ ] 网页界面(Gradio)
+- [ ] 刷新Cookie
+- [ ] 多种类型活动抢票
+- [ ] Header补充
+- [ ] Pylint
+- [ ] UPX
+- [ ] JS逆向 + biliTicker_gt
 
 ## 开发
 
