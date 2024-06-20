@@ -64,7 +64,7 @@ class UserCli:
             mode = self.data.Inquire(
                 type="List",
                 message="请选择B站账号登录模式",
-                choices=["扫描二维码", "浏览器登录", "手动输入Cookie"],
+                choices=["扫描二维码", "浏览器登录", "手动输入Cookie", "账号密码登录"]
             )
 
             match mode:
@@ -81,7 +81,7 @@ class UserCli:
                         message="请输入B站账号",
                     )
                     password = self.data.Inquire(
-                        type="Text",
+                        type="Password",
                         message="请输入B站密码",
                     )
                     return login.Password(username=username, password=password)

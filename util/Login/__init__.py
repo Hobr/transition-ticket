@@ -250,7 +250,7 @@ class Login:
 
                     resend = self.net.Response(
                         method="post",
-                        url="https://passport.bilibili.com/x/safecenter/sms/send",
+                        url="https://passport.bilibili.com/x/safecenter/common/sms/send",
                         params=resend_params,
                     ).json()
                     # BUG: -400 Key: 'SendSmsReq.Type' Error:Field validation for 'Type' failed on the 'required' tag

@@ -216,6 +216,7 @@ class Data:
             "Confirm": inquirer.Confirm,
             "List": inquirer.List,
             "Checkbox": inquirer.Checkbox,
+            "Password": inquirer.Password,
         }
 
         process = method[type]
