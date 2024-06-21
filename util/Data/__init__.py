@@ -60,7 +60,7 @@ class Data:
             parent_pid = psutil.Process(os.getpid()).ppid()
             parent_process = psutil.Process(parent_pid)
             parent_name = parent_process.name()
-            parent_env = parent_process.environ()
+            print(argv)
         except (psutil.NoSuchProcess, psutil.AccessDenied, psutil.ZombieProcess):
             logger.error("获取父进程信息失败!")
             sleep(5)
@@ -68,7 +68,7 @@ class Data:
         if os.name == "nt":
             if parent_name == "powershell.exe" or "WT_SESSION" in os.environ:
                 qr.print_ascii(invert=True)
-            elif parent_name == "cmd.exe" or len(argv) == 1:
+            elif parent_name == "cmd.exe" or len(argv) == 1 and not argv[0].endswith(".py"):
                 img.show()
             else:
                 qr.print_ascii(invert=True)
