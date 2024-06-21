@@ -72,7 +72,7 @@ class Data:
                 img.show()
             else:
                 qr.print_ascii(invert=True)
-        elif os.name == "posix":
+        else:
             qr.print_ascii(invert=True)
 
     @logger.catch
