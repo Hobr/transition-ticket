@@ -1,6 +1,7 @@
 import glob
 from os import getcwd, makedirs, path
 from sys import exit
+from time import sleep
 
 import yaml
 from loguru import logger
@@ -52,6 +53,7 @@ class Config:
 
         except Exception as e:
             logger.exception(f"【配置】读取配置列表错误! {e}")
+            sleep(5)
             exit()
 
     @logger.catch

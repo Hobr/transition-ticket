@@ -1,5 +1,3 @@
-from sys import exit
-
 from loguru import logger
 
 from util import Data, Request
