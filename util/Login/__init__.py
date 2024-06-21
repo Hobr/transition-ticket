@@ -437,7 +437,7 @@ class Login:
         resp = self.net.Response(
             method="post",
             url="https://passport.bilibili.com/login/exit/v2",
-            params={"biliCSRF": self.cookie["bili_jct"]},
+            params={"biliCSRF": self.net.GetCookie()["bili_jct"]},
         ).json()
 
         if resp["code"] == 0:
