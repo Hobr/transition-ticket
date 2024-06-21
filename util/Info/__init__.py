@@ -60,7 +60,7 @@ class Info:
 
         screens = response["data"]["screen_list"]
         if not screens:
-            logger.info("【活动详情】该活动暂未开放票务信息")
+            logger.warning("【活动详情】该活动暂未开放票务信息")
             exit()
 
         dist = {}
@@ -120,7 +120,7 @@ class Info:
         lists = response["data"]["list"]
 
         if len(lists) == 0:
-            logger.info("【购买人】暂无购买人信息, 请到会员购平台绑定后再次使用!")
+            logger.warning("【购买人】暂无购买人信息, 请到会员购平台绑定后再次使用!")
             exit()
 
         for i in range(len(lists)):
