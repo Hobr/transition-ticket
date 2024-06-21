@@ -114,7 +114,7 @@ class UserCli:
                         raise LoginException("未知登录模式, 请重新选择!")
 
             except LoginException:
-                logger.info("登录失败, 请重新选择登录模式!")
+                logger.warning("【登录】登录失败, 请重新选择登录模式!")
                 return LoginStep()
 
         @logger.catch
