@@ -1,8 +1,10 @@
 import base64
 import datetime
 import json
+import os
 from sys import exit
 
+import psutil
 import inquirer
 import machineid
 import pytz
@@ -11,6 +13,15 @@ from Crypto.Util.Padding import pad, unpad
 from inquirer.themes import GreenPassion
 from loguru import logger
 from qrcode import QRCode  # type: ignore
+
+
+class CustomThemes(GreenPassion):
+    def __init__(self):
+        super().__init__()
+        self.List.selection_cursor = '->'  # 选择光标
+        self.List.selection_color = '\033[1;35;106m'  # 设置 List选项 的选中颜色(紫，蓝)
+        self.Question.mark_color = '\033[93m'  # 设置 [?] 中 ? 的颜色(黄)
+        self.Question.brackets_color = '\033[96m'  # 设置 [?] 中 [] 的颜色(蓝)
 
 
 class Data:
@@ -40,10 +51,23 @@ class Data:
         """
         qr = QRCode()
         qr.add_data(url)
-        qr.print_ascii(invert=True)
 
         img = qr.make_image()
         img.save(img_path)
+        
+        try:
+            parent_pid = psutil.Process(os.getpid()).ppid()
+            parent_process = psutil.Process(parent_pid)
+            parent_name = parent_process.name()
+        except (psutil.NoSuchProcess, psutil.AccessDenied, psutil.ZombieProcess):
+            parent_name = ""
+
+        if parent_name == "powershell.exe" or "WT_SESSION" in os.environ:
+            qr.print_ascii(invert=True)
+        elif parent_name == "cmd.exe":
+            img.show()
+        else:
+            qr.print_ascii(invert=True)
 
     @logger.catch
     def SeleniumCookieFormat(self, cookie: list) -> dict:
@@ -227,7 +251,7 @@ class Data:
         process = method[type]
         res = inquirer.prompt(
             [process(name="res", message=message, default=default, **({"choices": choices} if type in choiceMethod else {}))],
-            theme=GreenPassion(),
+            theme=CustomThemes(),
         )
 
         if res is not None:

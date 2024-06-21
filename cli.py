@@ -97,7 +97,7 @@ if __name__ == "__main__":
     if job.Run():
         notice = Notice(title="抢票", message="下单成功! 请在十分钟内支付")
         mode = settingConfig["notice"]
-        logger.info("【抢票】下单成功! 请在十分钟内支付")
+        logger.success("【抢票】下单成功! 请在十分钟内支付")
 
         # 多线程通知
         noticeThread = []

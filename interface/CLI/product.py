@@ -33,8 +33,9 @@ class ProductCli:
             "skuId": 0,
         }
 
-        # 颜色代码
+        # 颜色ANSI代码
         self.YELLOW = "\033[93m"
+        self.BLUE = "\033[96m"
         self.RESET = "\033[0m"
 
     @logger.catch
@@ -65,7 +66,7 @@ class ProductCli:
             """
             活动
             """
-            print("[!] BW2024链接: show.bilibili.com/platform/detail.html?id=85939")
+            print(f"{self.BLUE}[{self.YELLOW}!{self.BLUE}] BW2024链接: show.bilibili.com/platform/detail.html?id=85939")
             url = self.data.Inquire(
                 type="Text",
                 message="请粘贴要抢的活动的网页链接",

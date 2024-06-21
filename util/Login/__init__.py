@@ -77,7 +77,7 @@ class Login:
 
                 check = respQR["data"]
                 if check["code"] == 0:
-                    logger.info("【登录】登录成功")
+                    logger.success("【登录】登录成功")
                     self.cookie = self.net.GetCookie()
                     # 补充Cookie参数
                     # self.cookie = Data().CookieAppend(self.cookie) | self.cookie
@@ -137,7 +137,7 @@ class Login:
             if driver.page_source is None or "登录" not in driver.page_source:
                 break
 
-        logger.info("【登录】登录成功")
+        logger.success("【登录】登录成功")
         driver.get("https://account.bilibili.com/account/home")
         seleniumCookie = driver.get_cookies()
         logger.info("【登录】Cookie已保存")
@@ -226,12 +226,12 @@ class Login:
         if resp["code"] == 0:
 
             if resp["data"]["status"] == 0:
-                logger.info("【登录】登录成功")
+                logger.success("【登录】登录成功")
                 self.cookie = self.net.GetCookie()
                 return self.Status()
 
             else:  # 二次短信验证登录
-                logger.info("【登录】登录失败, 需要二次验证")
+                logger.warning("【登录】登录失败, 需要二次验证")
 
                 resp_url = resp["data"]["url"]
                 tmp_token_match = re.search(r"tmp_token=(\w{32})", resp_url)
@@ -268,7 +268,7 @@ class Login:
                     if resend["code"] != 0:
                         raise LoginException(f"验证码发送失败: {resend['code']} {resend['message']}")
 
-                    logger.info("【登录】验证码发送成功")
+                    logger.success("【登录】验证码发送成功")
                     resend_token = resend["data"]["captcha_key"]
                     verify_code = self.data.Inquire(type="Text", message="请输入验证码")
 
@@ -298,7 +298,7 @@ class Login:
                     if reverify["code"] != 0:
                         raise LoginException(f"验证码登录失败 {reverify['code']}: {reverify['message']}")
 
-                    logger.info("【登录】验证码登录成功")
+                    logger.success("【登录】验证码登录成功")
                     self.net.Response(
                         method="post",
                         url="https://passport.bilibili.com/x/passport-login/web/exchange_cookie",
@@ -340,7 +340,7 @@ class Login:
         ).json()
 
         if resp["code"] == 0:
-            logger.info("【登录】验证码发送成功")
+            logger.success("【登录】验证码发送成功")
             captcha_key = resp["data"]["captcha_key"]
             return captcha_key
         else:
@@ -372,7 +372,7 @@ class Login:
         ).json()
 
         if resp["code"] == 0:
-            logger.info("【登录】登录成功")
+            logger.success("【登录】登录成功")
         else:
             raise LoginException(f"验证码登录失败 {resp['code']}: {resp['message']}")
 
