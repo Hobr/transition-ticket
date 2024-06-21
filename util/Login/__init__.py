@@ -2,6 +2,7 @@ import json
 import re
 import time
 from sys import exit
+from time import sleep
 
 import browsers
 from loguru import logger
@@ -405,6 +406,7 @@ class Login:
                 return self.cookie
             else:
                 logger.error("【登录状态检测】登录失败")
+                sleep(5)
                 exit()
 
         else:
@@ -435,12 +437,12 @@ class Login:
         退出登录
         """
         resp = self.net.Response(
-            method="get",
+            method="post",
             url="https://passport.bilibili.com/login/exit/v2",
-            params={"biliCSRF": self.cookie["bili_jct"]},
+            params={"biliCSRF": self.net.GetCookie()["bili_jct"]},
         ).json()
 
-        if resp["code"] == 0 and resp["status"]:
+        if resp["code"] == 0:
             logger.info("【退出登录】注销Cookie成功")
             return True
         elif resp["code"] == 2202:

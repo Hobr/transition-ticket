@@ -3,6 +3,7 @@ import datetime
 import json
 import os
 from sys import exit
+from time import sleep
 
 import psutil
 import inquirer
@@ -193,6 +194,7 @@ class Data:
             return decrypted_text.decode("utf-8")
         except Exception:
             logger.error("【解密】这是你的配置吗?")
+            sleep(5)
             exit()
 
     @logger.catch
@@ -258,4 +260,5 @@ class Data:
             return res["res"]
         else:
             logger.error("【交互】未知错误!")
+            sleep(5)
             exit()

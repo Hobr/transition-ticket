@@ -3,6 +3,7 @@ import re
 from loguru import logger
 
 from util import Config, Data, Info, Request
+from util.Info import InfoException
 
 
 class ProductCli:
@@ -66,41 +67,49 @@ class ProductCli:
             """
             活动
             """
-            print(f"{self.BLUE}[{self.YELLOW}!{self.BLUE}] BW2024链接: show.bilibili.com/platform/detail.html?id=85939")
+            print(f"{self.BLUE}[{self.YELLOW}!{self.BLUE}]{self.RESET} BW2024链接: show.bilibili.com/platform/detail.html?id=85939")
             url = self.data.Inquire(
                 type="Text",
                 message="请粘贴要抢的活动的网页链接",
             )
+            
+            try:
+                match = re.search(r"id=(\d+)", url)
+                if match:
+                    projectId = match.group(1)
+                    return int(projectId)
+                else:
+                    raise InfoException("商品配置初始化", "活动URL格式错误!")
 
-            match = re.search(r"id=(\d+)", url)
-            if match:
-                projectId = match.group(1)
-                return int(projectId)
-
-            else:
-                logger.error("【商品配置初始化】活动URL格式错误!")
+            except InfoException:
+                logger.warning("请重新配置活动信息!")
                 return ProjectStep()
 
         @logger.catch
-        def ScrenStep() -> int:
+        def ScreenStep() -> int:
             """
             场次
             """
-            projectInfo = self.info.Project()
-            screenInfo = self.info.Screen()
+            try:
+                projectInfo = self.info.Project()
+                screenInfo = self.info.Screen()
 
-            lists = {
-                f"{self.YELLOW if screenInfo[i]['display_name'] == '预售中' else ''}"
-                f"{screenInfo[i]['name']} ({screenInfo[i]['display_name']})"
-                f"{self.RESET if screenInfo[i]['display_name'] == '预售中' else ''}": screenInfo[i]["id"]
-                for i in range(len(screenInfo))
-            }
-            select = self.data.Inquire(
-                type="List",
-                message=f"您选择的活动是:{projectInfo['name']}, 接下来请选择场次",
-                choices=list(lists.keys()),
-            )
-            return lists[select]
+                lists = {
+                    f"{self.YELLOW if screenInfo[i]['display_name'] == '预售中' else ''}"
+                    f"{screenInfo[i]['name']} ({screenInfo[i]['display_name']})"
+                    f"{self.RESET if screenInfo[i]['display_name'] == '预售中' else ''}": screenInfo[i]["id"]
+                    for i in range(len(screenInfo))
+                }
+                select = self.data.Inquire(
+                    type="List",
+                    message=f"您选择的活动是:{projectInfo['name']}, 接下来请选择场次",
+                    choices=list(lists.keys()),
+                )
+                return lists[select]
+
+            except InfoException:
+                logger.warning("请重新配置活动信息!")
+                return self.Generate()
 
         @logger.catch
         def SkuStep(screenId: int) -> int:
@@ -109,19 +118,24 @@ class ProductCli:
 
             screenId: 场次ID
             """
-            skuInfo = self.info.Sku(screenId)
-            lists = {
-                f"{self.YELLOW if skuInfo[i]['display_name'] == '预售中' else ''}"
-                f"{skuInfo[i]['name']} {skuInfo[i]['price']}元 ({skuInfo[i]['display_name']})"
-                f"{self.RESET}": skuInfo[i]["id"]
-                for i in range(len(skuInfo))
-            }
-            select = self.data.Inquire(
-                type="List",
-                message="请选择价位",
-                choices=list(lists.keys()),
-            )
-            return lists[select]
+            try:
+                skuInfo = self.info.Sku(screenId)
+                lists = {
+                    f"{self.YELLOW if skuInfo[i]['display_name'] == '预售中' else ''}"
+                    f"{skuInfo[i]['name']} {skuInfo[i]['price']}元 ({skuInfo[i]['display_name']})"
+                    f"{self.RESET}": skuInfo[i]["id"]
+                    for i in range(len(skuInfo))
+                }
+                select = self.data.Inquire(
+                    type="List",
+                    message="请选择价位",
+                    choices=list(lists.keys()),
+                )
+                return lists[select]
+            
+            except InfoException:
+                logger.warning("请重新配置活动信息!")
+                return self.Generate()
 
         @logger.catch
         def FilenameStep(name: str) -> str:
@@ -140,7 +154,7 @@ class ProductCli:
         print("下面开始配置商品!")
         self.config["projectId"] = ProjectStep()
         self.info = Info(net=self.net, pid=self.config["projectId"])
-        self.config["screenId"] = ScrenStep()
+        self.config["screenId"] = ScreenStep()
         self.config["skuId"] = SkuStep(screenId=self.config["screenId"])
 
         self.conf.Save(FilenameStep(name=self.info.Project()["name"]), self.config)

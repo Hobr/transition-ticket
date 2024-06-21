@@ -1,5 +1,6 @@
 import logging
 from sys import exit
+from time import sleep
 
 import hishel
 import httpx
@@ -169,5 +170,6 @@ class Request:
                 if "show.bilibili.com" in str(request.url):
                     logger.error(f"【Request响应】请求错误, 状态码: {response.status_code}")
             else:
-                logger.error("【Request响应】IP被412风控!!!!! 请更换IP(重启路由器/使用手机流量热点/梯子......)后再次使用")
+                logger.error("【Request响应】IP被412风控!!!!!请更换IP后再次使用(重启路由器/使用手机流量热点/梯子...)")
+                sleep(5)
                 exit()
