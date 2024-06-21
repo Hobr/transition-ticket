@@ -5,9 +5,9 @@ import os
 from sys import exit
 from time import sleep
 
-import psutil
 import inquirer
 import machineid
+import psutil
 import pytz
 from Crypto.Cipher import AES
 from Crypto.Util.Padding import pad, unpad
@@ -19,10 +19,10 @@ from qrcode import QRCode  # type: ignore
 class CustomThemes(GreenPassion):
     def __init__(self):
         super().__init__()
-        self.List.selection_cursor = '->'  # 选择光标
-        self.List.selection_color = '\033[1;35;106m'  # 设置 List选项 的选中颜色(紫，蓝)
-        self.Question.mark_color = '\033[93m'  # 设置 [?] 中 ? 的颜色(黄)
-        self.Question.brackets_color = '\033[96m'  # 设置 [?] 中 [] 的颜色(蓝)
+        self.List.selection_cursor = "->"  # 选择光标
+        self.List.selection_color = "\033[1;35;106m"  # 设置 List选项 的选中颜色(紫，蓝)
+        self.Question.mark_color = "\033[93m"  # 设置 [?] 中 ? 的颜色(黄)
+        self.Question.brackets_color = "\033[96m"  # 设置 [?] 中 [] 的颜色(蓝)
 
 
 class Data:
@@ -55,7 +55,7 @@ class Data:
 
         img = qr.make_image()
         img.save(img_path)
-        
+
         try:
             parent_pid = psutil.Process(os.getpid()).ppid()
             parent_process = psutil.Process(parent_pid)

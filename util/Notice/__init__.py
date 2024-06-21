@@ -3,8 +3,8 @@ from os import getcwd, path
 
 from loguru import logger
 
-from util.Request import Request
 from util.Login import Login
+from util.Request import Request
 
 
 class Notice:

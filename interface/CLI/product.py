@@ -72,7 +72,7 @@ class ProductCli:
                 type="Text",
                 message="请粘贴要抢的活动的网页链接",
             )
-            
+
             try:
                 match = re.search(r"id=(\d+)", url)
                 if match:
@@ -132,7 +132,7 @@ class ProductCli:
                     choices=list(lists.keys()),
                 )
                 return lists[select]
-            
+
             except InfoException:
                 logger.warning("请重新配置活动信息!")
                 return self.Generate()

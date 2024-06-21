@@ -1,8 +1,8 @@
 from loguru import logger
 
 from util import Config, Data, Info, Login, Request
-from util.Login import LoginException
 from util.Info import InfoException
+from util.Login import LoginException
 
 
 class UserCli:
