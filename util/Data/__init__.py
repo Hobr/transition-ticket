@@ -2,7 +2,7 @@ import base64
 import datetime
 import json
 import os
-from sys import exit
+from sys import argv, exit
 from time import sleep
 
 import inquirer
@@ -60,12 +60,15 @@ class Data:
             parent_pid = psutil.Process(os.getpid()).ppid()
             parent_process = psutil.Process(parent_pid)
             parent_name = parent_process.name()
+            parent_env = parent_process.environ()
         except (psutil.NoSuchProcess, psutil.AccessDenied, psutil.ZombieProcess):
-            parent_name = ""
+            logger.error("获取父进程信息失败!")
+            sleep(5)
+            exit()
 
         if parent_name == "powershell.exe" or "WT_SESSION" in os.environ:
             qr.print_ascii(invert=True)
-        elif parent_name == "cmd.exe":
+        elif parent_name == "cmd.exe" or len(argv) == 1:
             img.show()
         else:
             qr.print_ascii(invert=True)
