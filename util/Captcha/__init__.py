@@ -1,6 +1,7 @@
 import sys
 import time
 from os import getcwd, path
+from time import sleep
 
 import browsers
 from loguru import logger
@@ -147,6 +148,7 @@ class Captcha:
 
         if not browser_list:
             logger.error("【登录】未找到可用浏览器/WebDriver! 建议选择其他方式登录")
+            sleep(5)
             exit()
 
         selenium_drivers = {
@@ -163,6 +165,7 @@ class Captcha:
 
             if not driver:
                 logger.error("【登录】所有浏览器/WebDriver尝试登录均失败")
+                sleep(5)
                 exit()
 
             driver.maximize_window()

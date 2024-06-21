@@ -2,6 +2,7 @@ import json
 import re
 import time
 from sys import exit
+from time import sleep
 
 import browsers
 from loguru import logger
@@ -405,6 +406,7 @@ class Login:
                 return self.cookie
             else:
                 logger.error("【登录状态检测】登录失败")
+                sleep(5)
                 exit()
 
         else:
