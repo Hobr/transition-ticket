@@ -1,8 +1,10 @@
 import base64
 import datetime
 import json
+import os
 from sys import exit
 
+import psutil
 import inquirer
 import machineid
 import pytz
@@ -40,10 +42,23 @@ class Data:
         """
         qr = QRCode()
         qr.add_data(url)
-        qr.print_ascii(invert=True)
 
         img = qr.make_image()
         img.save(img_path)
+        
+        try:
+            parent_pid = psutil.Process(os.getpid()).ppid()
+            parent_process = psutil.Process(parent_pid)
+            parent_name = parent_process.name()
+        except (psutil.NoSuchProcess, psutil.AccessDenied, psutil.ZombieProcess):
+            parent_name = ""
+
+        if parent_name == "powershell.exe" or "WT_SESSION" in os.environ:
+            qr.print_ascii(invert=True)
+        elif parent_name == "cmd.exe":
+            img.show()
+        else:
+            qr.print_ascii(invert=True)
 
     @logger.catch
     def SeleniumCookieFormat(self, cookie: list) -> dict:
