@@ -15,6 +15,15 @@ from loguru import logger
 from qrcode import QRCode  # type: ignore
 
 
+class CustomThemes(GreenPassion):
+    def __init__(self):
+        super().__init__()
+        self.List.selection_cursor = '->'  # 选择光标
+        self.List.selection_color = '\033[1;35;106m'  # 设置 List选项 的选中颜色(紫，蓝)
+        self.Question.mark_color = '\033[93m'  # 设置 [?] 中 ? 的颜色(黄)
+        self.Question.brackets_color = '\033[96m'  # 设置 [?] 中 [] 的颜色(蓝)
+
+
 class Data:
     """
     数据处理
@@ -242,7 +251,7 @@ class Data:
         process = method[type]
         res = inquirer.prompt(
             [process(name="res", message=message, default=default, **({"choices": choices} if type in choiceMethod else {}))],
-            theme=GreenPassion(),
+            theme=CustomThemes(),
         )
 
         if res is not None:
