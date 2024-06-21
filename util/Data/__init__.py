@@ -65,12 +65,14 @@ class Data:
             logger.error("获取父进程信息失败!")
             sleep(5)
             exit()
-
-        if parent_name == "powershell.exe" or "WT_SESSION" in os.environ:
-            qr.print_ascii(invert=True)
-        elif parent_name == "cmd.exe" or len(argv) == 1:
-            img.show()
-        else:
+        if os.name == "nt":
+            if parent_name == "powershell.exe" or "WT_SESSION" in os.environ:
+                qr.print_ascii(invert=True)
+            elif parent_name == "cmd.exe" or len(argv) == 1:
+                img.show()
+            else:
+                qr.print_ascii(invert=True)
+        elif os.name == "posix":
             qr.print_ascii(invert=True)
 
     @logger.catch
