@@ -2,6 +2,7 @@ from loguru import logger
 
 from util import Config, Data, Info, Login, Request
 from util.Login import LoginException
+from util.Info import InfoException
 
 
 class UserCli:
@@ -122,18 +123,23 @@ class UserCli:
             """
             购买人
             """
-            buyerInfo = Info(net=self.net).Buyer()
-            choice = {f"{i['购买人']} - {i['身份证']} - {i['手机号']}": x for x, i in enumerate(buyerInfo)}
+            try:
+                buyerInfo = Info(net=self.net).Buyer()
+                choice = {f"{i['购买人']} - {i['身份证']} - {i['手机号']}": x for x, i in enumerate(buyerInfo)}
 
-            select = self.data.Inquire(
-                type="List",
-                message="请选择购票人",
-                choices=list(choice.keys()),
-            )
+                select = self.data.Inquire(
+                    type="List",
+                    message="请选择购票人",
+                    choices=list(choice.keys()),
+                )
 
-            id = choice[select]
-            dist = buyerInfo[id]["数据"]
-            return dist
+                id = choice[select]
+                dist = buyerInfo[id]["数据"]
+                return dist
+
+            except InfoException:
+                logger.warning("请重新配置活动信息!")
+                return self.Generate()
 
         @logger.catch
         def FilenameStep(name: str) -> str:
