@@ -4,6 +4,7 @@ from os import getcwd, path
 from loguru import logger
 
 from util.Request import Request
+from util.Login import Login
 
 
 class Notice:
@@ -23,6 +24,9 @@ class Notice:
         title: 标题
         message: 消息
         """
+        self.net = Request()
+        self.login = Login(net=self.net)
+
         self.appName = "Bilibili_Show_Python"
         self.appIconPath = self.AssestDir("assest/icon.ico")
         self.audioPath = self.AssestDir("assest/alarm.wav")
@@ -78,8 +82,6 @@ class Notice:
         PushPlus
 
         文档: https://pushplus.plus/doc/
-
-        link: 需要用户点击跳转的链接
         """
         url = "http://www.pushplus.plus/send"
         data = {
@@ -89,4 +91,5 @@ class Notice:
             "template": "html",
             "channel": "wechat",
         }
-        Request().Response(method="post", url=url, params=data)
+        self.net.Response(method="post", url=url, params=data)
+        self.login.ExitLogin()

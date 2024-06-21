@@ -435,12 +435,12 @@ class Login:
         退出登录
         """
         resp = self.net.Response(
-            method="get",
+            method="post",
             url="https://passport.bilibili.com/login/exit/v2",
             params={"biliCSRF": self.cookie["bili_jct"]},
         ).json()
 
-        if resp["code"] == 0 and resp["status"]:
+        if resp["code"] == 0:
             logger.info("【退出登录】注销Cookie成功")
             return True
         elif resp["code"] == 2202:
