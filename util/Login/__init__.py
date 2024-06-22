@@ -227,94 +227,93 @@ class Login:
             params=params,
         ).json()
 
-        if resp["code"] == 0:
-
-            if resp["data"]["status"] == 0:
-                logger.success("【登录】登录成功")
-                self.cookie = self.net.GetCookie()
-                return self.Status()
-
-            else:  # 二次短信验证登录
-                logger.warning("【登录】登录失败, 需要二次验证")
-
-                resp_url = resp["data"]["url"]
-                tmp_token_match = re.search(r"tmp_token=(\w{32})", resp_url)
-                tmp_token = tmp_token_match.group(1) if tmp_token_match else ""
-                scene_match = re.search(r"scene=([^&]+)", resp_url)
-                scene = scene_match.group(1) if scene_match else "loginTelCheck"
-
-                info = self.net.Response(
-                    method="get",
-                    url=f"https://passport.bilibili.com/x/safecenter/user/info?tmp_code={tmp_token}",
-                ).json()
-
-                if info["data"]["account_info"]["bind_tel"]:
-                    hide_tel = info["data"]["account_info"]["hide_tel"]
-                    logger.info(f"【登录】手机号已绑定, 即将给 {hide_tel} 发送验证码")
-
-                    token, challenge, validate, seccode = self.GetPreCaptcha()
-
-                    resend_params = {
-                        "tmp_code": tmp_token,
-                        "sms_type": scene,
-                        "recaptcha_token": token,
-                        "gee_challenge": challenge,
-                        "gee_validate": validate,
-                        "gee_seccode": seccode,
-                    }
-
-                    resend = self.net.Response(
-                        method="post",
-                        url="https://passport.bilibili.com/x/safecenter/common/sms/send",
-                        params=resend_params,
-                    ).json()
-
-                    if resend["code"] != 0:
-                        raise LoginException(f"验证码发送失败: {resend['code']} {resend['message']}")
-
-                    logger.success("【登录】验证码发送成功")
-                    resend_token = resend["data"]["captcha_key"]
-                    verify_code = self.data.Inquire(type="Text", message="请输入验证码")
-
-                    if resp["data"]["status"] == 1:
-                        data = {
-                            "verify_type": "sms",
-                            "tmp_code": tmp_token,
-                            "captcha_key": resend_token,
-                            "code": verify_code,
-                        }
-                        url = "https://passport.bilibili.com/x/safecenter/sec/verify"
-
-                    elif resp["data"]["status"] == 2:
-                        data = {
-                            "type": "loginTelCheck",
-                            "tmp_code": tmp_token,
-                            "captcha_key": resend_token,
-                            "code": verify_code,
-                        }
-                        url = "https://passport.bilibili.com/x/safecenter/login/tel/verify"
-
-                    else:
-                        raise LoginException(f"未知错误: {resp['data']['status']}")
-
-                    reverify = self.net.Response(method="post", url=url, params=data).json()
-
-                    if reverify["code"] != 0:
-                        raise LoginException(f"验证码登录失败 {reverify['code']}: {reverify['message']}")
-
-                    logger.success("【登录】验证码登录成功")
-                    self.net.Response(
-                        method="post",
-                        url="https://passport.bilibili.com/x/passport-login/web/exchange_cookie",
-                        params={"source": "risk", "code": reverify["data"]["code"]},
-                    ).json()
-                    self.cookie = self.net.GetCookie()
-                    return self.Status()
-
-                else:
-                    raise LoginException("手机号未绑定, 请重新选择登录方式")
-        else:
+        if resp["code"] != 0:
             raise LoginException(f"登录失败 {resp['code']}: {resp['message']}")
+
+        if resp["data"]["status"] == 0:
+            logger.success("【登录】登录成功")
+            self.cookie = self.net.GetCookie()
+            return self.Status()
+
+        else:  # 二次短信验证登录
+            logger.warning("【登录】登录失败, 需要二次验证")
+
+            resp_url = resp["data"]["url"]
+            tmp_token_match = re.search(r"tmp_token=(\w{32})", resp_url)
+            tmp_token = tmp_token_match.group(1) if tmp_token_match else ""
+            scene_match = re.search(r"scene=([^&]+)", resp_url)
+            scene = scene_match.group(1) if scene_match else "loginTelCheck"
+
+            info = self.net.Response(
+                method="get",
+                url=f"https://passport.bilibili.com/x/safecenter/user/info?tmp_code={tmp_token}",
+            ).json()
+
+            if not info["data"]["account_info"]["bind_tel"]:
+                raise LoginException("手机号未绑定, 请重新选择登录方式")
+
+            hide_tel = info["data"]["account_info"]["hide_tel"]
+            logger.info(f"【登录】手机号已绑定, 即将给 {hide_tel} 发送验证码")
+
+            token, challenge, validate, seccode = self.GetPreCaptcha()
+
+            resend_params = {
+                "tmp_code": tmp_token,
+                "sms_type": scene,
+                "recaptcha_token": token,
+                "gee_challenge": challenge,
+                "gee_validate": validate,
+                "gee_seccode": seccode,
+            }
+
+            resend = self.net.Response(
+                method="post",
+                url="https://passport.bilibili.com/x/safecenter/common/sms/send",
+                params=resend_params,
+            ).json()
+
+            if resend["code"] != 0:
+                raise LoginException(f"验证码发送失败: {resend['code']} {resend['message']}")
+
+            logger.success("【登录】验证码发送成功")
+            resend_token = resend["data"]["captcha_key"]
+            verify_code = self.data.Inquire(type="Text", message="请输入验证码")
+
+            if resp["data"]["status"] == 1:
+                data = {
+                    "verify_type": "sms",
+                    "tmp_code": tmp_token,
+                    "captcha_key": resend_token,
+                    "code": verify_code,
+                }
+                url = "https://passport.bilibili.com/x/safecenter/sec/verify"
+
+            elif resp["data"]["status"] == 2:
+                data = {
+                    "type": "loginTelCheck",
+                    "tmp_code": tmp_token,
+                    "captcha_key": resend_token,
+                    "code": verify_code,
+                }
+                url = "https://passport.bilibili.com/x/safecenter/login/tel/verify"
+
+            else:
+                raise LoginException(f"未知错误: {resp['data']['status']}")
+
+            reverify = self.net.Response(method="post", url=url, params=data).json()
+
+            if reverify["code"] != 0:
+                raise LoginException(f"验证码登录失败 {reverify['code']}: {reverify['message']}")
+
+            logger.success("【登录】验证码登录成功")
+            self.net.Response(
+                method="post",
+                url="https://passport.bilibili.com/x/passport-login/web/exchange_cookie",
+                params={"source": "risk", "code": reverify["data"]["code"]},
+            ).json()
+            self.cookie = self.net.GetCookie()
+            return self.Status()
+
 
     def SMSSend(self, tel: str) -> str:
         """
