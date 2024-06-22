@@ -69,8 +69,9 @@ class Login:
             url = resp["data"]["url"]
             self.data.QRGenerate(url, "qr.jpg")
 
+            t = 0
             while True:
-                time.sleep(1.5)
+                time.sleep(0.5)
                 respQR = self.net.Response(
                     method="get",
                     url="https://passport.bilibili.com/x/passport-login/web/qrcode/poll?source=main-fe-header&qrcode_key=" + resp["data"]["qrcode_key"],
@@ -86,7 +87,9 @@ class Login:
 
                 # 未扫描:86101 扫描未确认:86090
                 elif check["code"] in [86101, 86090]:
-                    logger.info("【登录】等待扫码...")
+                    t += 1
+                    if t % 5 == 0:
+                        logger.info("【登录】等待扫码...")
 
                 else:
                     raise LoginException(f"{check['code']}: {check['message']}")
