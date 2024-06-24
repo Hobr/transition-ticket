@@ -60,11 +60,11 @@ class Data:
             parent_pid = psutil.Process(os.getpid()).ppid()
             parent_process = psutil.Process(parent_pid)
             parent_name = parent_process.name()
-            print(argv)
         except (psutil.NoSuchProcess, psutil.AccessDenied, psutil.ZombieProcess):
             logger.error("获取父进程信息失败!")
             sleep(5)
             exit()
+
         if os.name == "nt":
             if parent_name == "powershell.exe" or "WT_SESSION" in os.environ:
                 qr.print_ascii(invert=True)
