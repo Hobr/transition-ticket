@@ -110,18 +110,21 @@ class Bilibili:
         # projectID/ScreenId/SkuID错误
         if code in [100080, 100082]:
             logger.error("【获取Token】项目/场次/价位不存在!")
+            logger.warning("程序正在准备退出...")
             sleep(5)
             exit()
 
         # 没开票
         if code == 100041:
             logger.error("【获取Token】该项目暂未开票!")
+            logger.warning("程序正在准备退出...")
             sleep(5)
             exit()
 
         # 停售
         if code == 100039:
             logger.error("【获取Token】早停售了你抢牛魔呢")
+            logger.warning("程序正在准备退出...")
             sleep(5)
             exit()
 
@@ -322,18 +325,21 @@ class Bilibili:
         # 存在未付款订单
         elif code == 100079:
             logger.error("【创建订单】存在未付款订单! 请在支付或取消订单后再次运行")
+            logger.warning("程序正在准备退出...")
             sleep(5)
             exit()
 
         # 订单已存在/已购买
         elif code == 100049:
             logger.error("【创建订单】该项目每人限购1张, 已存在购买订单")
+            logger.warning("程序正在准备退出...")
             sleep(5)
             exit()
 
         # 本项目需要联系人信息
         elif code == 209001:
             logger.error("【创建订单】目前仅支持实名制一人一票类活动哦~(其他类型活动也用不着上脚本吧啊喂)")
+            logger.warning("程序正在准备退出...")
             sleep(5)
             exit()
 
