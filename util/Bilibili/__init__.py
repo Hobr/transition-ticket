@@ -64,6 +64,7 @@ class Bilibili:
 
         返回: 0-成功, 1-风控, 2-未知
         """
+        logger.info("【获取Token】正在尝试获取Token...")
         # 成功
         if not self.risked:
             url = f"https://show.bilibili.com/api/ticket/order/prepare?project_id={self.projectId}"
@@ -103,7 +104,7 @@ class Bilibili:
             self.scene = riskParams["scene"]
             self.ua = riskParams["ua"]
             self.voucher = riskParams["v_voucher"]
-            logger.warning("【获取Token】已风控")
+            logger.error("【获取Token】已风控")
             return 1
 
         # projectID/ScreenId/SkuID错误
@@ -136,6 +137,7 @@ class Bilibili:
 
         返回: True-有票, False-无票
         """
+        logger.info("【获取票数】正在尝试获取票数...")
         url = f"https://show.bilibili.com/api/ticket/project/getV2?version=134&id={self.projectId}&project_id={self.projectId}&requestSource={self.scene}"
         res = self.net.Response(method="get", url=url).json()
         data = res["data"]
@@ -186,6 +188,7 @@ class Bilibili:
 
         返回: True-成功, False-失败
         """
+        logger.info("【获取流水】正在尝试获取流水...")
         # 获取CSRF
         if self.csrf is None:
             self.csrf = self.net.GetCookie()["bili_jct"]
@@ -265,6 +268,7 @@ class Bilibili:
 
         返回: 0-成功, 1-Token过期, 2-库存不足, 3-失败
         """
+        logger.info("【创建订单】正在尝试创建订单...")
         url = f"https://show.bilibili.com/api/ticket/order/createV2?project_id={self.projectId}"
         timestamp = int(round(time.time() * 1000))
         clickPosition = {
@@ -352,7 +356,7 @@ class Bilibili:
 
         # 成功
         if code == 0:
-            logger.info("【创建订单状态】锁单成功!")
+            logger.success("【创建订单状态】锁单成功!")
             return True
 
         # 失败
