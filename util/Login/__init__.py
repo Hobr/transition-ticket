@@ -7,7 +7,7 @@ from time import sleep
 import browsers
 from loguru import logger
 from selenium import webdriver
-from selenium.common.exceptions import WebDriverException
+from selenium.common.exceptions import WebDriverException, NoSuchWindowException
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.support.ui import WebDriverWait
@@ -128,7 +128,7 @@ class Login:
                         driver.execute_script("arguments[0].click();", event)
                         break
 
-                    except WebDriverException:
+                    except (WebDriverException, NoSuchWindowException):
                         raise LoginException("浏览器/WebDriver启动失败")
 
                 else:
