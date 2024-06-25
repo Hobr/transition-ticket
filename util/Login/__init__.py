@@ -67,7 +67,7 @@ class Login:
 
         if resp["code"] == 0:
             url = resp["data"]["url"]
-            self.data.QRGenerate(url, "qr.jpg")
+            self.data.QRGenerate(url)
 
             t = 0
             while True:

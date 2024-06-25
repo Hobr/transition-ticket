@@ -13,7 +13,7 @@ from Crypto.Cipher import AES
 from Crypto.Util.Padding import pad, unpad
 from inquirer.themes import GreenPassion
 from loguru import logger
-from qrcode import QRCode  # type: ignore
+import qrcode
 
 
 class CustomThemes(GreenPassion):
@@ -43,18 +43,16 @@ class Data:
         return json.loads(json_str)
 
     @logger.catch
-    def QRGenerate(self, url: str, img_path: str) -> None:
+    def QRGenerate(self, url: str) -> None:
         """
         生成二维码
 
         url: 链接
         img_path: 保存路径
         """
-        qr = QRCode()
+        qr = qrcode.QRCode()
         qr.add_data(url)
-
         img = qr.make_image()
-        img.save(img_path)
 
         try:
             parent_pid = psutil.Process(os.getpid()).ppid()
@@ -68,7 +66,7 @@ class Data:
         if os.name == "nt":
             if parent_name == "powershell.exe" or "WT_SESSION" in os.environ:
                 qr.print_ascii(invert=True)
-            elif parent_name == "cmd.exe" or len(argv) == 1 and not argv[0].endswith(".py"):
+            elif parent_name == "cmd.exe" or argv[0].endswith(".exe"):
                 img.show()
             else:
                 qr.print_ascii(invert=True)
