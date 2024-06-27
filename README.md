@@ -72,3 +72,10 @@ pre-commit autoupdate
 # 打包
 pyinstaller --clean --noconfirm --log-level WARN cli.spec
 ```
+
+## 感谢
+
+- [Amorter/biliTicker_gt](https://github.com/Amorter/biliTicker_gt)
+- [Just-Prog/Bilibili_show_ticket_auto_order](https://github.com/Just-Prog/Bilibili_show_ticket_auto_order)
+- [biliticket/BHYG](https://github.com/biliticket/BHYG)
+- [mikumifa/biliTickerBuy](https://github.com/mikumifa/biliTickerBuy)
