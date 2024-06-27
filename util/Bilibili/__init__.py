@@ -192,14 +192,11 @@ class Bilibili:
         返回: True-成功, False-失败
         """
         logger.info("【获取流水】正在尝试获取流水...")
-        # 获取CSRF
-        if self.csrf is None:
-            self.csrf = self.net.GetCookie()["bili_jct"]
 
         url = "https://api.bilibili.com/x/gaia-vgate/v1/register"
         params = {
             "buvid": self.buvid,
-            "csrf": self.csrf,
+            "csrf": self.net.GetCookie()["bili_jct"],
             "decision_type": self.decisionType,
             "ip": self.ip,
             "mid": self.mid,
@@ -243,7 +240,7 @@ class Bilibili:
         url = "https://api.bilibili.com/x/gaia-vgate/v1/validate"
         params = {
             "challenge": self.challenge,
-            "csrf": self.csrf,
+            "csrf": self.net.GetCookie()["bili_jct"],
             "seccode": validate + "|jordan",
             "token": self.token,
             "validate": validate,
@@ -323,8 +320,8 @@ class Bilibili:
                 return 2
 
         # 存在未付款订单
-        elif code == 100079:
-            logger.error("【创建订单】存在未付款订单! 请在支付或取消订单后再次运行")
+        elif code in [100079, 100048]:
+            logger.error("【创建订单】存在未付款/未完成订单! 请在支付或取消订单后再次运行")
             logger.warning("程序正在准备退出...")
             sleep(5)
             exit()
