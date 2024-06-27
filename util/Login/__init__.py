@@ -7,7 +7,7 @@ from time import sleep
 import browsers
 from loguru import logger
 from selenium import webdriver
-from selenium.common.exceptions import WebDriverException, NoSuchWindowException
+from selenium.common.exceptions import NoSuchWindowException, WebDriverException
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.support.ui import WebDriverWait
@@ -313,7 +313,6 @@ class Login:
             ).json()
             self.cookie = self.net.GetCookie()
             return self.Status()
-
 
     def SMSSend(self, tel: str) -> str:
         """

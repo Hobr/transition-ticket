@@ -108,21 +108,21 @@ class Bilibili:
             return 1
 
         # projectID/ScreenId/SkuID错误
-        if code in [100080, 100082]:
+        elif code in [100080, 100082]:
             logger.error("【获取Token】项目/场次/价位不存在!")
             logger.warning("程序正在准备退出...")
             sleep(5)
             exit()
 
         # 没开票
-        if code == 100041:
+        elif code == 100041:
             logger.error("【获取Token】该项目暂未开票!")
             logger.warning("程序正在准备退出...")
             sleep(5)
             exit()
 
         # 停售
-        if code == 100039:
+        elif code == 100039:
             logger.error("【获取Token】早停售了你抢牛魔呢")
             logger.warning("程序正在准备退出...")
             sleep(5)
@@ -342,6 +342,14 @@ class Bilibili:
             logger.warning("程序正在准备退出...")
             sleep(5)
             exit()
+
+        # TODO 项目不可售 等待开票
+        elif code == 100016:
+            logger.error("【创建订单】该项目目前不可售!")
+            # logger.warning("程序正在准备退出...")
+            # sleep(5)
+            # exit()
+            return 3
 
         # 失败
         else:
