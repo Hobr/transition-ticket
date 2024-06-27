@@ -431,24 +431,3 @@ class Login:
         else:
             logger.error("【刷新Token】刷新失败")
             return False
-
-    @logger.catch
-    def ExitLogin(self) -> bool:
-        """
-        退出登录
-        """
-        resp = self.net.Response(
-            method="post",
-            url="https://passport.bilibili.com/login/exit/v2",
-            params={"biliCSRF": self.net.GetCookie()["bili_jct"]},
-        ).json()
-
-        if resp["code"] == 0:
-            logger.info("【退出登录】注销Cookie成功")
-            return True
-        elif resp["code"] == 2202:
-            logger.error("【退出登录】CSRF请求非法")
-            return False
-        else:
-            logger.error("【退出登录】发生了什么")
-            return False

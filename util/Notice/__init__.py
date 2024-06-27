@@ -92,4 +92,3 @@ class Notice:
             "channel": "wechat",
         }
         self.net.Response(method="post", url=url, params=data)
-        self.login.ExitLogin()

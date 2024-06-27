@@ -54,8 +54,6 @@ class Bilibili:
 
         self.data = Data()
         self.risked = False
-        self.queryNotice = False
-        self.createNotice = False
 
     @logger.catch
     def QueryToken(self) -> int:
@@ -90,7 +88,7 @@ class Bilibili:
 
         # 成功
         if code == 0:
-            logger.info("【获取Token】Token获取成功!")
+            logger.success("【获取Token】Token获取成功!")
             self.token = data["token"]
             return 0
 
@@ -140,7 +138,7 @@ class Bilibili:
 
         返回: True-有票, False-无票
         """
-        logger.info("【获取票数】正在尝试获取票数...")
+        logger.info("【获取票数】正在蹲票...")
         url = f"https://show.bilibili.com/api/ticket/project/getV2?version=134&id={self.projectId}&project_id={self.projectId}&requestSource={self.scene}"
         res = self.net.Response(method="get", url=url).json()
         data = res["data"]
@@ -169,14 +167,12 @@ class Bilibili:
 
             # 有票
             if clickable:
-                logger.info("【获取票数】当前可购买")
+                logger.success("【获取票数】当前可购买")
                 return True
 
             # 无票
             else:
-                if not self.queryNotice:
-                    logger.warning("【获取票数】当前无票, 系统正在循环蹲票中! 请稍后")
-                    self.queryNotice = True
+                logger.warning("【获取票数】当前无票, 系统正在循环蹲票中! 请稍后")
                 return False
 
         # 失败
@@ -300,7 +296,7 @@ class Bilibili:
         if code == 0:
             self.orderId = data["orderId"]
             self.orderToken = data["token"]
-            logger.info("【创建订单】订单创建成功!")
+            logger.success("【创建订单】订单创建成功!")
             return 0
 
         # Token过期
@@ -311,9 +307,7 @@ class Bilibili:
         # 库存不足 219,100009
         elif code in [219, 100009]:
             if self.data.TimestampCheck(timestamp=self.saleStart, duration=15):
-                if self.createNotice:
-                    logger.warning("【创建订单】目前处于开票15分钟黄金期, 已为您忽略无票提示!")
-                    self.createNotice = True
+                logger.warning("【创建订单】目前处于开票15分钟黄金期, 已为您忽略无票提示!")
                 return 3
             else:
                 logger.warning("【创建订单】库存不足!")
@@ -350,8 +344,7 @@ class Bilibili:
 
         # 失败
         else:
-            if not self.createNotice:
-                logger.error(f"【创建订单】{code}: {res['msg']}")
+            logger.error(f"【创建订单】{code}: {res['msg']}")
             return 3
 
     @logger.catch
@@ -388,7 +381,7 @@ class Bilibili:
 
         # 成功
         if code == 0:
-            logger.info("【获取订单状态】请扫码/在打开的浏览器页面进行支付!")
+            logger.success("【获取订单状态】请扫码/在打开的浏览器页面进行支付!")
             webbrowser.open(f"https://show.bilibili.com/platform/orderDetail.html?order_id={self.orderId}")
             return True
 
