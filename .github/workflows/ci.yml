@@ -43,7 +43,7 @@ jobs:
       - name: Install Poetry
         uses: abatilo/actions-poetry@v2
 
-      - name: Virturl Environment
+      - name: Virtual Environment
         run: |
           poetry config virtualenvs.create true --local
           poetry config virtualenvs.in-project true --local
@@ -59,6 +59,14 @@ jobs:
         with:
           name: dist-${{ matrix.os }}
           path: dist
+
+      - name: Rename Package Name with Version
+        if: startsWith(github.ref, 'refs/tags/')
+        run: |
+          tag=${GITHUB_REF#refs/tags/}
+          for file in dist/*; do
+            mv "$file" "$tag-$file"
+          done
 
       - name: Release
         uses: softprops/action-gh-release@v2
