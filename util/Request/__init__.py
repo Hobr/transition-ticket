@@ -146,10 +146,7 @@ class Request:
         """
         # 调试模式
         if self.isDebug:
-            if "show.bilibili.com" in str(request.url):
-                logger.debug(f"【Request请求】地址: {request.url} 方法: {request.method} 内容: {request.content} 请求参数: {request.read()}")
-            else:
-                logger.debug(f"【Request请求】地址: {request.url} 方法: {request.method}")
+            logger.debug(f"【Request请求】地址: {request.url} 方法: {request.method} 内容: {request.content} 请求参数: {request.read()}")
 
     @logger.catch
     def ResponseHook(self, response: httpx.Response) -> None:
@@ -159,18 +156,14 @@ class Request:
         request = response.request
         # 调试模式
         if self.isDebug:
-            if "show.bilibili.com" in str(request.url):
-                logger.debug(f"【Request响应】地址: {request.url} 状态码: {response.status_code} 返回: {response.read()}")
-            else:
-                logger.debug(f"【Request响应】地址: {request.url} 状态码: {response.status_code}")
+            logger.debug(f"【Request响应】地址: {request.url} 状态码: {response.status_code} 返回: {response.read()}")
 
         # 风控
         if response.status_code != 200:
             if response.status_code != 412:
-                if "show.bilibili.com" in str(request.url):
-                    logger.error(f"【Request响应】请求错误, 状态码: {response.status_code}")
+                logger.error(f"【Request响应】请求错误, 状态码: {response.status_code}")
             else:
-                logger.error("【Request响应】IP被412风控!!!!!请更换IP后再次使用(重启路由器/使用手机流量热点/梯子...)")
+                logger.error("【Request响应】IP被412风控!!!!!请更换IP后再次使用(重启路由器/使用手机流量热点/代理...)")
                 logger.warning("程序正在准备退出...")
                 sleep(5)
                 exit()

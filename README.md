@@ -52,6 +52,7 @@ python cli.py
 - [ ] Pylint
 - [ ] UPX
 - [ ] JS逆向 + biliTicker_gt
+- [ ] 多人购票
 - [ ] 多种类型活动抢票
 - [ ] 图形界面(PySide6)
 - [ ] 网页界面(Gradio)
