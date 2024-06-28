@@ -60,6 +60,7 @@ class Data:
             parent_name = parent_process.name()
         except (psutil.NoSuchProcess, psutil.AccessDenied, psutil.ZombieProcess):
             logger.error("获取父进程信息失败!")
+            logger.warning("程序正在准备退出...")
             sleep(5)
             exit()
 
@@ -197,6 +198,7 @@ class Data:
             return decrypted_text.decode("utf-8")
         except Exception:
             logger.error("【解密】这是你的配置吗?")
+            logger.warning("程序正在准备退出...")
             sleep(5)
             exit()
 
@@ -263,5 +265,6 @@ class Data:
             return res["res"]
         else:
             logger.error("【交互】未知错误!")
+            logger.warning("程序正在准备退出...")
             sleep(5)
             exit()

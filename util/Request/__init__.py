@@ -171,5 +171,6 @@ class Request:
                     logger.error(f"【Request响应】请求错误, 状态码: {response.status_code}")
             else:
                 logger.error("【Request响应】IP被412风控!!!!!请更换IP后再次使用(重启路由器/使用手机流量热点/梯子...)")
+                logger.warning("程序正在准备退出...")
                 sleep(5)
                 exit()

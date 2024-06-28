@@ -1,6 +1,7 @@
 import os
 import shutil
 import threading
+from time import sleep
 
 from bili_ticket_gt_python import ClickPy
 from loguru import logger
@@ -52,8 +53,14 @@ if __name__ == "__main__":
     productData = Config(dir="product")
     settingData = Config(dir="setting")
     # 验证
-    gtPy = ClickPy()
-    cap = Captcha(gtPy=gtPy)
+    try:
+        gtPy = ClickPy()
+        cap = Captcha(gtPy=gtPy)
+    except Exception:
+        logger.error("【自动过验证】初始化失败!")
+        logger.warning("程序正在准备退出...")
+        sleep(5)
+        exit()
 
     # 检测配置文件情况
     userList = userData.List()

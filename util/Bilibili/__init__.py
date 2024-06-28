@@ -335,13 +335,12 @@ class Bilibili:
             sleep(5)
             exit()
 
-        # TODO 项目不可售 等待开票
+        # 项目不可售 等待开票
         elif code == 100016:
             logger.error("【创建订单】该项目目前不可售!")
-            # logger.warning("程序正在准备退出...")
-            # sleep(5)
-            # exit()
-            return 3
+            logger.warning("程序正在准备退出...")
+            sleep(5)
+            exit()
 
         # 失败
         else:

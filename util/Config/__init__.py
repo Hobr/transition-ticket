@@ -53,6 +53,7 @@ class Config:
 
         except Exception as e:
             logger.exception(f"【配置】读取配置列表错误! {e}")
+            logger.warning("程序正在准备退出...")
             sleep(5)
             exit()
 

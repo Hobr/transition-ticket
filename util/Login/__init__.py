@@ -407,6 +407,7 @@ class Login:
                 return self.cookie
             else:
                 logger.error("【登录状态检测】登录失败")
+                logger.warning("程序正在准备退出...")
                 sleep(5)
                 exit()
 

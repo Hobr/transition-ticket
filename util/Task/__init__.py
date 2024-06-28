@@ -163,8 +163,12 @@ class Task:
         返回值: 0-成功, 1-验证码, 2-失败
         """
         self.queryTokenResult = self.api.QueryToken()
+
         # 顺路
-        self.api.QueryAmount()
+        if self.queryTokenResult == 0:
+            self.api.QueryAmount()
+
+        # 防风控
         sleep(self.sleep)
 
     @logger.catch
@@ -190,6 +194,8 @@ class Task:
         返回值: True-成功, False-失败
         """
         self.queryTicketResult = self.api.QueryAmount()
+
+        # 防风控
         sleep(self.sleep)
 
     @logger.catch
@@ -200,6 +206,8 @@ class Task:
         返回值: 0-成功, 1-刷新, 2-等待, 3-失败
         """
         self.createOrderResult = self.api.CreateOrder()
+
+        # 防风控
         sleep(self.sleep)
 
     @logger.catch
