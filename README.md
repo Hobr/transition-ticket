@@ -30,7 +30,7 @@
 
 ```bash
 pip config set global.index-url https://pypi.tuna.tsinghua.edu.cn/simple
-pip install poetry virtualenv
+pip install poetry virtualenv pre-commit
 
 virtualenv venv
 source venv/script/activate

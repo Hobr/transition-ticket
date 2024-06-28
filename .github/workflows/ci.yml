@@ -60,13 +60,21 @@ jobs:
           name: dist-${{ matrix.os }}
           path: dist
 
-      - name: Rename Package Name with Version
-        if: startsWith(github.ref, 'refs/tags/')
+      - name: Rename Release Files with Tag on Ubuntu/MacOS
+        if: matrix.os != 'windows-latest'
         run: |
           tag=${GITHUB_REF#refs/tags/}
           for file in dist/*; do
-            mv "$file" "$tag-$file"
+            mv "$file" "dist/${tag}-${file##*/}"
           done
+
+      - name: Rename Release Files with Tag on Windows
+        if: matrix.os == 'windows-latest'
+        run: |
+          $tag = $env:GITHUB_REF -replace 'refs/tags/', ''
+          Get-ChildItem -Path dist | ForEach-Object {
+            Rename-Item -Path $_.FullName -NewName "$tag-$($_.Name)"
+          }
 
       - name: Release
         uses: softprops/action-gh-release@v2

@@ -29,6 +29,7 @@
                 portaudio
                 stdenv.cc.cc.lib
                 graphviz
+                pre-commit
               ]
               ++ (with pkgs.python312Packages; [
                 pip
