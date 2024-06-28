@@ -61,6 +61,7 @@ class Captcha:
             logger.error("【登录】导入 bili_ticket_gt_python 库失败, 已自动选择手动验证码验证")
             self.verify = "Manual"
 
+        logger.info("【验证码】自动验证中...")
         match self.verify:
             case "Auto":
                 return self.Auto(challenge)
@@ -85,6 +86,7 @@ class Captcha:
 
         try:
             validate = ClickPy().simple_match_retry(self.gt, challenge)  # type: ignore
+            logger.info(f"【极验文字点选 - 自动重试】验证结果: {validate}")
             return validate
         except Exception:
             raise
