@@ -69,7 +69,6 @@ allow-magic-value-types = ["int","str"]
 requires = ["poetry-core"]
 build-backend = "poetry.core.masonry.api"
 
-
 [[tool.poetry.source]]
 name = "TUNA"
 url = "https://pypi.tuna.tsinghua.edu.cn/simple/"
