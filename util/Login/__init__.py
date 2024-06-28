@@ -49,6 +49,7 @@ class Login:
 
         self.cookie = {}
         self.data = Data()
+        self.cap = Captcha()
 
         self.source = "main_web"
 
@@ -164,7 +165,7 @@ class Login:
         if resp["code"] == 0:
             token = resp["data"]["token"]
             challenge = resp["data"]["geetest"]["challenge"]
-            validate = Captcha(verify="Auto").Geetest(challenge)
+            validate = self.cap.Geetest(challenge)
             seccode = validate + "|jordan"
             return token, challenge, validate, seccode
         else:
@@ -185,7 +186,7 @@ class Login:
         if resp["code"] == 0:
             token = resp["data"]["recaptcha_token"]
             challenge = resp["data"]["gee_challenge"]
-            validate = Captcha(verify="Auto").Geetest(challenge)
+            validate = self.cap.Geetest(challenge)
             seccode = validate + "|jordan"
             return token, challenge, validate, seccode
         else:

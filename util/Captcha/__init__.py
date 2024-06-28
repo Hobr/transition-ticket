@@ -19,7 +19,7 @@ class Captcha:
     @logger.catch
     def __init__(
         self,
-        gtPy: ClickPy,
+        verify: str = "Auto",
         gt: str = "ac597a4506fee079629df5d8b66dd4fe",
     ):
         """
@@ -28,7 +28,15 @@ class Captcha:
         gtPy: 自动验证实例
         gt: 极验gt
         """
-        self.gtPy = gtPy
+        try:
+            self.gtPy = ClickPy()
+        except Exception as e:
+            logger.error(f"【自动验证初始化】失败{e}")
+            logger.warning("程序正在准备退出...")
+            sleep(5)
+            exit()
+
+        self.verify = verify
         self.gt = gt
 
         self.rt = "abcdefghijklmnop"  # rt固定即可
