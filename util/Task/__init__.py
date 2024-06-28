@@ -165,6 +165,7 @@ class Task:
         self.queryTokenResult = self.api.QueryToken()
         # 顺路
         self.api.QueryAmount()
+        sleep(self.sleep)
 
     @logger.catch
     def RiskProcessAction(self) -> None:
@@ -189,6 +190,7 @@ class Task:
         返回值: True-成功, False-失败
         """
         self.queryTicketResult = self.api.QueryAmount()
+        sleep(self.sleep)
 
     @logger.catch
     def CreateOrderAction(self) -> None:
@@ -198,6 +200,7 @@ class Task:
         返回值: 0-成功, 1-刷新, 2-等待, 3-失败
         """
         self.createOrderResult = self.api.CreateOrder()
+        sleep(self.sleep)
 
     @logger.catch
     def CreateStatusAction(self) -> None:
@@ -229,7 +232,7 @@ class Task:
             "创建订单状态": "CreateStatus",
         }
         while self.state != "完成":  # type: ignore
-            sleep(self.sleep)
+            sleep(0.15)
             if self.state in job.keys():  # type: ignore
                 self.trigger(job[self.state])  # type: ignore
             else:

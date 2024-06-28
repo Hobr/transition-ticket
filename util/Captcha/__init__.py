@@ -1,9 +1,9 @@
 import sys
-import time
 from os import getcwd, path
 from time import sleep
 
 import browsers
+from bili_ticket_gt_python import ClickPy
 from loguru import logger
 from selenium import webdriver
 from selenium.webdriver.common.by import By
@@ -19,32 +19,21 @@ class Captcha:
     @logger.catch
     def __init__(
         self,
-        verify: str = "Auto",
+        gtPy: ClickPy,
         gt: str = "ac597a4506fee079629df5d8b66dd4fe",
     ):
         """
         初始化
 
-        log: 日志实例
-        verify: 验证码实例
+        gtPy: 自动验证实例
         gt: 极验gt
         """
-        self.verify = verify
+        self.gtPy = gtPy
         self.gt = gt
+
         self.rt = "abcdefghijklmnop"  # rt固定即可
 
         self.geetest_path = self.AssestDir("geetest/index.html")
-
-    @logger.catch
-    def AssestDir(self, dir: str):
-        """
-        获取资源文件夹(涉及到Pyinstaller)
-        """
-        try:
-            base_path = sys._MEIPASS  # type: ignore
-        except AttributeError:
-            base_path = getcwd()
-        return path.join(base_path, dir)
 
     @logger.catch
     def Geetest(self, challenge: str) -> str:
@@ -56,87 +45,22 @@ class Captcha:
         返回: validate
         """
         try:
-            from bili_ticket_gt_python import ClickPy, SlidePy
-        except ImportError:
-            logger.error("【登录】导入 bili_ticket_gt_python 库失败, 已自动选择手动验证码验证")
-            self.verify = "Manual"
-
-        logger.info("【验证码】自动验证中...")
-        match self.verify:
-            case "Auto":
-                return self.Auto(challenge)
-            case "Manual":
-                return self.Manual(challenge)
-            case ClickPy.__name__:
-                return self.Auto(challenge)
-            case SlidePy.__name__:
-                return self.Slide(challenge)
-            case _:
-                raise Exception("未指定验证码实例或实例类型不正确")
-
-    @logger.catch
-    def Auto(self, challenge: str) -> str:
-        """
-        极验文字点选 - 自动重试
-
-        challenge: 流水号
-        返回: validate
-        """
-        from bili_ticket_gt_python import ClickPy
-
-        try:
-            validate = ClickPy().simple_match_retry(self.gt, challenge)  # type: ignore
-            logger.info(f"【极验文字点选 - 自动重试】验证结果: {validate}")
+            validate = self.gtPy.simple_match_retry(self.gt, challenge)  # type: ignore
+            logger.info(f"【极验文字点选验证】验证结果: {validate}")
             return validate
         except Exception:
             raise
 
     @logger.catch
-    def Click(self, challenge: str) -> str:
+    def AssestDir(self, dir: str):
         """
-        极验文字点选
-
-        challenge: 流水号
-        返回: validate
+        获取资源文件夹(涉及到Pyinstaller)
         """
-        from bili_ticket_gt_python import ClickPy
-
         try:
-            c, s, args = ClickPy().get_new_c_s_args(self.gt, challenge)  # type: ignore
-            before_calculate_key = time.time()
-            key = ClickPy().calculate_key(args)  # type: ignore
-            w = ClickPy().generate_w(key, self.gt, challenge, str(c), s, self.rt)  # type: ignore
-            # 点选验证码生成w后需要等待2秒提交
-            w_use_time = time.time() - before_calculate_key
-            if w_use_time < 2:
-                time.sleep(2 - w_use_time)
-            msg, validate = ClickPy().verify(self.gt, challenge, w)  # type: ignore
-            logger.info(f"【验证码】验证结果: {msg}")
-            return validate
-        except Exception:
-            raise
-
-    @logger.catch
-    def Slide(self, challenge: str) -> str:
-        """
-        极验滑块
-
-        challenge: 流水号
-        返回: validate
-        """
-        from bili_ticket_gt_python import SlidePy
-
-        try:
-            c, s, args = SlidePy().get_new_c_s_args(self.gt, challenge)  # type: ignore
-            # 注意滑块验证码这里要刷新challenge
-            challenge = args[0]
-            key = SlidePy().calculate_key(args)  # type: ignore
-            w = SlidePy().generate_w(key, self.gt, challenge, str(c), s, self.rt)  # type: ignore
-            msg, validate = SlidePy().verify(self.gt, challenge, w)  # type: ignore
-            logger.info(f"【验证码】验证结果: {msg}")
-            return validate
-        except Exception:
-            raise
+            base_path = sys._MEIPASS  # type: ignore
+        except AttributeError:
+            base_path = getcwd()
+        return path.join(base_path, dir)
 
     @logger.catch
     def Manual(self, challenge) -> str:
