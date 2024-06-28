@@ -191,7 +191,7 @@ class Task:
         等待开票
         """
         interval = abs(self.api.GetSaleStartTime() - int(time())) - 30
-        logger.info(f"【等待开票】需要等待 {interval/60} 分钟")
+        logger.info(f"【等待开票】需要等待 {interval/60:.1f} 分钟")
         sleep(interval)
         logger.info("【等待开票】等待结束! 开始抢票")
 
