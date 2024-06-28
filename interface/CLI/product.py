@@ -1,4 +1,5 @@
 import re
+from time import sleep
 
 from loguru import logger
 
@@ -108,8 +109,10 @@ class ProductCli:
                 return lists[select]
 
             except InfoException:
-                logger.warning("请重新配置活动信息!")
-                return self.Generate()
+                logger.exception("请重新配置活动信息!")
+                logger.warning("程序正在准备退出...")
+                sleep(5)
+                exit()
 
         @logger.catch
         def SkuStep(screenId: int) -> int:
@@ -134,8 +137,10 @@ class ProductCli:
                 return lists[select]
 
             except InfoException:
-                logger.warning("请重新配置活动信息!")
-                return self.Generate()
+                logger.exception("请重新配置活动信息!")
+                logger.warning("程序正在准备退出...")
+                sleep(5)
+                exit()
 
         @logger.catch
         def FilenameStep(name: str) -> str:

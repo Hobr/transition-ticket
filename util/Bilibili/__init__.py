@@ -1,9 +1,8 @@
 import json
-import time
 import webbrowser
 from random import randint
 from sys import exit
-from time import sleep
+from time import sleep, time
 
 from loguru import logger
 
@@ -60,7 +59,7 @@ class Bilibili:
         """
         获取Token
 
-        返回: 0-成功, 1-风控, 2-未知
+        返回: 0-成功, 1-风控, 2-未开票, 3-未知
         """
         logger.info("【获取Token】正在尝试获取Token...")
         # 成功
@@ -114,10 +113,8 @@ class Bilibili:
 
         # 没开票
         elif code == 100041:
-            logger.error("【获取Token】该项目暂未开票!")
-            logger.warning("程序正在准备退出...")
-            sleep(5)
-            exit()
+            logger.warning("【获取Token】该项目暂未开票! 下面进入等待开票模式")
+            return 2
 
         # 停售
         elif code == 100039:
@@ -129,7 +126,35 @@ class Bilibili:
         # 未知
         else:
             logger.error(f"【获取Token】{code}: {res['msg']}")
-            return 2
+            return 3
+
+    @logger.catch
+    def GetSaleStartTime(self) -> int:
+        """
+        获取开票时间
+        """
+        url = f"https://show.bilibili.com/api/ticket/project/getV2?version=134&id={self.projectId}&project_id={self.projectId}&requestSource={self.scene}"
+        res = self.net.Response(method="get", url=url).json()
+        data = res["data"]
+        code = res["errno"]
+
+        # 成功
+        if code == 0:
+            for i, screen in enumerate(data["screen_list"]):
+                if screen["id"] == self.screenId:
+                    for j, sku in enumerate(screen["ticket_list"]):
+                        if sku["id"] == self.skuId:
+                            dist = sku["saleStart"]
+                            break
+            logger.info(
+                f"【获取开票时间】开票时间为{self.data.TimestampFormat(int(dist))}, 当前时间为:{self.data.TimestampFormat(int(time()))} (请确保本机时间是北京时间, 服务器用户尤其要注意!)"
+            )
+            return dist
+        else:
+            logger.error("【获取开票时间】获取失败!")
+            logger.warning("程序正在准备退出...")
+            sleep(5)
+            exit()
 
     @logger.catch
     def QueryAmount(self) -> bool:
@@ -267,7 +292,7 @@ class Bilibili:
         """
         logger.info("【创建订单】正在尝试创建订单...")
         url = f"https://show.bilibili.com/api/ticket/order/createV2?project_id={self.projectId}"
-        timestamp = int(round(time.time() * 1000))
+        timestamp = int(round(time() * 1000))
         clickPosition = {
             "x": randint(1300, 1500),
             "y": randint(20, 100),
