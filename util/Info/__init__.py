@@ -133,8 +133,7 @@ class Info:
             raise InfoException("购买人", "暂无购买人信息, 请到会员购平台绑定后再次使用!")
 
         buyers_info = []
-        for i, info in enumerate(lists):
-
+        for _i, info in enumerate(lists):
             # 补充/删除信息
             info.pop("error_code")
             info["buyer"] = None

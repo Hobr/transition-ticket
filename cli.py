@@ -59,20 +59,9 @@ if __name__ == "__main__":
     settingList = settingData.List()
 
     # 读取配置
-    if userList != []:
-        userConfig = UserCli(conf=userData).Select(selects=userList)
-    else:
-        userConfig = UserCli(conf=userData).Generate()
-
-    if productList != []:
-        productConfig = ProductCli(conf=productData).Select(selects=productList)
-    else:
-        productConfig = ProductCli(conf=productData).Generate()
-
-    if settingList != []:
-        settingConfig = SettingCli(conf=settingData).Select(selects=settingList)
-    else:
-        settingConfig = SettingCli(conf=settingData).Generate()
+    userConfig = UserCli(conf=userData).Select(selects=userList) if userList != [] else UserCli(conf=userData).Generate()
+    productConfig = ProductCli(conf=productData).Select(selects=productList) if productList != [] else ProductCli(conf=productData).Generate()
+    settingConfig = SettingCli(conf=settingData).Select(selects=settingList) if settingList != [] else SettingCli(conf=settingData).Generate()
 
     net = Request(
         cookie=userConfig["cookie"],

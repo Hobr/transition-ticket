@@ -2,7 +2,8 @@ import base64
 import datetime
 import json
 import os
-from sys import argv, exit
+import sys
+from sys import argv
 from time import sleep
 
 import inquirer
@@ -19,10 +20,10 @@ from loguru import logger
 class CustomThemes(GreenPassion):
     def __init__(self):
         super().__init__()
-        self.List.selection_cursor = "->"  # 选择光标 # type: ignore
-        self.List.selection_color = "\033[1;35;106m"  # 设置 List选项 的选中颜色(紫，蓝) # type: ignore
-        self.Question.mark_color = "\033[93m"  # 设置 [?] 中 ? 的颜色(黄) # type: ignore
-        self.Question.brackets_color = "\033[96m"  # 设置 [?] 中 [] 的颜色(蓝) # type: ignore
+        self.List.selection_cursor = "->"  # 选择光标
+        self.List.selection_color = "\033[1;35;106m"  # 设置 List选项 的选中颜色(紫，蓝)
+        self.Question.mark_color = "\033[93m"  # 设置 [?] 中 ? 的颜色(黄)
+        self.Question.brackets_color = "\033[96m"  # 设置 [?] 中 [] 的颜色(蓝)
 
 
 class Data:
@@ -50,7 +51,7 @@ class Data:
         url: 链接
         img_path: 保存路径
         """
-        qr = qrcode.QRCode()  # type: ignore
+        qr = qrcode.QRCode()
         qr.add_data(url)
         img = qr.make_image()
 
@@ -62,7 +63,7 @@ class Data:
             logger.error("获取父进程信息失败!")
             logger.warning("程序正在准备退出...")
             sleep(5)
-            exit()
+            sys.exit()
 
         if os.name == "nt":
             if parent_name == "powershell.exe" or "WT_SESSION" in os.environ:
@@ -95,9 +96,9 @@ class Data:
         """
         dist = {}
         cookies = cookie.split("; ")
-        for cookie in cookies:
-            if "=" in cookie:
-                key, value = cookie.split("=", 1)
+        for i in cookies:
+            if "=" in i:
+                key, value = i.split("=", 1)
                 dist[key] = value
         return dist
 
@@ -136,7 +137,9 @@ class Data:
                 case "d":
                     return formatted_time.strftime("%Y-%m-%d")
                 case _:
-                    raise
+                    logger.warning("程序正在准备退出...")
+                    sleep(5)
+                    sys.exit()
 
     @logger.catch
     def TimestampCheck(self, timestamp: int, duration: int = 15) -> bool:
@@ -147,10 +150,7 @@ class Data:
         duration: 持续时间 分钟
         """
         timestamp_now = datetime.datetime.now().timestamp()
-        if timestamp + duration * 60 >= timestamp_now >= timestamp:
-            return True
-        else:
-            return False
+        return timestamp + duration * 60 >= timestamp_now >= timestamp
 
     @logger.catch
     def PasswordRSAEncrypt(self, password: str, public_key: str) -> str:
@@ -200,7 +200,7 @@ class Data:
             logger.error("【解密】这是你的配置吗?")
             logger.warning("程序正在准备退出...")
             sleep(5)
-            exit()
+            sys.exit()
 
     @logger.catch
     def CookieAppend(self, baseCookie: dict) -> dict:
@@ -257,7 +257,14 @@ class Data:
 
         process = method[type]
         res = inquirer.prompt(
-            [process(name="res", message=message, default=default, **({"choices": choices} if type in choiceMethod else {}))],
+            [
+                process(
+                    name="res",
+                    message=message,
+                    default=default,
+                    **({"choices": choices} if type in choiceMethod else {}),
+                )
+            ],
             theme=CustomThemes(),
         )
 
@@ -267,4 +274,4 @@ class Data:
             logger.error("【交互】未知错误!")
             logger.warning("程序正在准备退出...")
             sleep(5)
-            exit()
+            sys.exit()

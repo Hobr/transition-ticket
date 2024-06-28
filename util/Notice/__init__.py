@@ -40,7 +40,7 @@ class Notice:
         获取资源文件夹(涉及到Pyinstaller)
         """
         try:
-            base_path = sys._MEIPASS  # type: ignore
+            base_path = sys._MEIPASS
         except AttributeError:
             base_path = getcwd()
         return path.join(base_path, dir)
@@ -58,7 +58,7 @@ class Notice:
             app_icon=self.appIconPath,
             app_name=self.appName,
             timeout=timeout,
-        )  # type: ignore
+        )
 
     @logger.catch
     def Sound(self, time: int = 2) -> None:
@@ -70,8 +70,10 @@ class Notice:
         p = pyaudio.PyAudio()
         stream = p.open(format=pyaudio.paInt16, channels=1, rate=44100, output=True)
 
-        for _ in range(time):
-            stream.write(open(self.audioPath, "rb").read())
+        with open(self.audioPath, "rb") as audio_file:
+            audio_data = audio_file.read()
+            for _ in range(time):
+                stream.write(audio_data)
 
         stream.stop_stream()
         stream.close()

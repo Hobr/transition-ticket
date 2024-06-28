@@ -1,13 +1,12 @@
 import json
 import re
+import sys
 import time
-from sys import exit
 from time import sleep
 
 import browsers
 from loguru import logger
 from selenium import webdriver
-from selenium.common.exceptions import NoSuchWindowException, WebDriverException
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.support.ui import WebDriverWait
@@ -129,8 +128,10 @@ class Login:
                         driver.execute_script("arguments[0].click();", event)
                         break
 
-                    except (WebDriverException, NoSuchWindowException):
-                        raise LoginException("浏览器/WebDriver启动失败")
+                    except Exception:
+                        logger.warning("程序正在准备退出...")
+                        sleep(5)
+                        sys.exit()
 
                 else:
                     raise LoginException("所有浏览器/WebDriver尝试登录均失败")
@@ -169,7 +170,9 @@ class Login:
             seccode = validate + "|jordan"
             return token, challenge, validate, seccode
         else:
-            raise
+            logger.warning("程序正在准备退出...")
+            sleep(5)
+            sys.exit()
 
     @logger.catch
     def GetPreCaptcha(self) -> tuple:
@@ -190,7 +193,9 @@ class Login:
             seccode = validate + "|jordan"
             return token, challenge, validate, seccode
         else:
-            raise
+            logger.warning("程序正在准备退出...")
+            sleep(5)
+            sys.exit()
 
     def Password(self, username: str, password: str) -> dict:
         """
@@ -410,7 +415,7 @@ class Login:
                 logger.error("【登录状态检测】登录失败")
                 logger.warning("程序正在准备退出...")
                 sleep(5)
-                exit()
+                sys.exit()
 
         else:
             logger.info("【登录状态检测】已关闭")

@@ -1,7 +1,7 @@
 import json
+import sys
 import webbrowser
 from random import randint
-from sys import exit
 from time import sleep, time
 
 from loguru import logger
@@ -109,7 +109,7 @@ class Bilibili:
             logger.error("【获取Token】项目/场次/价位不存在!")
             logger.warning("程序正在准备退出...")
             sleep(5)
-            exit()
+            sys.exit()
 
         # 没开票
         elif code == 100041:
@@ -121,7 +121,7 @@ class Bilibili:
             logger.error("【获取Token】早停售了你抢牛魔呢")
             logger.warning("程序正在准备退出...")
             sleep(5)
-            exit()
+            sys.exit()
 
         # 未知
         else:
@@ -140,9 +140,9 @@ class Bilibili:
 
         # 成功
         if code == 0:
-            for i, screen in enumerate(data["screen_list"]):
+            for _i, screen in enumerate(data["screen_list"]):
                 if screen["id"] == self.screenId:
-                    for j, sku in enumerate(screen["ticket_list"]):
+                    for _j, sku in enumerate(screen["ticket_list"]):
                         if sku["id"] == self.skuId:
                             dist = sku["saleStart"]
                             break
@@ -154,7 +154,7 @@ class Bilibili:
             logger.error("【获取开票时间】获取失败!")
             logger.warning("程序正在准备退出...")
             sleep(5)
-            exit()
+            sys.exit()
 
     @logger.catch
     def QueryAmount(self) -> bool:
@@ -344,28 +344,28 @@ class Bilibili:
             logger.error("【创建订单】存在未付款/未完成订单! 请在支付或取消订单后再次运行")
             logger.warning("程序正在准备退出...")
             sleep(5)
-            exit()
+            sys.exit()
 
         # 订单已存在/已购买
         elif code == 100049:
             logger.error("【创建订单】该项目每人限购1张, 已存在购买订单")
             logger.warning("程序正在准备退出...")
             sleep(5)
-            exit()
+            sys.exit()
 
         # 本项目需要联系人信息
         elif code == 209001:
             logger.error("【创建订单】目前仅支持实名制一人一票类活动哦~(其他类型活动也用不着上脚本吧啊喂)")
             logger.warning("程序正在准备退出...")
             sleep(5)
-            exit()
+            sys.exit()
 
         # 项目不可售 等待开票
         elif code == 100016:
             logger.error("【创建订单】该项目目前不可售!")
             logger.warning("程序正在准备退出...")
             sleep(5)
-            exit()
+            sys.exit()
 
         # 失败
         else:

@@ -1,4 +1,5 @@
 import re
+import sys
 from time import sleep
 
 from loguru import logger
@@ -112,7 +113,7 @@ class ProductCli:
                 logger.exception("请重新配置活动信息!")
                 logger.warning("程序正在准备退出...")
                 sleep(5)
-                exit()
+                sys.exit()
 
         @logger.catch
         def SkuStep(screenId: int) -> int:
@@ -140,7 +141,7 @@ class ProductCli:
                 logger.exception("请重新配置活动信息!")
                 logger.warning("程序正在准备退出...")
                 sleep(5)
-                exit()
+                sys.exit()
 
         @logger.catch
         def FilenameStep(name: str) -> str:

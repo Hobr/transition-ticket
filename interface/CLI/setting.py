@@ -181,7 +181,12 @@ class SettingCli:
         self.config["request"]["timeout"] = TimeoutStep()
         self.config["request"]["retry"] = RetryStep()
         self.config["request"]["proxy"] = ProxyStep()
-        self.config["notice"]["system"], self.config["notice"]["sound"], self.config["notice"]["wechat"], self.config["notice"]["plusPush"] = NoticeStep()
+        (
+            self.config["notice"]["system"],
+            self.config["notice"]["sound"],
+            self.config["notice"]["wechat"],
+            self.config["notice"]["plusPush"],
+        ) = NoticeStep()
 
         self.conf.Save(FilenameStep(), self.config)
         logger.info("【设置配置初始化】配置已保存!")

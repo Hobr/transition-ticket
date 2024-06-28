@@ -1,4 +1,5 @@
 import logging
+import sys
 from time import sleep, time
 
 from loguru import logger
@@ -264,10 +265,12 @@ class Task:
             "创建订单": "CreateOrder",
             "创建订单状态": "CreateStatus",
         }
-        while self.state != "完成":  # type: ignore
+        while self.state != "完成":
             sleep(0.15)
-            if self.state in job.keys():  # type: ignore
-                self.trigger(job[self.state])  # type: ignore
+            if self.state in job:
+                self.trigger(job[self.state])
             else:
-                raise
+                logger.warning("状态机异常! 程序正在准备退出...")
+                sleep(5)
+                sys.exit()
         return True

@@ -45,12 +45,12 @@ python cli.py
 ## 开发计划
 
 - [ ] 替代inquirer
+- [ ] *等待开票*状态 -> 获取Token
 - [ ] 抢票流程细节补充/修复
 - [ ] 成功付款后返回CLI第一步
 - [ ] 进度条代替循环的输出
 - [ ] 短信验证码错误修复
 - [ ] Header补充
-- [ ] Pylint
 - [ ] UPX
 - [ ] JS逆向 + biliTicker_gt
 - [ ] 多人购票

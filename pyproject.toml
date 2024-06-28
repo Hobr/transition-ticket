@@ -33,10 +33,7 @@ psutil = "^6.0.0"
 optional = true
 
 [tool.poetry.group.dev.dependencies]
-isort = "^5.13.2"
-black = "^24.4.2"
-flake8 = "^7.0.0"
-pylint = "^3.2.4"
+ruff = "^0.5.0"
 pyupgrade = "^3.15.2"
 snakeviz = "^2.2.0"
 
@@ -54,18 +51,19 @@ optional = true
 sphinx = "^7.3.7"
 recommonmark = "^0.7.1"
 
-[tool.isort]
-profile = "black"
-line_length = 180
-skip = [".git", "__pycache__", ".venv",".direnv"]
+[tool.ruff]
+line-length = 190
 
-[tool.black]
-line-length = 180
-skip = [".git", "__pycache__", ".venv",".direnv"]
+[tool.ruff.lint]
+select = ["B", "C4", "C9", "E", "F", "I", "PL", "S", "SIM", "U", "W", "YTT"]
+ignore = ["B006", "S311"]
 
-[tool.flake8]
-max-line-length = 180
-exclude = [".git", "__pycache__", ".venv",".direnv"]
+[tool.ruff.lint.mccabe]
+max-complexity = 12
+
+[tool.ruff.lint.pylint]
+max-args = 8
+allow-magic-value-types = ["int","str"]
 
 [build-system]
 requires = ["poetry-core"]

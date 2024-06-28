@@ -35,7 +35,7 @@ class Captcha:
                 logger.error(f"【自动验证初始化】失败{e}")
                 logger.warning("程序正在准备退出...")
                 sleep(5)
-                exit()
+                sys.exit()
 
         self.verify = verify
         self.gt = gt
@@ -54,7 +54,7 @@ class Captcha:
             logger.error("【登录】verify参数错误")
             logger.warning("程序正在准备退出...")
             sleep(5)
-            exit()
+            sys.exit()
 
     @logger.catch
     def Auto(self, challenge: str) -> str:
@@ -66,7 +66,7 @@ class Captcha:
         返回: validate
         """
         try:
-            validate = self.gtPy.simple_match_retry(self.gt, challenge)  # type: ignore
+            validate = self.gtPy.simple_match_retry(self.gt, challenge)
             logger.info(f"【极验文字点选验证】验证结果: {validate}")
             return validate
         except Exception:
@@ -86,7 +86,7 @@ class Captcha:
             logger.error("【登录】未找到可用浏览器/WebDriver! 建议选择其他方式登录")
             logger.warning("程序正在准备退出...")
             sleep(5)
-            exit()
+            sys.exit()
 
         selenium_drivers = {
             "chrome": webdriver.Chrome,
@@ -105,7 +105,7 @@ class Captcha:
                 logger.error("【登录】所有浏览器/WebDriver尝试登录均失败")
                 logger.warning("程序正在准备退出...")
                 sleep(5)
-                exit()
+                sys.exit()
 
             driver.maximize_window()
             try:
@@ -127,7 +127,7 @@ class Captcha:
             except Exception as e:
                 logger.error(f"【登录】{e}")
                 driver.quit()
-                exit()
+                sys.exit()
         return ""
 
     @logger.catch
@@ -136,7 +136,7 @@ class Captcha:
         获取资源文件夹(涉及到Pyinstaller)
         """
         try:
-            base_path = sys._MEIPASS  # type: ignore
+            base_path = sys._MEIPASS
         except AttributeError:
             base_path = getcwd()
         return path.join(base_path, dir)

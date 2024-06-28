@@ -1,6 +1,6 @@
 import glob
+import sys
 from os import getcwd, makedirs, path
-from sys import exit
 from time import sleep
 
 import yaml
@@ -36,7 +36,7 @@ class Config:
         """
         将YAML格式的str转换为dict
         """
-        return yaml.load(yaml_str, Loader=yaml.FullLoader)
+        return yaml.safe_load(yaml_str)
 
     @logger.catch
     def List(self) -> list:
@@ -55,7 +55,7 @@ class Config:
             logger.exception(f"【配置】读取配置列表错误! {e}")
             logger.warning("程序正在准备退出...")
             sleep(5)
-            exit()
+            sys.exit()
 
     @logger.catch
     def Load(self, filename: str, decrypt: bool = False) -> dict:
@@ -71,7 +71,7 @@ class Config:
                     decrypted_yaml_str = Data().AESDecrypt(yaml_str)
                     return self.yaml_str_to_dict(decrypted_yaml_str)
                 else:
-                    return yaml.load(file, Loader=yaml.FullLoader)
+                    return yaml.safe_load(file)
 
         except FileNotFoundError:
             logger.exception(f"【配置】读取的配置文件 {filename} 不存在!")
