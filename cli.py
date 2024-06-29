@@ -48,7 +48,7 @@ if __name__ == "__main__":
         colorize=False,
         enqueue=True,
         encoding="utf-8",
-        # 日志保留天数
+        # 日志保留份数
         retention=3,
         # 调试
         backtrace=True,
