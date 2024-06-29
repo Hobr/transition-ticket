@@ -191,21 +191,23 @@ class Task:
         """
         等待开票
         """
-        interval = abs(self.api.GetSaleStartTime() - int(time()))
-        countdown = interval
+        countdown = abs(self.api.GetSaleStartTime() - int(time()))
 
         if countdown >= 3600:
             for _ in range(countdown//10):
+                countdown = abs(self.api.GetSaleStartTime() - int(time()))
                 logger.info(f"【等待开票】需要等待 {countdown/60:.1f} 分钟")
                 sleep(600)
                 countdown -= 600
         if 3600 > countdown >= 600: 
             for _ in range(10):
+                countdown = abs(self.api.GetSaleStartTime() - int(time()))
                 logger.info(f"【等待开票】即将开票! 需要等待 {countdown/60:.1f} 分钟")
                 sleep(60)
                 countdown -=60
         if 600 > countdown >= 60: 
             for _ in range(12):
+                countdown = abs(self.api.GetSaleStartTime() - int(time()))
                 logger.info(f"【等待开票】准备开票! 需要等待 {countdown/60:.1f} 分钟")
                 sleep(5)
                 countdown -=5
