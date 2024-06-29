@@ -1,5 +1,3 @@
-import os
-import shutil
 import threading
 
 from loguru import logger
@@ -41,10 +39,6 @@ if __name__ == "__main__":
         diagnose=True,
     )
 
-    # 删除缓存
-    if os.path.exists(".cache"):
-        shutil.rmtree(".cache")
-
     # 初始化
     # 用户数据文件
     userData = Config(dir="user")
@@ -67,7 +61,6 @@ if __name__ == "__main__":
         cookie=userConfig["cookie"],
         header=userConfig["header"],
         timeout=settingConfig["request"]["timeout"],
-        retry=settingConfig["request"]["retry"],
         proxy=settingConfig["request"]["proxy"],
     )
 

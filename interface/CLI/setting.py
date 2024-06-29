@@ -30,11 +30,9 @@ class SettingCli:
             # 网络
             "request": {
                 # 请求间隔
-                "sleep": 1.25,
+                "sleep": 1.0,
                 # 超时
                 "timeout": 3.0,
-                # 重试
-                "retry": 3,
                 # 代理
                 "proxy": None,
             },
@@ -82,7 +80,7 @@ class SettingCli:
             interval = self.data.Inquire(
                 type="Text",
                 message="请输入创建订单请求间隔时间(单位:秒), 太快会被风控!",
-                default="1.25",
+                default="1.0",
             )
             return float(interval)
 
@@ -97,18 +95,6 @@ class SettingCli:
                 default="3.0",
             )
             return float(timeout)
-
-        @logger.catch
-        def RetryStep() -> int:
-            """
-            重试
-            """
-            retry = self.data.Inquire(
-                type="Text",
-                message="请输入请求重试次数",
-                default="3",
-            )
-            return int(retry)
 
         @logger.catch
         def ProxyStep() -> str | None:
@@ -179,7 +165,6 @@ class SettingCli:
         print("下面开始配置设置!")
         self.config["request"]["sleep"] = SleepStep()
         self.config["request"]["timeout"] = TimeoutStep()
-        self.config["request"]["retry"] = RetryStep()
         self.config["request"]["proxy"] = ProxyStep()
         (
             self.config["notice"]["system"],

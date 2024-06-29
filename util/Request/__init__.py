@@ -1,6 +1,5 @@
 import logging
 
-import hishel
 import httpx
 from fake_useragent import UserAgent
 from loguru import logger
@@ -17,7 +16,6 @@ class Request:
         cookie: dict = {},
         header: dict = {},
         timeout: float = 5.0,
-        retry: int = 3,
         proxy: str | None = None,
         redirect: bool = True,
         isDebug: bool = False,
@@ -27,7 +25,6 @@ class Request:
 
         cookie: Dict Cookie
         timeout: 超时
-        retry: 重试次数
         proxy: 代理
         redirect: 重定向
         isDebug: 调试模式
@@ -35,7 +32,6 @@ class Request:
 
         self.cookie = cookie
         self.timeout = timeout
-        self.retry = retry
         self.proxy = proxy
         self.redirect = redirect
         self.isDebug = isDebug
@@ -53,7 +49,7 @@ class Request:
             "User-Agent": UserAgent(os="android", platforms="mobile").random,
         } | header
 
-        self.session = hishel.CacheClient(
+        self.session = httpx.Client(
             cookies=self.cookie,
             headers=self.header,
             timeout=self.timeout,
@@ -69,17 +65,6 @@ class Request:
                 "request": [self.RequestHook],
                 "response": [self.ResponseHook],
             },
-            # 缓存
-            controller=hishel.Controller(
-                # 缓存请求模式
-                cacheable_methods=["GET", "POST"],
-                # 缓存状态码
-                cacheable_status_codes=[200],
-                # 无法新连接时读取缓存
-                allow_stale=False,
-                # 强制刷新缓存
-                always_revalidate=True,
-            ),
         )
 
         # 关闭Httpx自带日志
@@ -102,14 +87,11 @@ class Request:
         if method not in methods:
             logger.warning("? 这是什么方式")
 
-        for _ in range(self.retry):
-            try:
-                return methods[method](url=url, **({"params": params} if method == "get" else {"data": params}))
+        try:
+            return methods[method](url=url, **({"params": params} if method == "get" else {"data": params}))
 
-            except httpx.RequestError as e:
-                logger.exception(f"【网络请求】请求错误: {e}")
-
-        logger.warning("【网络请求】疑似IP被Ban/无网络!")
+        except httpx.RequestError as e:
+            logger.exception(f"【网络请求】请求错误: {e}")
 
     @logger.catch
     def GetCookie(self) -> dict:
