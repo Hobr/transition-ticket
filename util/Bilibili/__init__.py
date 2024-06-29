@@ -339,11 +339,6 @@ class Bilibili:
                 logger.warning("【创建订单】库存不足!")
                 return 2
 
-        # 服务器拥堵
-        elif code == 412:
-            logger.warning("【创建订单】服务器拥堵! 正在重试")
-            return 3
-
         # 存在未付款订单
         elif code in [100079, 100048]:
             logger.error("【创建订单】存在未付款/未完成订单! 请在支付或取消订单后再次运行")
@@ -411,7 +406,7 @@ class Bilibili:
 
         # 成功
         if code == 0:
-            logger.success("【获取订单状态】请扫码/在打开的浏览器页面进行支付!")
+            logger.success("【获取订单状态】请在打开的浏览器页面进行支付!")
             webbrowser.open(f"https://show.bilibili.com/platform/orderDetail.html?order_id={self.orderId}")
             return True
 

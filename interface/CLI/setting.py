@@ -30,9 +30,9 @@ class SettingCli:
             # 网络
             "request": {
                 # 请求间隔
-                "sleep": 1.5,
+                "sleep": 1.25,
                 # 超时
-                "timeout": 5,
+                "timeout": 3.0,
                 # 重试
                 "retry": 3,
                 # 代理
@@ -81,8 +81,8 @@ class SettingCli:
             """
             interval = self.data.Inquire(
                 type="Text",
-                message="请输入创建订单请求间隔时间(单位:秒, 建议大于多少来着?)",
-                default="3",
+                message="请输入创建订单请求间隔时间(单位:秒), 太快会被风控!",
+                default="1.25",
             )
             return float(interval)
 
@@ -94,7 +94,7 @@ class SettingCli:
             timeout = self.data.Inquire(
                 type="Text",
                 message="请输入请求超时时间(单位:秒)",
-                default="5",
+                default="3.0",
             )
             return float(timeout)
 
@@ -117,7 +117,7 @@ class SettingCli:
             """
             select = self.data.Inquire(
                 type="Confirm",
-                message="是否使用代理",
+                message="是否使用代理, 默认为否",
                 default=False,
             )
             if select:

@@ -113,7 +113,7 @@ class Request:
             except httpx.RequestError as e:
                 logger.exception(f"【网络请求】请求错误: {e}")
 
-        logger.debug("【网络请求】疑似IP被Ban/无网络!")
+        logger.warning("【网络请求】疑似IP被Ban/无网络!")
         logger.warning("程序正在准备退出...")
         sleep(5)
         sys.exit()
@@ -161,12 +161,16 @@ class Request:
         if self.isDebug:
             logger.debug(f"【Request响应】地址: {request.url} 状态码: {response.status_code} 返回: {response.read()}")
 
-        # 风控
+        # 错误
         if response.status_code != 200:
-            if response.status_code != 412:
-                logger.error(f"【Request响应】请求错误, 状态码: {response.status_code}")
-            else:
+            if response.status_code == 412:
                 logger.error("【Request响应】IP被412风控!!!!!请更换IP后再次使用(重启路由器/使用手机流量热点/代理...)")
                 logger.warning("程序正在准备退出...")
                 sleep(5)
                 sys.exit()
+
+            elif response.status_code == 429:
+                logger.warning("【Request响应】B站服务器卡了! 继续抢")
+
+            else:
+                logger.error(f"【Request响应】请求错误, 状态码: {response.status_code}")
