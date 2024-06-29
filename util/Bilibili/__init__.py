@@ -147,7 +147,7 @@ class Bilibili:
                             dist = sku["saleStart"]
                             break
             logger.info(
-                f"【获取开票时间】开票时间为 {self.data.TimestampFormat(int(dist))}, 当前时间为 {self.data.TimestampFormat(int(time()))} (请确保本机时间是北京时间, 服务器用户尤其要注意!)"
+                f"【获取开票时间】开票时间为 {self.data.TimestampFormat(int(dist))}, 当前时间为 {self.data.TimestampFormat(int(time()))}"
             )
             return dist
         else:

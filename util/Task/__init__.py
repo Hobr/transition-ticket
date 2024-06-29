@@ -192,6 +192,7 @@ class Task:
         等待开票
         """
         countdown = abs(self.api.GetSaleStartTime() - int(time()))
+        logger.warning("【等待开票】请确保本机时间是北京时间, 服务器用户尤其要注意!")
 
         if countdown >= 3600:
             for _ in range(countdown // 10):
