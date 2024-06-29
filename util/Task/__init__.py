@@ -159,6 +159,9 @@ class Task:
             conditions=lambda: self.createStatusResult is False,
         )
 
+        # 上次刷新时间
+        self.lastTime = time()
+
         # 关闭Transitions自带日志
         logging.getLogger("transitions").setLevel(logging.CRITICAL)
 
@@ -203,7 +206,7 @@ class Task:
         返回值: 0-成功, 1-风控, 2-未开票, 3-未知
         """
         self.queryTokenResult = self.api.QueryToken()
-        self.threadTime = time()
+        self.lastTime = time()
 
         # 顺路
         if self.queryTokenResult == 0:
@@ -287,9 +290,8 @@ class Task:
 
         while self.state != "完成":  # type: ignore
             sleep(0.15)
-            if self.state in job:  # type: ignore
-                self.trigger(job[self.state])  # type: ignore
-            else:
-                logger.warning("状态机异常!")
-        self.keep_running = False
+            self.trigger(job[self.state])  # type: ignore
+            if time() >= self.lastTime + 9 * 60:
+                logger.info("【刷新Token】已经9分钟没刷新Token了! 开始刷新")
+                self.to_获取Token()  # type: ignore
         return True
