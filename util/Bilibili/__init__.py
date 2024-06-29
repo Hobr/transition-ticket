@@ -59,7 +59,7 @@ class Bilibili:
         """
         获取Token
 
-        返回: 0-成功, 1-风控, 2-未开票, 3-未知
+        返回: 0-成功, 1-风控, 2-未知
         """
         logger.info("【获取Token】正在尝试获取Token...")
         # 成功
@@ -111,11 +111,6 @@ class Bilibili:
             sleep(5)
             sys.exit()
 
-        # 没开票
-        elif code == 100041:
-            logger.warning("【获取Token】该项目暂未开票! 下面进入等待开票模式")
-            return 2
-
         # 停售
         elif code == 100039:
             logger.error("【获取Token】早停售了你抢牛魔呢")
@@ -126,7 +121,7 @@ class Bilibili:
         # 未知
         else:
             logger.error(f"【获取Token】{code}: {res['msg']}")
-            return 3
+            return 2
 
     @logger.catch
     def GetSaleStartTime(self) -> int:
@@ -146,9 +141,7 @@ class Bilibili:
                         if sku["id"] == self.skuId:
                             dist = sku["saleStart"]
                             break
-            logger.info(
-                f"【获取开票时间】开票时间为 {self.data.TimestampFormat(int(dist))}, 当前时间为 {self.data.TimestampFormat(int(time()))}"
-            )
+            logger.info(f"【获取开票时间】开票时间为 {self.data.TimestampFormat(int(dist))}, 当前时间为 {self.data.TimestampFormat(int(time()))}")
             return dist
         else:
             logger.error("【获取开票时间】获取失败!")
