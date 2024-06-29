@@ -105,38 +105,36 @@ class Login:
         """
         browser_list = [i for i in list(browsers.browsers()) if i["browser_type"] != "msie"]
 
-        if browser_list:
-            selenium_drivers = {
-                "chrome": webdriver.Chrome,
-                "firefox": webdriver.Firefox,
-                "msedge": webdriver.Edge,
-                "safari": webdriver.Safari,
-            }
-
-            for browser in browser_list:
-                browser_type = browser["browser_type"]
-                print(f"请在打开的 {browser_type} 浏览器中进行登录")
-                driver = selenium_drivers[browser_type]()
-
-                if driver:
-                    driver.maximize_window()
-
-                    try:
-                        driver.get("https://show.bilibili.com/")
-                        wait = WebDriverWait(driver, 30)
-                        event = wait.until(EC.element_to_be_clickable((By.CLASS_NAME, "nav-header-register")))
-                        driver.execute_script("arguments[0].click();", event)
-                        break
-
-                    except Exception:
-                        logger.warning("程序正在准备退出...")
-                        sleep(5)
-                        sys.exit()
-
-                else:
-                    raise LoginException("所有浏览器/WebDriver尝试登录均失败")
-        else:
+        if not browser_list:
             raise LoginException("未找到可用浏览器/WebDriver!建议选择其他方式登录")
+
+        selenium_drivers = {
+            "chrome": webdriver.Chrome,
+            "firefox": webdriver.Firefox,
+            "msedge": webdriver.Edge,
+            "safari": webdriver.Safari,
+        }
+
+        for browser in browser_list:
+            browser_type = browser["browser_type"]
+            print(f"请在打开的 {browser_type} 浏览器中进行登录")
+            driver = selenium_drivers[browser_type]()
+
+            if not driver:
+                raise LoginException("所有浏览器/WebDriver尝试登录均失败")
+
+            driver.maximize_window()
+            try:
+                driver.get("https://show.bilibili.com/")
+                wait = WebDriverWait(driver, 30)
+                event = wait.until(EC.element_to_be_clickable((By.CLASS_NAME, "nav-header-register")))
+                driver.execute_script("arguments[0].click();", event)
+                break
+
+            except Exception:
+                logger.warning("程序正在准备退出...")
+                sleep(5)
+                sys.exit()
 
         while True:
             time.sleep(0.5)

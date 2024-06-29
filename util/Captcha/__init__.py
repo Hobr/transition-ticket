@@ -3,7 +3,6 @@ from os import getcwd, path
 from time import sleep
 
 import browsers
-from bili_ticket_gt_python import ClickPy
 from loguru import logger
 from selenium import webdriver
 from selenium.webdriver.common.by import By
@@ -28,18 +27,15 @@ class Captcha:
         gtPy: 自动验证实例
         gt: 极验gt
         """
-        if verify == "Auto":
-            try:
-                self.gtPy = ClickPy()
-            except Exception as e:
-                logger.error(f"【自动验证初始化】失败{e}")
-                logger.warning("程序正在准备退出...")
-                sleep(5)
-                sys.exit()
+        try: 
+            from bili_ticket_gt_python import ClickPy
+            self.gtPy = ClickPy()
+        except ImportError:
+            self.verify = "Manual"
+            logger.warning("【登录】无法导入极验自动验证，请手动验证")
 
         self.verify = verify
         self.gt = gt
-
         self.rt = "abcdefghijklmnop"  # rt固定即可
 
         self.geetest_path = self.AssestDir("geetest/index.html")
