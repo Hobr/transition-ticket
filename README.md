@@ -1,10 +1,5 @@
 # B站会员购 蹲票脚本
 
-[![GitHub release](https://img.shields.io/github/v/release/bilibili-ticket/bilibili-ticket-python)](https://github.com/bilibili-ticket/bilibili-ticket-python/releases)
-[![Build and Release](https://github.com/bilibili-ticket/bilibili-ticket-python/actions/workflows/ci.yml/badge.svg)](https://github.com/bilibili-ticket/bilibili-ticket-python/actions/workflows/ci.yml)
-
-> 目前处于开发阶段, 我们无法保证软件的稳定性!
-
 ## 声明
 
 [电报交流群](https://t.me/bilibili_ticket)
