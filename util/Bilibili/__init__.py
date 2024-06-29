@@ -101,7 +101,7 @@ class Bilibili:
             self.scene = riskParams["scene"]
             self.ua = riskParams["ua"]
             self.voucher = riskParams["v_voucher"]
-            logger.error("【获取Token】已风控")
+            logger.error("【获取Token】需要验证! 下面进入自动过验证")
             return 1
 
         # projectID/ScreenId/SkuID错误
