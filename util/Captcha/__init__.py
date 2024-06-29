@@ -27,8 +27,9 @@ class Captcha:
         gtPy: 自动验证实例
         gt: 极验gt
         """
-        try: 
+        try:
             from bili_ticket_gt_python import ClickPy
+
             self.gtPy = ClickPy()
         except ImportError:
             self.verify = "Manual"

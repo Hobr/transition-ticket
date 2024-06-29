@@ -194,27 +194,25 @@ class Task:
         countdown = abs(self.api.GetSaleStartTime() - int(time()))
 
         if countdown >= 3600:
-            for _ in range(countdown//10):
+            for _ in range(countdown // 10):
                 countdown = abs(self.api.GetSaleStartTime() - int(time()))
                 logger.info(f"【等待开票】需要等待 {countdown/60:.1f} 分钟")
                 sleep(600)
                 countdown -= 600
         if 3600 > countdown >= 600:
-            for _ in range(countdown//60):
+            for _ in range(countdown // 60):
                 countdown = abs(self.api.GetSaleStartTime() - int(time()))
                 logger.info(f"【等待开票】即将开票! 需要等待 {countdown/60:.1f} 分钟")
                 sleep(60)
-                countdown -=60
+                countdown -= 60
         if 600 > countdown >= 60:
-            for _ in range(countdown//5):
+            for _ in range(countdown // 5):
                 countdown = abs(self.api.GetSaleStartTime() - int(time()))
                 logger.info(f"【等待开票】准备开票! 需要等待 {countdown/60:.1f} 分钟")
                 sleep(5)
-                countdown -=5
+                countdown -= 5
         if countdown == 0:
             logger.info("【等待开票】等待结束! 开始抢票")
-            
-            
 
     @logger.catch
     def RiskProcessAction(self) -> None:
@@ -251,9 +249,6 @@ class Task:
         返回值: 0-成功, 1-刷新, 2-等待, 3-失败
         """
         self.createOrderResult = self.api.CreateOrder()
-
-        # 防风控
-        sleep(self.sleep)
 
     @logger.catch
     def CreateStatusAction(self) -> None:
