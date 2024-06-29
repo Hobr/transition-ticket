@@ -141,10 +141,8 @@ class Request:
             if response.status_code == 412:
                 logger.error("【Request响应】IP被412风控!!!!!请更换IP后再次使用(重启路由器/使用手机流量热点/代理...)")
 
-            elif response.status_code == 429:
-                logger.warning("【Request响应】429错误, B站服务器卡了! 继续抢")
-
-            elif "show.bilibili.com" not in str(request.url):
+            # 等于100001
+            elif response.status_code == 429 or "show.bilibili.com" not in str(request.url):
                 pass
 
             else:

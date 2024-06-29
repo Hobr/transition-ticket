@@ -322,17 +322,19 @@ class Bilibili:
 
         # 库存不足 219,100009
         elif code in [219, 100009]:
-            if self.data.TimestampCheck(timestamp=self.saleStart, duration=15):
-                logger.warning("【创建订单】目前处于开票15分钟黄金期, 已为您忽略无票提示!")
-                return 3
-            else:
-                logger.warning("【创建订单】库存不足!")
-                return 2
+            logger.warning("【创建订单】库存不足!")
+            return 2
 
         # 存在未付款订单
         elif code in [100079, 100048]:
             logger.error("【创建订单】存在未付款/未完成订单! 请尽快付款")
             sleep(0.5)
+            return 3
+
+        # 硬控
+        elif code == 3:
+            logger.error("【创建订单】触发ERROR 3, 需要歇5秒")
+            sleep(5)
             return 3
 
         # 订单已存在/已购买
