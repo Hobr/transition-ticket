@@ -235,7 +235,7 @@ class Bilibili:
             self.token = data["token"]
             self.challenge = data["geetest"]["challenge"]
             self.gt = data["geetest"]["gt"]
-            logger.success(f"【获取流水】流水获取成功! 流水号: {self.challenge}")
+            logger.info(f"【获取流水】流水获取成功! 流水号: {self.challenge}")
             return True
 
         # 失败
