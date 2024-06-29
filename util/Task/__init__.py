@@ -1,4 +1,5 @@
 import logging
+import threading
 from time import sleep, time
 
 from loguru import logger
@@ -169,6 +170,16 @@ class Task:
         # 关闭Transitions自带日志
         logging.getLogger("transitions").setLevel(logging.CRITICAL)
 
+        self.threadTime = time()
+        self.threadRun = True
+
+    def AutoRefreshToken(self):
+        while self.threadRun:
+            if abs(time() - self.threadTime) >= 9 * 60 and self.state != "获取Token":  # type: ignore
+                logger.info("【自动刷新Token】自上次刷新已过去9分钟, 正在刷新Token")
+                self.to_获取Token()  # type: ignore
+                self.threadTime = time()
+
     @logger.catch
     def QueryTokenAction(self) -> None:
         """
@@ -177,6 +188,7 @@ class Task:
         返回值: 0-成功, 1-风控, 2-未开票, 3-未知
         """
         self.queryTokenResult = self.api.QueryToken()
+        self.threadTime = time()
 
         # 顺路
         if self.queryTokenResult == 0:
@@ -286,10 +298,13 @@ class Task:
             "创建订单": "CreateOrder",
             "创建订单状态": "CreateStatus",
         }
+
+        threading.Thread(target=self.AutoRefreshToken, daemon=True).start()
         while self.state != "完成":  # type: ignore
             sleep(0.15)
             if self.state in job:  # type: ignore
                 self.trigger(job[self.state])  # type: ignore
             else:
                 logger.warning("状态机异常!")
+        self.keep_running = False
         return True
