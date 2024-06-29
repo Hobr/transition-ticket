@@ -191,7 +191,7 @@ class Task:
         """
         等待开票
         """
-        interval = abs(self.api.GetSaleStartTime() - int(time())) - 30
+        interval = abs(self.api.GetSaleStartTime() - int(time()))
         countdown = interval
 
         if countdown >= 3600:
