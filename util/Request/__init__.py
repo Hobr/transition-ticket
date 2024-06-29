@@ -172,5 +172,8 @@ class Request:
             elif response.status_code == 429:
                 logger.warning("【Request响应】B站服务器卡了! 继续抢")
 
+            elif "show.bilibili.com" not in str(request.url):
+                pass
+
             else:
                 logger.error(f"【Request响应】请求错误, 状态码: {response.status_code}")

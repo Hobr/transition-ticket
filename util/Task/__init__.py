@@ -249,6 +249,9 @@ class Task:
         返回值: 0-成功, 1-刷新, 2-等待, 3-失败
         """
         self.createOrderResult = self.api.CreateOrder()
+        if self.createOrderResult != 0:
+            # 防风控
+            sleep(self.sleep)
 
     @logger.catch
     def CreateStatusAction(self) -> None:
