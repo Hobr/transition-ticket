@@ -1,6 +1,4 @@
 import logging
-import sys
-from time import sleep
 
 import hishel
 import httpx
@@ -102,9 +100,7 @@ class Request:
         }
 
         if method not in methods:
-            logger.warning("程序正在准备退出...")
-            sleep(5)
-            sys.exit()
+            logger.warning("? 这是什么方式")
 
         for _ in range(self.retry):
             try:
@@ -114,9 +110,6 @@ class Request:
                 logger.exception(f"【网络请求】请求错误: {e}")
 
         logger.warning("【网络请求】疑似IP被Ban/无网络!")
-        logger.warning("程序正在准备退出...")
-        sleep(5)
-        sys.exit()
 
     @logger.catch
     def GetCookie(self) -> dict:
@@ -165,9 +158,6 @@ class Request:
         if response.status_code != 200:
             if response.status_code == 412:
                 logger.error("【Request响应】IP被412风控!!!!!请更换IP后再次使用(重启路由器/使用手机流量热点/代理...)")
-                logger.warning("程序正在准备退出...")
-                sleep(5)
-                sys.exit()
 
             elif response.status_code == 429:
                 logger.warning("【Request响应】B站服务器卡了! 继续抢")

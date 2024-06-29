@@ -152,9 +152,6 @@ class Bilibili:
             return dist
         else:
             logger.error("【获取开票时间】获取失败!")
-            logger.warning("程序正在准备退出...")
-            sleep(5)
-            sys.exit()
 
     @logger.catch
     def QueryAmount(self) -> bool:
@@ -341,10 +338,9 @@ class Bilibili:
 
         # 存在未付款订单
         elif code in [100079, 100048]:
-            logger.error("【创建订单】存在未付款/未完成订单! 请在支付或取消订单后再次运行")
-            logger.warning("程序正在准备退出...")
-            sleep(5)
-            sys.exit()
+            logger.error("【创建订单】存在未付款/未完成订单! 请尽快付款")
+            sleep(0.5)
+            return 3
 
         # 订单已存在/已购买
         elif code == 100049:

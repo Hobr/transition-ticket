@@ -61,9 +61,6 @@ class Data:
             parent_name = parent_process.name()
         except (psutil.NoSuchProcess, psutil.AccessDenied, psutil.ZombieProcess):
             logger.error("获取父进程信息失败!")
-            logger.warning("程序正在准备退出...")
-            sleep(5)
-            sys.exit()
 
         if os.name == "nt":
             if parent_name == "powershell.exe" or "WT_SESSION" in os.environ:
@@ -137,9 +134,7 @@ class Data:
                 case "d":
                     return formatted_time.strftime("%Y-%m-%d")
                 case _:
-                    logger.warning("程序正在准备退出...")
-                    sleep(5)
-                    sys.exit()
+                    logger.exception("【时间戳转换】时间错误")
 
     @logger.catch
     def TimestampCheck(self, timestamp: int, duration: int = 15) -> bool:

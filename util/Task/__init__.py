@@ -1,5 +1,4 @@
 import logging
-import sys
 from time import sleep, time
 
 from loguru import logger
@@ -291,7 +290,5 @@ class Task:
             if self.state in job:  # type: ignore
                 self.trigger(job[self.state])  # type: ignore
             else:
-                logger.warning("状态机异常! 程序正在准备退出...")
-                sleep(5)
-                sys.exit()
+                logger.warning("状态机异常!")
         return True

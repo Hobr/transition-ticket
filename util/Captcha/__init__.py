@@ -1,6 +1,5 @@
 import sys
 from os import getcwd, path
-from time import sleep
 
 import browsers
 from loguru import logger
@@ -49,9 +48,6 @@ class Captcha:
             return self.Manual(challenge)
         else:
             logger.error("【登录】verify参数错误")
-            logger.warning("程序正在准备退出...")
-            sleep(5)
-            sys.exit()
 
     @logger.catch
     def Auto(self, challenge: str) -> str:
@@ -81,9 +77,6 @@ class Captcha:
 
         if not browser_list:
             logger.error("【登录】未找到可用浏览器/WebDriver! 建议选择其他方式登录")
-            logger.warning("程序正在准备退出...")
-            sleep(5)
-            sys.exit()
 
         selenium_drivers = {
             "chrome": webdriver.Chrome,
@@ -100,9 +93,6 @@ class Captcha:
 
             if not driver:
                 logger.error("【登录】所有浏览器/WebDriver尝试登录均失败")
-                logger.warning("程序正在准备退出...")
-                sleep(5)
-                sys.exit()
 
             driver.maximize_window()
             try:
@@ -124,7 +114,7 @@ class Captcha:
             except Exception as e:
                 logger.error(f"【登录】{e}")
                 driver.quit()
-                sys.exit()
+
         return ""
 
     @logger.catch
