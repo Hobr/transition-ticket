@@ -1,9 +1,24 @@
+import sys
+import atexit
+import shutil
 import threading
 
 from loguru import logger
 
 from interface import ProductCli, SettingCli, UserCli
 from util import Captcha, Config, Notice, Request, Task
+
+
+def cleanup_meipass() -> None:
+    if hasattr(sys, '_MEIPASS'):
+        meipass_path = sys._MEIPASS
+        try:
+            shutil.rmtree(meipass_path)
+            print(f"正在清理 {meipass_path}")
+        except Exception as e:
+            print(f"清理失败 {meipass_path}: {e}")
+
+atexit.register(cleanup_meipass)
 
 if __name__ == "__main__":
     # 丢锅
