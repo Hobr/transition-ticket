@@ -184,7 +184,8 @@ class Task:
             self.api.QueryAmount()
 
         # 防风控
-        sleep(self.sleep)
+        else:
+            sleep(self.sleep)
 
     @logger.catch
     def WaitAvailableAction(self) -> None:
@@ -238,8 +239,9 @@ class Task:
         """
         self.queryTicketResult = self.api.QueryAmount()
 
-        # 防风控
-        sleep(self.sleep)
+        if not self.queryTicketResult:
+            # 防风控
+            sleep(self.sleep)
 
     @logger.catch
     def CreateOrderAction(self) -> None:
@@ -249,6 +251,7 @@ class Task:
         返回值: 0-成功, 1-刷新, 2-等待, 3-失败
         """
         self.createOrderResult = self.api.CreateOrder()
+
         if self.createOrderResult != 0:
             # 防风控
             sleep(self.sleep)
@@ -283,10 +286,10 @@ class Task:
             "创建订单": "CreateOrder",
             "创建订单状态": "CreateStatus",
         }
-        while self.state != "完成":
+        while self.state != "完成":  # type: ignore
             sleep(0.15)
-            if self.state in job:
-                self.trigger(job[self.state])
+            if self.state in job:  # type: ignore
+                self.trigger(job[self.state])  # type: ignore
             else:
                 logger.warning("状态机异常! 程序正在准备退出...")
                 sleep(5)
