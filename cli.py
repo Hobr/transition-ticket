@@ -1,6 +1,6 @@
-import sys
 import atexit
 import shutil
+import sys
 import threading
 
 from loguru import logger
@@ -10,13 +10,14 @@ from util import Captcha, Config, Notice, Request, Task
 
 
 def cleanup_meipass() -> None:
-    if hasattr(sys, '_MEIPASS'):
+    if hasattr(sys, "_MEIPASS"):
         meipass_path = sys._MEIPASS
         try:
             shutil.rmtree(meipass_path)
             print(f"正在清理 {meipass_path}")
         except Exception as e:
             print(f"清理失败 {meipass_path}: {e}")
+
 
 atexit.register(cleanup_meipass)
 
@@ -26,7 +27,7 @@ if __name__ == "__main__":
         """
 |=====================================================================
 |
-|  欢迎使用 https://github.com/bilibili-ticket/bilibili-ticket-python
+|  欢迎使用 https://github.com/biliticket/transition-ticket
 |  本程序仅供学习交流, 不得用于商业用途
 |  使用本程序进行违法操作产生的法律责任由操作者自行承担
 |  对本程序进行二次开发/分发时请注意遵守GPL-3.0开源协议

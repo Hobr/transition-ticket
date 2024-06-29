@@ -1,8 +1,8 @@
 [tool.poetry]
-name = "bilibili-show-python"
+name = "transition-ticket"
 version = "1.0.0"
 description = "B站会员购脚本"
-authors = ["bilibili-ticket"]
+authors = ["biliticket"]
 license = "GPL3.0"
 readme = "README.md"
 package-mode = false

@@ -1,4 +1,4 @@
-# B站会员购 蹲票脚本
+# Transition Ticket
 
 ## 声明
 
@@ -16,7 +16,7 @@
 
 ## 使用
 
-[下载地址](https://github.com/bilibili-ticket/bilibili-ticket-python/releases)
+[下载地址](https://github.com/biliticket/transition-ticket/releases)
 
 注意:
 
@@ -41,6 +41,7 @@ python cli.py
 
 - [ ] 提前获取Token
 - [ ] 修改打包模式为目录模式, 而不是单文件模式
+- [ ] 显示版本号
 - [ ] 成功付款后返回CLI第一步
 - [ ] 短信验证码错误修复
 - [ ] Header补充
