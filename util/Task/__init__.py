@@ -199,13 +199,13 @@ class Task:
                 logger.info(f"【等待开票】需要等待 {countdown/60:.1f} 分钟")
                 sleep(600)
                 countdown -= 600
-        if 3600 > countdown >= 600: 
+        if 3600 > countdown >= 600:
             for _ in range(countdown//60):
                 countdown = abs(self.api.GetSaleStartTime() - int(time()))
                 logger.info(f"【等待开票】即将开票! 需要等待 {countdown/60:.1f} 分钟")
                 sleep(60)
                 countdown -=60
-        if 600 > countdown >= 60: 
+        if 600 > countdown >= 60:
             for _ in range(countdown//5):
                 countdown = abs(self.api.GetSaleStartTime() - int(time()))
                 logger.info(f"【等待开票】准备开票! 需要等待 {countdown/60:.1f} 分钟")
