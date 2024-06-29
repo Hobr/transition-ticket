@@ -31,7 +31,7 @@ if __name__ == "__main__":
     # 日志
     logger.add(
         "log/{time}.log",
-        colorize=True,
+        colorize=False,
         enqueue=True,
         encoding="utf-8",
         # 日志保留天数
