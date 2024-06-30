@@ -2,7 +2,6 @@ import atexit
 import shutil
 import sys
 import threading
-from time import sleep
 
 from loguru import logger
 
@@ -71,12 +70,6 @@ if __name__ == "__main__":
     userConfig = UserCli(conf=userData).Select(selects=userList) if userList != [] else UserCli(conf=userData).Generate()
     productConfig = ProductCli(conf=productData).Select(selects=productList) if productList != [] else ProductCli(conf=productData).Generate()
     settingConfig = SettingCli(conf=settingData).Select(selects=settingList) if settingList != [] else SettingCli(conf=settingData).Generate()
-
-    if "phone" not in userConfig or "gold" not in settingConfig:
-        logger.error("【用户配置】配置文件版本过期，请重新新建配置文件")
-        logger.warning("程序正在准备退出...")
-        sleep(5)
-        sys.exit()
 
     net = Request(
         cookie=userConfig["cookie"],
