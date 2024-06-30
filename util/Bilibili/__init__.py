@@ -260,7 +260,7 @@ class Bilibili:
         return self.challenge
 
     @logger.catch
-    def RiskValidate(self, validate: str) -> bool:
+    def RiskValidate(self, validate: str, validate_mode: str = "geetest") -> bool:
         """
         校验
 
@@ -268,29 +268,32 @@ class Bilibili:
 
         返回值: True-成功, False-失败
         """
-        url = "https://api.bilibili.com/x/gaia-vgate/v1/validate"
-        params = {
-            "challenge": self.challenge,
-            "csrf": self.net.GetCookie()["bili_jct"],
-            "seccode": validate + "|jordan",
-            "token": self.token,
-            "validate": validate,
-        }
-        res = self.net.Response(method="get", url=url, params=params)
-        code = res["code"]
+        if validate_mode == "geetest":
+            url = "https://api.bilibili.com/x/gaia-vgate/v1/validate"
+            params = {
+                "challenge": self.challenge,
+                "csrf": self.net.GetCookie()["bili_jct"],
+                "seccode": validate + "|jordan",
+                "token": self.token,
+                "validate": validate,
+            }
+            res = self.net.Response(method="get", url=url, params=params)
+            code = res["code"]
 
-        # 成功&有效
-        if code == 0 and res["data"]["is_valid"] == 1:
-            self.risked = True
-            cookie = self.net.GetCookie()
-            cookie["x-bili-gaia-vtoken"] = self.token
-            self.net.RefreshCookie(cookie)
-            return True
+            # 成功&有效
+            if code == 0 and res["data"]["is_valid"] == 1:
+                self.risked = True
+                cookie = self.net.GetCookie()
+                cookie["x-bili-gaia-vtoken"] = self.token
+                self.net.RefreshCookie(cookie)
+                return True
 
-        # 失败
-        else:
-            logger.error(f"【校验】{code}: {res['message']}")
-            return False
+            # 失败
+            else:
+                logger.error(f"【校验】{code}: {res['message']}")
+                return False
+        elif validate_mode == "phone":
+            pass
 
     @logger.catch
     def CreateOrder(self) -> int:
