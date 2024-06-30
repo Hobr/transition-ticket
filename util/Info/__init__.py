@@ -41,7 +41,7 @@ class Info:
         response = self.net.Response(
             method="get",
             url=f"https://show.bilibili.com/api/ticket/project/getV2?version=134&id={self.pid}",
-        ).json()
+        )
 
         base_info_id = 0
         for i, item in enumerate(response["data"]["performance_desc"]["list"]):
@@ -68,7 +68,7 @@ class Info:
         response = self.net.Response(
             method="get",
             url=f"https://show.bilibili.com/api/ticket/project/getV2?version=134&id={self.pid}",
-        ).json()
+        )
 
         screens = response["data"]["screen_list"]
         if not screens:
@@ -96,7 +96,7 @@ class Info:
         response = self.net.Response(
             method="get",
             url=f"https://show.bilibili.com/api/ticket/project/getV2?version=134&id={self.pid}",
-        ).json()
+        )
 
         skus = {}
         for i in response["data"]["screen_list"]:
@@ -125,7 +125,7 @@ class Info:
         response = self.net.Response(
             method="get",
             url="https://show.bilibili.com/api/ticket/buyer/list",
-        ).json()
+        )
 
         lists = response["data"]["list"]
 
@@ -163,5 +163,5 @@ class Info:
         response = self.net.Response(
             method="get",
             url=f"https://show.bilibili.com/api/ticket/project/getV2?version=134&id={self.pid}",
-        ).json()
+        )
         return response["data"]["mid"]

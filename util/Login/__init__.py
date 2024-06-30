@@ -58,12 +58,12 @@ class Login:
 
         文档: https://github.com/SocialSisterYi/bilibili-API-collect/blob/master/docs/login/login_action/QR.md
         """
-        self.net.Response(method="get", url="https://www.bilibili.com/")
+        self.net.Response(method="get", url="https://www.bilibili.com/", isJson=False)
 
         resp = self.net.Response(
             method="get",
             url="https://passport.bilibili.com/x/passport-login/web/qrcode/generate",
-        ).json()
+        )
 
         if resp["code"] == 0:
             url = resp["data"]["url"]
@@ -75,7 +75,7 @@ class Login:
                 respQR = self.net.Response(
                     method="get",
                     url="https://passport.bilibili.com/x/passport-login/web/qrcode/poll?source=main-fe-header&qrcode_key=" + resp["data"]["qrcode_key"],
-                ).json()
+                )
 
                 check = respQR["data"]
                 if check["code"] == 0:
@@ -159,7 +159,7 @@ class Login:
         resp = self.net.Response(
             method="get",
             url="https://passport.bilibili.com/x/passport-login/captcha?source=main_web",
-        ).json()
+        )
 
         if resp["code"] == 0:
             token = resp["data"]["token"]
@@ -182,7 +182,7 @@ class Login:
         resp = self.net.Response(
             method="post",
             url="https://passport.bilibili.com/x/safecenter/captcha/pre",
-        ).json()
+        )
 
         if resp["code"] == 0:
             token = resp["data"]["recaptcha_token"]
@@ -209,7 +209,7 @@ class Login:
         salt = self.net.Response(
             method="get",
             url="https://passport.bilibili.com/x/passport-login/web/key",
-        ).json()
+        )
 
         salt_hash = salt["data"]["hash"]
         salt_key = salt["data"]["key"]
@@ -229,7 +229,7 @@ class Login:
             method="post",
             url="https://passport.bilibili.com/x/passport-login/web/login",
             params=params,
-        ).json()
+        )
 
         if resp["code"] != 0:
             raise LoginException(f"登录失败 {resp['code']}: {resp['message']}")
@@ -251,7 +251,7 @@ class Login:
             info = self.net.Response(
                 method="get",
                 url=f"https://passport.bilibili.com/x/safecenter/user/info?tmp_code={tmp_token}",
-            ).json()
+            )
 
             if not info["data"]["account_info"]["bind_tel"]:
                 raise LoginException("手机号未绑定, 请重新选择登录方式")
@@ -274,7 +274,7 @@ class Login:
                 method="post",
                 url="https://passport.bilibili.com/x/safecenter/common/sms/send",
                 params=resend_params,
-            ).json()
+            )
 
             if resend["code"] != 0:
                 raise LoginException(f"验证码发送失败: {resend['code']} {resend['message']}")
@@ -304,7 +304,7 @@ class Login:
             else:
                 raise LoginException(f"未知错误: {resp['data']['status']}")
 
-            reverify = self.net.Response(method="post", url=url, params=data).json()
+            reverify = self.net.Response(method="post", url=url, params=data)
 
             if reverify["code"] != 0:
                 raise LoginException(f"验证码登录失败 {reverify['code']}: {reverify['message']}")
@@ -314,7 +314,7 @@ class Login:
                 method="post",
                 url="https://passport.bilibili.com/x/passport-login/web/exchange_cookie",
                 params={"source": "risk", "code": reverify["data"]["code"]},
-            ).json()
+            )
             self.cookie = self.net.GetCookie()
             return self.Status()
 
@@ -343,7 +343,7 @@ class Login:
             method="post",
             url="https://passport.bilibili.com/x/passport-login/web/sms/send",
             params=params,
-        ).json()
+        )
 
         if resp["code"] == 0:
             logger.success("【登录】验证码发送成功")
@@ -375,7 +375,7 @@ class Login:
             method="post",
             url="https://passport.bilibili.com/x/passport-login/web/login/sms",
             params=params,
-        ).json()
+        )
 
         if resp["code"] == 0:
             logger.success("【登录】登录成功")
@@ -405,7 +405,7 @@ class Login:
         self.net.RefreshCookie(self.cookie)
 
         if self.isCheckStatus:
-            user = self.net.Response(method="get", url="https://api.bilibili.com/x/web-interface/nav").json()
+            user = self.net.Response(method="get", url="https://api.bilibili.com/x/web-interface/nav")
 
             if user["data"]["isLogin"]:
                 return self.cookie
@@ -428,7 +428,7 @@ class Login:
         """
         url = ""
         params = {}
-        resp = self.net.Response(method="post", url=url, params=params).json()
+        resp = self.net.Response(method="post", url=url, params=params)
 
         if resp["code"] == 0:
             logger.info("【刷新Token】刷新成功")
@@ -446,7 +446,7 @@ class Login:
             method="post",
             url="https://passport.bilibili.com/login/exit/v2",
             params={"biliCSRF": self.net.GetCookie()["bili_jct"]},
-        ).json()
+        )
 
         if resp["code"] == 0:
             logger.info("【退出登录】注销Cookie成功")

@@ -81,7 +81,7 @@ class Bilibili:
             "requestSource": self.scene,
             "newRisk": True,
         }
-        res = self.net.Response(method="post", url=url, params=params).json()
+        res = self.net.Response(method="post", url=url, params=params)
         data = res["data"]
         code = res["errno"]
 
@@ -129,7 +129,7 @@ class Bilibili:
         获取开票时间
         """
         url = f"https://show.bilibili.com/api/ticket/project/getV2?version=134&id={self.projectId}&project_id={self.projectId}&requestSource={self.scene}"
-        res = self.net.Response(method="get", url=url).json()
+        res = self.net.Response(method="get", url=url)
         data = res["data"]
         code = res["errno"]
 
@@ -155,7 +155,7 @@ class Bilibili:
         """
         logger.info("【获取票数】正在蹲票...")
         url = f"https://show.bilibili.com/api/ticket/project/getV2?version=134&id={self.projectId}&project_id={self.projectId}&requestSource={self.scene}"
-        res = self.net.Response(method="get", url=url).json()
+        res = self.net.Response(method="get", url=url)
         data = res["data"]
         code = res["errno"]
 
@@ -216,7 +216,7 @@ class Bilibili:
             "ua": self.ua,
             "v_voucher": self.voucher,
         }
-        res = self.net.Response(method="post", url=url, params=params).json()
+        res = self.net.Response(method="post", url=url, params=params)
         data = res["data"]
         code = res["code"]
 
@@ -262,7 +262,7 @@ class Bilibili:
             "token": self.token,
             "validate": validate,
         }
-        res = self.net.Response(method="get", url=url, params=params).json()
+        res = self.net.Response(method="get", url=url, params=params)
         code = res["code"]
 
         # 成功&有效
@@ -309,7 +309,7 @@ class Bilibili:
             "newRisk": True,
             "requestSource": self.scene,
         }
-        res = self.net.Response(method="post", url=url, params=params).json()
+        res = self.net.Response(method="post", url=url, params=params)
         data = res["data"]
         code = res["errno"]
 
@@ -374,7 +374,7 @@ class Bilibili:
         返回: True-成功, False-失败
         """
         url = f"https://show.bilibili.com/api/ticket/order/createstatus?token={self.orderToken}&project_id={self.projectId}&orderId={self.orderId}"
-        res = self.net.Response(method="get", url=url).json()
+        res = self.net.Response(method="get", url=url)
         code = res["errno"]
 
         # 成功
@@ -395,7 +395,7 @@ class Bilibili:
         返回: True-成功, False-失败
         """
         url = f"https://show.bilibili.com/api/ticket/order/info?order_id={self.orderId}"
-        res = self.net.Response(method="get", url=url).json()
+        res = self.net.Response(method="get", url=url)
         code = res["errno"]
 
         # 成功

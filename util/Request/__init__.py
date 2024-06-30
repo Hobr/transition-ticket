@@ -72,13 +72,14 @@ class Request:
         logging.getLogger("httpx").setLevel(logging.CRITICAL)
 
     @logger.catch
-    def Response(self, method: str, url: str, params: dict = {}) -> httpx.Response:
+    def Response(self, method: str, url: str, params: dict = {}, isJson: bool = True) -> dict:
         """
         网络
 
         method: 方法 post/get
         url: 地址 str
         params: 参数 dict
+        isJson: 返回是否为JSON bool
         """
         methods = {
             "get": self.session.get,
@@ -89,10 +90,14 @@ class Request:
             logger.warning("? 这是什么方式")
 
         try:
-            return methods[method](url=url, **({"params": params} if method == "get" else {"data": params}))
+            if isJson:
+                return methods[method](url=url, **({"params": params} if method == "get" else {"data": params})).json()
+            else:
+                methods[method](url=url, **({"params": params} if method == "get" else {"data": params}))
+                return {}
 
         except httpx.RequestError as e:
-            logger.exception(f"【网络请求】请求错误: {e}")
+            return {"code": 114514, "errno": 114515, "msg": f"请求错误: {e}", "message": f"请求错误: {e}"}
 
     @logger.catch
     def GetCookie(self) -> dict:
