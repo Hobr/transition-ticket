@@ -23,7 +23,7 @@ class Captcha:
         """
         初始化
 
-        gtPy: 自动验证实例
+        verify: 验证方式
         gt: 极验gt
         """
         try:

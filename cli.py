@@ -6,7 +6,7 @@ import threading
 from loguru import logger
 
 from interface import ProductCli, SettingCli, UserCli
-from util import Captcha, Config, Notice, Request, Task
+from util import Bilibili, Captcha, Config, Notice, Request, Task
 
 
 def cleanup_meipass() -> None:
@@ -79,15 +79,22 @@ if __name__ == "__main__":
         isDebug=settingConfig["dev"]["debug"],
     )
 
-    job = Task(
+    api = Bilibili(
         net=net,
-        cap=cap,
-        sleep=settingConfig["request"]["sleep"],
         projectId=productConfig["projectId"],
         screenId=productConfig["screenId"],
         skuId=productConfig["skuId"],
         buyer=userConfig["buyer"],
+        count=len(userConfig["buyer"]),
         goldTime=settingConfig["request"]["gold"],
+        phone=userConfig["phone"],
+    )
+
+    job = Task(
+        net=net,
+        cap=cap,
+        api=api,
+        sleep=settingConfig["request"]["sleep"],
     )
 
     # job.DrawFSM()

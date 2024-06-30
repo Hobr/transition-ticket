@@ -33,6 +33,8 @@ class UserCli:
             "header": {},
             # 购买人
             "buyer": [],
+            # 绑定手机号
+            "phone": "",
         }
 
     @logger.catch
@@ -152,6 +154,22 @@ class UserCli:
                 sys.exit()
 
         @logger.catch
+        def PhoneStep() -> str:
+            """
+            绑定手机号
+            """
+            phone = self.data.Inquire(
+                type="Text",
+                message="请输入你的B站号绑定的手机号, 如果错误有可能无法通过验证码!",
+            )
+
+            if len(phone) != 11:
+                logger.error("【绑定手机号】手机号码长度错误!")
+                return PhoneStep()
+
+            return phone
+
+        @logger.catch
         def FilenameStep(name: str) -> str:
             """
             文件名
@@ -169,5 +187,6 @@ class UserCli:
         self.config["cookie"] = LoginStep()
         self.config["header"] = self.net.GetHeader()
         self.config["buyer"] = BuyerStep()
+        self.config["phone"] = PhoneStep()
         self.conf.Save(FilenameStep(name=self.config["buyer"][0]["name"]), self.config, encrypt=True)
         return self.config

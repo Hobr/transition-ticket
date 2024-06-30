@@ -17,30 +17,22 @@ class Task:
         self,
         net: Request,
         cap: Captcha,
+        api: Bilibili,
         sleep: int,
-        projectId: int,
-        screenId: int,
-        skuId: int,
-        buyer: dict,
-        goldTime: float,
     ):
         """
         初始化
 
         net: 网络实例
         cap: 验证码实例
+        api: Bilibili实例
         sleep: 任务间请求间隔时间
-        projectId: 项目ID
-        screenId: 场次ID
-        skuId: 商品ID
-        buyer: 购买者信息
-        goldTime: 开票黄金时间
         """
 
         self.net = net
         self.cap = cap
+        self.api = api
         self.sleep = sleep
-        self.api = Bilibili(net=self.net, projectId=projectId, screenId=screenId, skuId=skuId, buyer=buyer, count=len(buyer), goldTime=goldTime)
 
         self.states = [
             State(name="开始"),
@@ -237,17 +229,18 @@ class Task:
         """
         验证码
 
-        返回值: 0-成功, 1-取消验证, 2-失败
+        返回值: 0-极验验证, 1手机号验证, 2-取消验证, 3-失败
         """
         match self.api.RiskInfo():
             case 0:
                 challenge = self.api.GetRiskChallenge()
                 validate = self.cap.Geetest(challenge)
-                self.riskProcessResult = self.api.RiskValidate(validate)
-                self.riskProcessResult = True
+                self.riskProcessResult = self.api.RiskValidate(validate=validate)
             case 1:
-                self.riskProcessResult = True
+                self.riskProcessResult = self.api.RiskValidate(validate_mode="phone")
             case 2:
+                self.riskProcessResult = True
+            case 3:
                 self.riskProcessResult = False
 
     @logger.catch

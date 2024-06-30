@@ -58,10 +58,12 @@ select = ["B", "C4", "C9", "E", "F", "I", "PL", "S", "SIM", "U", "W", "YTT"]
 ignore = ["B006", "S311", "S501"]
 
 [tool.ruff.lint.mccabe]
-max-complexity = 15
+max-complexity = 16
 
 [tool.ruff.lint.pylint]
-max-args = 9
+max-args = 10
+max-statements = 55
+max-returns = 7
 allow-magic-value-types = ["int","str"]
 
 [build-system]
