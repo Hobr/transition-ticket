@@ -1,3 +1,6 @@
+import sys
+from time import sleep
+
 from loguru import logger
 
 from util import Config, Data, Info, Login, Request
@@ -29,7 +32,7 @@ class UserCli:
             # Header
             "header": {},
             # 购买人
-            "buyer": {},
+            "buyer": [],
         }
 
     @logger.catch
@@ -119,7 +122,7 @@ class UserCli:
                 return LoginStep()
 
         @logger.catch
-        def BuyerStep() -> dict:
+        def BuyerStep() -> list:
             """
             购买人
             """
@@ -128,18 +131,21 @@ class UserCli:
                 choice = {f"{i['购买人']} - {i['身份证']} - {i['手机号']}": x for x, i in enumerate(buyerInfo)}
 
                 select = self.data.Inquire(
-                    type="List",
+                    type="Checkbox",
                     message="请选择购票人",
                     choices=list(choice.keys()),
                 )
 
-                id = choice[select]
-                dist = buyerInfo[id]["数据"]
+                dist = []
+                for i in select:
+                    id = choice[i]
+                    dist.append(buyerInfo[id]["数据"])
                 return dist
 
             except InfoException:
-                logger.warning("请重新配置活动信息!")
-                return self.Generate()
+                logger.error("选择错误! 请重新打开进行配置")
+                sleep(5)
+                sys.exit()
 
         @logger.catch
         def FilenameStep(name: str) -> str:
@@ -159,5 +165,5 @@ class UserCli:
         self.config["cookie"] = LoginStep()
         self.config["header"] = self.net.GetHeader()
         self.config["buyer"] = BuyerStep()
-        self.conf.Save(FilenameStep(name=self.config["buyer"]["name"]), self.config, encrypt=True)
+        self.conf.Save(FilenameStep(name=self.config["buyer"][0]["name"]), self.config, encrypt=True)
         return self.config

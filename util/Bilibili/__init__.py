@@ -327,7 +327,7 @@ class Bilibili:
             "pay_money": self.cost * self.count,
             "order_type": self.orderType,
             "timestamp": timestamp,
-            "buyer_info": f"[{json.dumps(self.buyer)}]",
+            "buyer_info": f"{json.dumps(self.buyer)}",
             "token": self.token,
             "deviceId": "",
             "clickPosition": json.dumps(clickPosition),

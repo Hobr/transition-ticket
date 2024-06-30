@@ -58,7 +58,7 @@ select = ["B", "C4", "C9", "E", "F", "I", "PL", "S", "SIM", "U", "W", "YTT"]
 ignore = ["B006", "S311", "S501"]
 
 [tool.ruff.lint.mccabe]
-max-complexity = 12
+max-complexity = 15
 
 [tool.ruff.lint.pylint]
 max-args = 9

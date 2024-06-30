@@ -40,7 +40,7 @@ class Task:
         self.net = net
         self.cap = cap
         self.sleep = sleep
-        self.api = Bilibili(net=self.net, projectId=projectId, screenId=screenId, skuId=skuId, buyer=buyer, goldTime=goldTime)
+        self.api = Bilibili(net=self.net, projectId=projectId, screenId=screenId, skuId=skuId, buyer=buyer, count=len(buyer), goldTime=goldTime)
 
         self.states = [
             State(name="开始"),
