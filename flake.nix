@@ -37,7 +37,6 @@
               ]);
             PIP_INDEX_URL = "https://pypi.tuna.tsinghua.edu.cn/simple";
             PIP_TRUSTED_HOST = "pypi.tuna.tsinghua.edu.cn";
-            NPM_CONFIG_REGISTRY = "https://registry.npmmirror.com";
             LD_LIBRARY_PATH = pkgs.lib.makeLibraryPath packages;
           };
       }
