@@ -170,32 +170,32 @@ class Task:
         """
         等待开票
         """
-        countdown = self.api.GetSaleStartTime() - int(time())
+        start_time = self.api.GetSaleStartTime()
+        countdown = start_time - int(time())
+        logger.info(f"【等待开票】本机时间已校准!")
 
         if countdown > 0:
             logger.warning("【等待开票】请确保本机时间是北京时间, 服务器用户尤其要注意!")
 
-            if countdown >= 3600:
-                for _ in range(countdown // 10):
+            while countdown > 0:
+                countdown = start_time - int(time())
+
+                if countdown >= 3600:
                     logger.info(f"【等待开票】需要等待 {countdown/60:.1f} 分钟")
                     sleep(600)
                     countdown -= 600
 
-            if 3600 > countdown >= 600:
-                for _ in range(countdown // 60):
+                elif 3600 > countdown >= 600:
                     logger.info(f"【等待开票】需要等待 {countdown/60:.1f} 分钟")
                     sleep(60)
                     countdown -= 60
 
-            if 600 > countdown >= 60:
-                countdown = abs(self.api.GetSaleStartTime() - int(time()))
-                for _ in range(countdown // 5):
+                elif 600 > countdown >= 60:
                     logger.info(f"【等待开票】准备开票! 需要等待 {countdown/60:.1f} 分钟")
                     sleep(5)
                     countdown -= 5
 
-            if 60 > countdown > 0:
-                for _ in range(countdown // 1):
+                elif 60 > countdown > 0:
                     logger.info(f"【等待开票】即将开票! 需要等待 {countdown} 秒")
                     sleep(1)
                     countdown -= 1
