@@ -145,6 +145,7 @@ class Bilibili:
             return dist
         else:
             logger.error("【获取开票时间】获取失败!")
+            return 0
 
     @logger.catch
     def QueryAmount(self) -> bool:

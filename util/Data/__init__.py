@@ -20,10 +20,10 @@ from loguru import logger
 class CustomThemes(GreenPassion):
     def __init__(self):
         super().__init__()
-        self.List.selection_cursor = "->"  # 选择光标
-        self.List.selection_color = "\033[1;35;106m"  # 设置 List选项 的选中颜色(紫，蓝)
-        self.Question.mark_color = "\033[93m"  # 设置 [?] 中 ? 的颜色(黄)
-        self.Question.brackets_color = "\033[96m"  # 设置 [?] 中 [] 的颜色(蓝)
+        self.List.selection_cursor = "->"  # 选择光标 # type: ignore
+        self.List.selection_color = "\033[1;35;106m"  # 设置 List选项 的选中颜色(紫，蓝) # type: ignore
+        self.Question.mark_color = "\033[93m"  # 设置 [?] 中 ? 的颜色(黄) # type: ignore
+        self.Question.brackets_color = "\033[96m"  # 设置 [?] 中 [] 的颜色(蓝) # type: ignore
 
 
 class Data:
@@ -51,7 +51,7 @@ class Data:
         url: 链接
         img_path: 保存路径
         """
-        qr = qrcode.QRCode()
+        qr = qrcode.QRCode()  # type: ignore
         qr.add_data(url)
         img = qr.make_image()
 
@@ -135,6 +135,7 @@ class Data:
                     return formatted_time.strftime("%Y-%m-%d")
                 case _:
                     logger.exception("【时间戳转换】时间错误")
+                    return ""
 
     @logger.catch
     def TimestampCheck(self, timestamp: int, duration: int = 15) -> bool:

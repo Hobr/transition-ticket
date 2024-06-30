@@ -11,7 +11,7 @@ from util import Captcha, Config, Notice, Request, Task
 
 def cleanup_meipass() -> None:
     if hasattr(sys, "_MEIPASS"):
-        meipass_path = sys._MEIPASS
+        meipass_path = sys._MEIPASS  # type: ignore
         try:
             shutil.rmtree(meipass_path)
             print(f"正在清理 {meipass_path}")

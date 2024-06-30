@@ -40,7 +40,7 @@ class Notice:
         获取资源文件夹(涉及到Pyinstaller)
         """
         try:
-            base_path = sys._MEIPASS
+            base_path = sys._MEIPASS  # type: ignore
         except AttributeError:
             base_path = getcwd()
         return path.join(base_path, dir)
@@ -58,7 +58,7 @@ class Notice:
             app_icon=self.appIconPath,
             app_name=self.appName,
             timeout=timeout,
-        )
+        )  # type: ignore
 
     @logger.catch
     def Sound(self, time: int = 2) -> None:

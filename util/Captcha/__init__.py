@@ -48,6 +48,7 @@ class Captcha:
             return self.Manual(challenge)
         else:
             logger.error("【登录】verify参数错误")
+            return ""
 
     @logger.catch
     def Auto(self, challenge: str) -> str:
@@ -123,7 +124,7 @@ class Captcha:
         获取资源文件夹(涉及到Pyinstaller)
         """
         try:
-            base_path = sys._MEIPASS
+            base_path = sys._MEIPASS  # type: ignore
         except AttributeError:
             base_path = getcwd()
         return path.join(base_path, dir)
