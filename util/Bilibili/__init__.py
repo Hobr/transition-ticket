@@ -224,8 +224,21 @@ class Bilibili:
         # 成功
         if code == 0:
             self.token = data["token"]
-            self.challenge = data["geetest"]["challenge"]
-            self.gt = data["geetest"]["gt"]
+            match data["type"]:
+                case "geetest":
+                    self.challenge = data["geetest"]["challenge"]
+                    self.gt = data["geetest"]["gt"]
+                case "phone":
+                    logger.info(f"绑定手机号为 {data['phone']['tel']}")
+                    pass
+                    logger.error("【获取流水】流水获取失败! phone 类型暂不支持")
+                    return 2
+                case "sms":
+                    logger.error("【获取流水】流水获取失败! sms 类型暂不支持")
+                    return 2
+                case "biliword":
+                    logger.error("【获取流水】流水获取失败! biliword 类型暂不支持")
+                    return 2
             logger.info(f"【获取流水】流水获取成功! 流水号: {self.challenge}")
             return 0
 
