@@ -284,11 +284,15 @@ class Bilibili:
                 "validate": validate,
             }
         elif validate_mode == "phone":
-            params = {
-                "code": self.phone,
-                "csrf": self.net.GetCookie()["bili_jct"],
-                "token": self.token,
-            }
+            if self.phone != "":
+                params = {
+                    "code": self.phone,
+                    "csrf": self.net.GetCookie()["bili_jct"],
+                    "token": self.token,
+                }
+            else:
+                logger.error("【校验】你没有配置实名手机号! 怎么办呢?")
+                return False
         else:
             return False
 

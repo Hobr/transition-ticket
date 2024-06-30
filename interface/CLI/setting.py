@@ -63,10 +63,10 @@ class SettingCli:
 
         selects: 可选择项目
         """
-        selects.append("新建配置")
+        selects.append("新建系统配置")
         select = self.data.Inquire(type="List", message="请选择加载的设置配置", choices=selects)
 
-        if select == "新建配置":
+        if select == "新建系统配置":
             return self.Generate()
 
         else:
@@ -90,6 +90,18 @@ class SettingCli:
                 default="35.0",
             )
             return float(time)
+
+        @logger.catch
+        def SleepStep() -> float:
+            """
+            请求间隔
+            """
+            interval = self.data.Inquire(
+                type="Text",
+                message="请输入创建订单请求间隔时间(单位:秒), 太快会被风控!",
+                default="1.0",
+            )
+            return float(interval)
 
         @logger.catch
         def NoticeStep() -> tuple[bool, bool, bool, str]:
@@ -140,6 +152,7 @@ class SettingCli:
 
         print("下面开始配置设置!")
         self.config["request"]["gold"] = GoldStep()
+        self.config["request"]["sleep"] = SleepStep()
         (
             self.config["notice"]["system"],
             self.config["notice"]["sound"],

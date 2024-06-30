@@ -162,11 +162,6 @@ class UserCli:
                 type="Text",
                 message="请输入你的B站号绑定的手机号, 如果错误有可能无法通过验证码!",
             )
-
-            if len(phone) != 11:
-                logger.error("【绑定手机号】手机号码长度错误!")
-                return PhoneStep()
-
             return phone
 
         @logger.catch
