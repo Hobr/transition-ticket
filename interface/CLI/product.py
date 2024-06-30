@@ -136,7 +136,7 @@ class ProductCli:
                     message="请选择价位",
                     choices=list(lists.keys()),
                 )
-                return lists[select], select.split('(')[0].strip()
+                return lists[select], select.split("(")[0].strip()
 
             except InfoException:
                 logger.exception("请重新配置活动信息!")

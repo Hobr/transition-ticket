@@ -25,6 +25,7 @@ class Bilibili:
         buyer: dict,
         orderType: int = 1,
         count: int = 1,
+        goldTime: float = 35.0,
     ):
         """
         初始化
@@ -36,6 +37,7 @@ class Bilibili:
         buyer: 购买者信息
         orderType: 订单类型
         count: 购买数量
+        goldTime: 开票黄金时间
         """
         self.net = net
 
@@ -46,6 +48,7 @@ class Bilibili:
 
         self.orderType = orderType
         self.count = count
+        self.goldTime = goldTime
 
         self.scene = "neul-next"
         self.screenPath = 0
@@ -292,8 +295,13 @@ class Bilibili:
             else:
                 logger.error(f"【校验】{code}: {res['message']}")
                 return False
+
+        # TODO
         elif validate_mode == "phone":
-            pass
+            return False
+
+        else:
+            return False
 
     @logger.catch
     def CreateOrder(self) -> int:
@@ -344,7 +352,7 @@ class Bilibili:
 
         # 库存不足 219,100009
         elif code in [219, 100009]:
-            if self.data.TimestampCheck(timestamp=self.saleStart, duration=15):
+            if self.data.TimestampCheck(timestamp=self.saleStart, duration=self.goldTime):
                 logger.warning("【创建订单】目前处于开票15分钟黄金期, 已为您忽略无票提示!")
                 return 3
             else:

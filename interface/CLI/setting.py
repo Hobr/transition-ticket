@@ -29,6 +29,8 @@ class SettingCli:
         self.config = {
             # 网络
             "request": {
+                # 开票黄金时间
+                "gold": 35.0,
                 # 请求间隔
                 "sleep": 1.0,
                 # 超时
@@ -46,6 +48,11 @@ class SettingCli:
                 "wechat": False,
                 # Plus Push Token
                 "plusPush": "",
+            },
+            # 开发者
+            "dev": {
+                # 开发者模式
+                "debug": False,
             },
         }
 
@@ -73,47 +80,16 @@ class SettingCli:
         """
 
         @logger.catch
-        def SleepStep() -> float:
+        def GoldStep() -> float:
             """
-            请求间隔
+            开票黄金时间
             """
-            interval = self.data.Inquire(
+            time = self.data.Inquire(
                 type="Text",
-                message="请输入创建订单请求间隔时间(单位:秒), 太快会被风控!",
-                default="1.0",
+                message="请输入开票黄金时间(单位:分钟), 在开票后的相应时间内会无视无票提示",
+                default="35.0",
             )
-            return float(interval)
-
-        @logger.catch
-        def TimeoutStep() -> float:
-            """
-            超时
-            """
-            timeout = self.data.Inquire(
-                type="Text",
-                message="请输入请求超时时间(单位:秒)",
-                default="3.0",
-            )
-            return float(timeout)
-
-        @logger.catch
-        def ProxyStep() -> str | None:
-            """
-            代理
-            """
-            select = self.data.Inquire(
-                type="Confirm",
-                message="是否使用代理, 默认为否",
-                default=False,
-            )
-            if select:
-                proxy = self.data.Inquire(
-                    type="Text",
-                    message="请输入代理地址",
-                    default="http://xxxx.xxx:8080",
-                )
-                return proxy
-            return None
+            return float(time)
 
         @logger.catch
         def NoticeStep() -> tuple[bool, bool, bool, str]:
@@ -163,9 +139,7 @@ class SettingCli:
             return filename
 
         print("下面开始配置设置!")
-        self.config["request"]["sleep"] = SleepStep()
-        self.config["request"]["timeout"] = TimeoutStep()
-        self.config["request"]["proxy"] = ProxyStep()
+        self.config["request"]["gold"] = GoldStep()
         (
             self.config["notice"]["system"],
             self.config["notice"]["sound"],

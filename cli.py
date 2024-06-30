@@ -48,8 +48,6 @@ if __name__ == "__main__":
         colorize=False,
         enqueue=True,
         encoding="utf-8",
-        # 日志保留份数
-        retention=3,
         # 调试
         backtrace=True,
         diagnose=True,
@@ -78,6 +76,7 @@ if __name__ == "__main__":
         header=userConfig["header"],
         timeout=settingConfig["request"]["timeout"],
         proxy=settingConfig["request"]["proxy"],
+        isDebug=settingConfig["dev"]["debug"],
     )
 
     job = Task(
@@ -88,6 +87,7 @@ if __name__ == "__main__":
         screenId=productConfig["screenId"],
         skuId=productConfig["skuId"],
         buyer=userConfig["buyer"],
+        goldTime=settingConfig["request"]["gold"],
     )
 
     # job.DrawFSM()

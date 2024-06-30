@@ -22,6 +22,7 @@ class Task:
         screenId: int,
         skuId: int,
         buyer: dict,
+        goldTime: float,
     ):
         """
         初始化
@@ -33,12 +34,13 @@ class Task:
         screenId: 场次ID
         skuId: 商品ID
         buyer: 购买者信息
+        goldTime: 开票黄金时间
         """
 
         self.net = net
         self.cap = cap
         self.sleep = sleep
-        self.api = Bilibili(net=self.net, projectId=projectId, screenId=screenId, skuId=skuId, buyer=buyer)
+        self.api = Bilibili(net=self.net, projectId=projectId, screenId=screenId, skuId=skuId, buyer=buyer, goldTime=goldTime)
 
         self.states = [
             State(name="开始"),
@@ -174,7 +176,7 @@ class Task:
         """
         start_time = self.api.GetSaleStartTime()
         countdown = start_time - int(time())
-        logger.info(f"【等待开票】本机时间已校准!")
+        logger.info("【等待开票】本机时间已校准!")
 
         if countdown > 0:
             logger.warning("【等待开票】请确保本机时间是北京时间, 服务器用户尤其要注意!")

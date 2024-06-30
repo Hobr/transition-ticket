@@ -61,7 +61,7 @@ ignore = ["B006", "S311", "S501"]
 max-complexity = 12
 
 [tool.ruff.lint.pylint]
-max-args = 8
+max-args = 9
 allow-magic-value-types = ["int","str"]
 
 [build-system]
