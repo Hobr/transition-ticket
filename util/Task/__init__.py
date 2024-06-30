@@ -199,7 +199,7 @@ class Task:
                     logger.info(f"【等待开票】即将开票! 需要等待 {countdown} 秒")
                     sleep(1)
                     countdown -= 1
-            
+
             if countdown == 0:
                 logger.info("【等待开票】等待结束! 开始抢票")
 
@@ -229,15 +229,18 @@ class Task:
         """
         验证码
 
-        返回值: True-成功, False-失败
+        返回值: 0-成功, 1-取消验证, 2-失败
         """
-        # 获取流水成功
-        if self.api.RiskInfo():
-            challenge = self.api.GetRiskChallenge()
-            validate = self.cap.Geetest(challenge)
-            self.riskProcessResult = self.api.RiskValidate(validate)
-        else:
-            self.riskProcessResult = False
+        match self.api.RiskInfo():
+            case 0:
+                challenge = self.api.GetRiskChallenge()
+                validate = self.cap.Geetest(challenge)
+                self.riskProcessResult = self.api.RiskValidate(validate)
+                self.riskProcessResult = True
+            case 1:
+                self.riskProcessResult = True
+            case 2:
+                self.riskProcessResult = False
 
     @logger.catch
     def QueryTicketAction(self) -> None:

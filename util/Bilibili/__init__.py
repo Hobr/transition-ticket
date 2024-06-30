@@ -196,11 +196,11 @@ class Bilibili:
             return False
 
     @logger.catch
-    def RiskInfo(self) -> bool:
+    def RiskInfo(self) -> int:
         """
         获取流水
 
-        返回: True-成功, False-失败
+        返回: 0-成功, 1-取消验证, 2-失败
         """
         logger.info("【获取流水】正在尝试获取流水...")
 
@@ -226,12 +226,17 @@ class Bilibili:
             self.challenge = data["geetest"]["challenge"]
             self.gt = data["geetest"]["gt"]
             logger.info(f"【获取流水】流水获取成功! 流水号: {self.challenge}")
-            return True
+            return 0
+
+        # 获取其他地方验证了, 无需验证
+        elif code == 100000:
+            logger.info("【获取流水】你是双开/在其他地方验证了吗? 视作已验证处理")
+            return 1
 
         # 失败
         else:
             logger.error(f"【获取流水】{code}: {res['message']}")
-            return False
+            return 2
 
     @logger.catch
     def GetRiskChallenge(self) -> str:
@@ -322,19 +327,17 @@ class Bilibili:
 
         # 库存不足 219,100009
         elif code in [219, 100009]:
-            logger.warning("【创建订单】库存不足!")
-            return 2
+            if self.data.TimestampCheck(timestamp=self.saleStart, duration=15):
+                logger.warning("【创建订单】目前处于开票15分钟黄金期, 已为您忽略无票提示!")
+                return 3
+            else:
+                logger.warning("【创建订单】库存不足!")
+                return 2
 
         # 存在未付款订单
         elif code in [100079, 100048]:
             logger.error("【创建订单】存在未付款/未完成订单! 请尽快付款")
             sleep(0.5)
-            return 3
-
-        # 硬控
-        elif code == 3:
-            logger.error("【创建订单】触发ERROR 3, 需要歇5秒")
-            sleep(5)
             return 3
 
         # 订单已存在/已购买
