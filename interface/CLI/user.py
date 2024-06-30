@@ -132,9 +132,13 @@ class UserCli:
 
                 select = self.data.Inquire(
                     type="Checkbox",
-                    message="请选择购票人",
+                    message="请选择购票人, 按空格勾选, 完成后回车, 请确认该活动最多支持几人购票!",
                     choices=list(choice.keys()),
                 )
+
+                if len(select) == 0:
+                    logger.error("【选择购买人】没人购买是吧?")
+                    return BuyerStep()
 
                 dist = []
                 for i in select:

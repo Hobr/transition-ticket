@@ -104,7 +104,7 @@ class SettingCli:
             }
             select = self.data.Inquire(
                 type="Checkbox",
-                message="抢票成功通知方式",
+                message="抢票成功通知方式, 按空格勾选",
                 choices=[
                     ("系统提醒", "system"),
                     ("音频提醒", "sound"),
