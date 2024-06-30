@@ -116,7 +116,7 @@ class ProductCli:
                 sys.exit()
 
         @logger.catch
-        def SkuStep(screenId: int) -> int:
+        def SkuStep(screenId: int) -> tuple:
             """
             价位
 
@@ -135,7 +135,7 @@ class ProductCli:
                     message="请选择价位",
                     choices=list(lists.keys()),
                 )
-                return lists[select]
+                return lists[select], select.split('(')[0].strip()
 
             except InfoException:
                 logger.exception("请重新配置活动信息!")
@@ -161,8 +161,9 @@ class ProductCli:
         self.config["projectId"] = ProjectStep()
         self.info = Info(net=self.net, pid=self.config["projectId"])
         self.config["screenId"] = ScreenStep()
-        self.config["skuId"] = SkuStep(screenId=self.config["screenId"])
+        skuId, skuSelected = SkuStep(screenId=self.config["screenId"])
+        self.config["skuId"] = skuId
 
-        self.conf.Save(FilenameStep(name=self.info.Project()["name"]), self.config)
+        self.conf.Save(FilenameStep(name=f"{self.info.Project()['name']} ({skuSelected})"), self.config)
         logger.info("【商品配置初始化】配置已保存!")
         return self.config
