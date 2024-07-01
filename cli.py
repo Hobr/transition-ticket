@@ -18,11 +18,11 @@ def cleanup_meipass() -> None:
         except Exception as e:
             print(f"清理失败 {meipass_path}: {e}")
 
+
 atexit.register(cleanup_meipass)
 
 if __name__ == "__main__":
     while True:
-
         # 丢锅
         print(
             """

@@ -196,7 +196,7 @@ class Task:
 
                 # 准点退出循环
                 elif countdown < 1:
-                    logger.info(f"【等待开票】即将开票!")
+                    logger.info("【等待开票】即将开票!")
                     sleep(countdown)
 
             if countdown == 0:
