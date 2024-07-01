@@ -385,7 +385,6 @@ class Login:
         self.cookie = self.net.GetCookie()
         return self.Status()
 
-    @logger.catch
     def Cookie(self, cookie: str) -> dict:
         """
         Cookie登录
@@ -395,7 +394,6 @@ class Login:
         self.cookie = self.data.StrCookieFormat(cookie)
         return self.Status()
 
-    @logger.catch
     def Status(self) -> dict:
         """
         登录状态
@@ -410,10 +408,7 @@ class Login:
             if user["data"]["isLogin"]:
                 return self.cookie
             else:
-                logger.error("【登录状态检测】登录失败")
-                logger.warning("程序正在准备退出...")
-                sleep(5)
-                sys.exit()
+                raise LoginException("登录状态检测失败")
 
         else:
             logger.info("【登录状态检测】已关闭")
