@@ -234,7 +234,7 @@ class Bilibili:
                     logger.info(f"【验证】验证类型为极验验证码! 流水号: {self.challenge}")
                     return 0
                 case "phone":
-                    logger.info(f"【验证】验证类型为手机号确认验证! 绑定手机号为 {data['phone']['tel']}")
+                    logger.info(f"【验证】验证类型为手机号确认验证! 绑定手机号: {data['phone']['tel']}")
                     return 1
                 case "sms":
                     logger.error("【验证】sms 验证暂不支持")
@@ -289,7 +289,7 @@ class Bilibili:
                     "token": self.token,
                 }
             else:
-                logger.error("【校验】你没有配置实名手机号! 怎么办呢?")
+                logger.error("【验证】你没有配置实名手机号! 怎么办呢?")
                 return False
         else:
             return False
@@ -302,13 +302,13 @@ class Bilibili:
             self.risked = True
             cookie = self.net.GetCookie()
             cookie["x-bili-gaia-vtoken"] = self.token
-            logger.info("【校验】校验成功!")
+            logger.info("【验证】验证成功!")
             self.net.RefreshCookie(cookie)
             return True
 
         # 失败
         else:
-            logger.error(f"【校验】{code}: {res['message']}")
+            logger.error(f"【验证】{code}: {res['message']}")
             return False
 
     @logger.catch
