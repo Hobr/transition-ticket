@@ -304,6 +304,7 @@ class Bilibili:
             self.risked = True
             cookie = self.net.GetCookie()
             cookie["x-bili-gaia-vtoken"] = self.token
+            logger.info("【校验】校验成功!")
             self.net.RefreshCookie(cookie)
             return True
 
@@ -362,7 +363,7 @@ class Bilibili:
         # 库存不足 219,100009
         elif code in [219, 100009]:
             if self.data.TimestampCheck(timestamp=self.saleStart, duration=self.goldTime):
-                logger.warning("【创建订单】目前处于开票15分钟黄金期, 已为您忽略无票提示!")
+                logger.warning(f"【创建订单】目前处于开票{self.goldTime}分钟黄金期, 已为您忽略无票提示!")
                 return 3
             else:
                 logger.warning("【创建订单】库存不足!")
