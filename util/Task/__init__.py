@@ -189,18 +189,18 @@ class Task:
                     sleep(5)
                     countdown -= 5
 
-                elif 60 > countdown >= 1:
-                    logger.info(f"【等待开票】即将开票! 需要等待 {countdown} 秒")
+                elif 60 > countdown > 1:
+                    logger.info(f"【等待开票】即将开票! 需要等待 {countdown-1} 秒")
                     sleep(1)
                     countdown -= 1
 
                 # 准点退出循环
                 elif countdown < 1:
+                    logger.info(f"【等待开票】即将开票!")
                     sleep(countdown)
 
             if countdown == 0:
                 logger.info("【等待开票】等待结束! 开始抢票")
-                # 防止本机时间校准偏移
                 sleep(0.003)
         else:
             logger.info("【等待开票】已开票! 开始进入抢票模式")
