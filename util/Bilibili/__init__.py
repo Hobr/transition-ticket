@@ -87,18 +87,17 @@ class Bilibili:
             "newRisk": True,
         }
         res = self.net.Response(method="post", url=url, params=params)
-        data = res["data"]
         code = res["errno"]
 
         # 成功
         if code == 0:
             logger.success("【获取Token】Token获取成功!")
-            self.token = data["token"]
+            self.token = res["data"]["token"]
             return 0
 
         # 风控
         elif code == -401:
-            riskParams = data["ga_data"]["riskParams"]
+            riskParams = res["data"]["ga_data"]["riskParams"]
             self.mid = riskParams["mid"]
             self.decisionType = riskParams["decision_type"]
             self.buvid = riskParams["buvid"]
@@ -135,12 +134,11 @@ class Bilibili:
         """
         url = f"https://show.bilibili.com/api/ticket/project/getV2?version=134&id={self.projectId}&project_id={self.projectId}&requestSource={self.scene}"
         res = self.net.Response(method="get", url=url)
-        data = res["data"]
         code = res["errno"]
 
         # 成功
         if code == 0:
-            for _i, screen in enumerate(data["screen_list"]):
+            for _i, screen in enumerate(res["data"]["screen_list"]):
                 if screen["id"] == self.screenId:
                     for _j, sku in enumerate(screen["ticket_list"]):
                         if sku["id"] == self.skuId:
@@ -162,11 +160,11 @@ class Bilibili:
         logger.info("【获取票数】正在蹲票...")
         url = f"https://show.bilibili.com/api/ticket/project/getV2?version=134&id={self.projectId}&project_id={self.projectId}&requestSource={self.scene}"
         res = self.net.Response(method="get", url=url)
-        data = res["data"]
         code = res["errno"]
 
         # 成功
         if code == 0:
+            data = res["data"]
             # 有保存Sku位置
             if data["screen_list"][self.screenPath]["ticket_list"][self.skuPath]["id"] == self.skuId:
                 self.cost = data["screen_list"][self.screenPath]["ticket_list"][self.skuPath]["price"]
@@ -223,11 +221,11 @@ class Bilibili:
             "v_voucher": self.voucher,
         }
         res = self.net.Response(method="post", url=url, params=params)
-        data = res["data"]
         code = res["code"]
 
         # 成功
         if code == 0:
+            data = res["data"]
             self.token = data["token"]
             match data["type"]:
                 case "geetest":
@@ -251,7 +249,7 @@ class Bilibili:
         # 获取其他地方验证了, 无需验证
         elif code == 100000:
             logger.info("【获取流水】你是双开/在其他地方验证了吗? 视作已验证处理")
-            return 1
+            return 2
 
         # 失败
         else:
@@ -345,13 +343,12 @@ class Bilibili:
             "requestSource": self.scene,
         }
         res = self.net.Response(method="post", url=url, params=params)
-        data = res["data"]
         code = res["errno"]
 
         # 成功
         if code == 0:
-            self.orderId = data["orderId"]
-            self.orderToken = data["token"]
+            self.orderId = res["data"]["orderId"]
+            self.orderToken = res["data"]["token"]
             logger.success("【创建订单】订单创建成功!")
             return 0
 

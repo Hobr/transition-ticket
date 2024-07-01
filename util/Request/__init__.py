@@ -96,7 +96,7 @@ class Request:
                 methods[method](url=url, **({"params": params} if method == "get" else {"data": params}))
                 return {}
 
-        except httpx.RequestError as e:
+        except (httpx.RequestError, httpx.HTTPStatusError, httpx.StreamError) as e:
             return {"code": 114514, "errno": 114515, "msg": f"请求错误: {e}", "message": f"请求错误: {e}"}
 
     @logger.catch
