@@ -54,12 +54,6 @@ jobs:
       - name: Package
         run: poetry run pyinstaller --clean --noconfirm --log-level WARN cli.spec
 
-      - name: Upload Artifact
-        uses: actions/upload-artifact@v4
-        with:
-          name: dist-${{ matrix.os }}
-          path: dist
-
       - name: Rename Release Files with Tag on Ubuntu/MacOS
         if: matrix.os != 'windows-latest'
         run: |
