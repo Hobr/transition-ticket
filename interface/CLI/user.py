@@ -71,7 +71,8 @@ class UserCli:
             mode = self.data.Inquire(
                 type="List",
                 message="请选择B站账号登录模式",
-                choices=["扫描二维码", "浏览器登录", "账号密码登录", "手机验证码登录", "手动输入Cookie"],
+                # choices=["扫描二维码", "浏览器登录", "账号密码登录", "手机验证码登录", "手动输入Cookie"],
+                choices=["扫描二维码", "浏览器登录", "手动输入Cookie"],
             )
 
             try:
