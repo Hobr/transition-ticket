@@ -52,6 +52,7 @@ class Bilibili:
         self.count = count
         self.goldTime = goldTime
 
+        self.err3 = 4.38
         self.scene = "neul-next"
         self.screenPath = 0
         self.skuPath = 0
@@ -335,10 +336,10 @@ class Bilibili:
             "pay_money": self.cost * self.count,
             "order_type": self.orderType,
             "timestamp": timestamp,
-            "buyer_info": f"{json.dumps(self.buyer)}",
+            "buyer_info": json.dumps(self.buyer),
             "token": self.token,
             "deviceId": "",
-            "clickPosition": json.dumps(clickPosition),
+            "clickPosition": clickPosition,
             "newRisk": True,
             "requestSource": self.scene,
         }
@@ -361,6 +362,7 @@ class Bilibili:
         elif code in [219, 100009]:
             if self.data.TimestampCheck(timestamp=self.saleStart, duration=self.goldTime):
                 logger.warning(f"【创建订单】目前处于开票{self.goldTime}分钟黄金期, 已为您忽略无票提示!")
+                sleep(self.err3)
                 return 3
             else:
                 logger.warning("【创建订单】库存不足!")
@@ -370,6 +372,12 @@ class Bilibili:
         elif code in [100079, 100048]:
             logger.error("【创建订单】存在未付款/未完成订单! 请尽快付款")
             sleep(0.5)
+            return 3
+
+        # 硬控
+        elif code == 3:
+            logger.error("【创建订单】被硬控了, 需等待几秒钟")
+            sleep(self.err3)
             return 3
 
         # 订单已存在/已购买

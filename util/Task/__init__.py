@@ -18,7 +18,6 @@ class Task:
         net: Request,
         cap: Captcha,
         api: Bilibili,
-        sleep: int,
     ):
         """
         初始化
@@ -26,13 +25,11 @@ class Task:
         net: 网络实例
         cap: 验证码实例
         api: Bilibili实例
-        sleep: 任务间请求间隔时间
         """
 
         self.net = net
         self.cap = cap
         self.api = api
-        self.sleep = sleep
 
         self.states = [
             State(name="开始"),
@@ -221,8 +218,8 @@ class Task:
             self.queryCache = True
 
         # 防风控
-        else:
-            sleep(self.sleep)
+        if self.queryTokenResult == 3:
+            sleep(0.35)
 
     @logger.catch
     def RiskProcessAction(self) -> None:
@@ -252,9 +249,9 @@ class Task:
         """
         self.queryTicketResult = self.api.QueryAmount()
 
+        # 防风控
         if not self.queryTicketResult:
-            # 防风控
-            sleep(self.sleep)
+            sleep(0.35)
 
     @logger.catch
     def CreateOrderAction(self) -> None:
@@ -265,9 +262,9 @@ class Task:
         """
         self.createOrderResult = self.api.CreateOrder()
 
-        if self.createOrderResult != 0:
+        if self.createOrderResult in [2, 3]:
             # 防风控
-            sleep(self.sleep)
+            sleep(0.35)
 
     @logger.catch
     def CreateStatusAction(self) -> None:

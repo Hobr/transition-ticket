@@ -145,7 +145,7 @@ class Request:
         # 错误
         if response.status_code != 200:
             if response.status_code == 412:
-                logger.error("【Request响应】IP被B站封禁止(412风控)!!!!! 下面暂停工作30秒, 请更换IP后再次使用(重启路由器/使用手机流量热点/代理...)")
+                logger.error("【Request响应】IP被B站封禁(412风控)!!!!! 下面暂停工作30秒, 请更换IP后再次使用(重启路由器/使用手机流量热点/代理...)")
                 sleep(30)
 
             # 等于100001

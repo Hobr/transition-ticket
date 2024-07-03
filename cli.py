@@ -96,7 +96,6 @@ if __name__ == "__main__":
             net=net,
             cap=cap,
             api=api,
-            sleep=settingConfig["request"]["sleep"],
         )
 
         # job.DrawFSM()

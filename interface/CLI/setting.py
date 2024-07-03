@@ -31,8 +31,6 @@ class SettingCli:
             "request": {
                 # 开票黄金时间
                 "gold": 35.0,
-                # 请求间隔
-                "sleep": 1.0,
                 # 超时
                 "timeout": 3.0,
                 # 代理
@@ -88,22 +86,10 @@ class SettingCli:
             """
             time = self.data.Inquire(
                 type="Text",
-                message="请输入开票黄金时间(单位:分钟), 在开票后的相应时间内会无视无票提示",
+                message="请输入开票黄金时间(单位:分钟), 在开票后的相应时间内会无视无票提示且自动规避ERR3",
                 default="35.0",
             )
             return float(time)
-
-        @logger.catch
-        def SleepStep() -> float:
-            """
-            请求间隔
-            """
-            interval = self.data.Inquire(
-                type="Text",
-                message="请输入创建订单请求间隔时间(单位:秒), 太快会被风控!",
-                default="1.0",
-            )
-            return float(interval)
 
         @logger.catch
         def NoticeStep() -> tuple[bool, bool, bool, str]:
@@ -154,7 +140,6 @@ class SettingCli:
 
         print("下面开始配置设置!")
         self.config["request"]["gold"] = GoldStep()
-        self.config["request"]["sleep"] = SleepStep()
         (
             self.config["notice"]["system"],
             self.config["notice"]["sound"],
