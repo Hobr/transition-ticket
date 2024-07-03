@@ -90,25 +90,25 @@ dev = ["freezegun (>=1.0,<2.0)", "pytest (>=6.0)", "pytest-cov"]
 
 [[package]]
 name = "bili-ticket-gt-python"
-version = "0.2.6"
+version = "0.2.7"
 description = ""
 optional = false
 python-versions = ">=3.8"
 files = [
-    {file = "bili_ticket_gt_python-0.2.6-cp310-cp310-macosx_11_0_arm64.whl", hash = "sha256:1a62c8c3320a6e7aec191ea832b5e208af45c88f82bd2889f8b77e46393b927e"},
-    {file = "bili_ticket_gt_python-0.2.6-cp310-cp310-manylinux_2_35_x86_64.whl", hash = "sha256:5cca6602a9f9aec36584b52f2cbc644064c5141c8ac7d1617c674758f6459503"},
-    {file = "bili_ticket_gt_python-0.2.6-cp310-none-win_amd64.whl", hash = "sha256:0bd4e8f90853b999429ccca6042164d92d3dda12ffee6c047cc0fb99380f9ff0"},
-    {file = "bili_ticket_gt_python-0.2.6-cp311-cp311-macosx_10_12_x86_64.whl", hash = "sha256:10122d38e650fb25e1c09b8c1edb169b54b887ad52eb6231eb512249b31d8a91"},
-    {file = "bili_ticket_gt_python-0.2.6-cp311-cp311-macosx_11_0_arm64.whl", hash = "sha256:1f447862fa09c19018014fb3fdf2de03dd361d57c5d31e6048a2b80050ce9ea6"},
-    {file = "bili_ticket_gt_python-0.2.6-cp311-none-win_amd64.whl", hash = "sha256:d06a12cc1d44856c0d41d547c907180feff2d4af9233d2c00630042dc58458d1"},
-    {file = "bili_ticket_gt_python-0.2.6-cp312-cp312-macosx_10_12_x86_64.whl", hash = "sha256:d9a7f493f8fc471c2c091d089133e03f7c2c2277f40be91cd309a9d224701dfc"},
-    {file = "bili_ticket_gt_python-0.2.6-cp312-cp312-macosx_11_0_arm64.whl", hash = "sha256:f0994d4edc84dc866137ca0fe5b4b1569f6bf6f8b42e0427cd93b5a393e11967"},
-    {file = "bili_ticket_gt_python-0.2.6-cp312-cp312-manylinux_2_35_x86_64.whl", hash = "sha256:124347c61f5df4945877fb963ef17fff99bc25557ca1fcdc16e9fe7c52cf83c8"},
-    {file = "bili_ticket_gt_python-0.2.6-cp312-none-win_amd64.whl", hash = "sha256:1080877c8408478c96644f848cecda48622bd811e51e9928d751db4434c4a9e5"},
-    {file = "bili_ticket_gt_python-0.2.6-cp38-none-win_amd64.whl", hash = "sha256:202c19b406eadd060b03a11110a82585e714bfda9338f3ab4e2e9683167b9d1c"},
-    {file = "bili_ticket_gt_python-0.2.6-cp39-cp39-macosx_11_0_arm64.whl", hash = "sha256:39a99ef3921306c9085471cf4820bfbb1522e21b9a5f24612580fd03a691c489"},
-    {file = "bili_ticket_gt_python-0.2.6-cp39-none-win_amd64.whl", hash = "sha256:7e69650139ba8c87dc6ab49a7136993126b3987e600f261f291e07a67ea1989f"},
-    {file = "bili_ticket_gt_python-0.2.6.tar.gz", hash = "sha256:39ffcd1bed6ad2f6ea01ef1490e94bc703f0a51cb3564ac68d38707f20eee894"},
+    {file = "bili_ticket_gt_python-0.2.7-cp310-cp310-macosx_11_0_arm64.whl", hash = "sha256:dc1ce4f70ed7556f6f558b31dfa9dce50dc94b05cf201e908e71519d3ec8f97b"},
+    {file = "bili_ticket_gt_python-0.2.7-cp310-cp310-manylinux_2_35_x86_64.whl", hash = "sha256:8c41d0d4f130ac8d846741b86682c614b9606c0c41e36b4ad4d7f2e980b421e1"},
+    {file = "bili_ticket_gt_python-0.2.7-cp310-none-win_amd64.whl", hash = "sha256:0f5f2ab9e35cb4a94fa8cceb9a5bff95aacc2106b19590213fe0b990ea5427f5"},
+    {file = "bili_ticket_gt_python-0.2.7-cp311-cp311-macosx_10_12_x86_64.whl", hash = "sha256:7f433cd6c74afaa6e21e644200d15b34dd7dd04ee823084372b0476187d05728"},
+    {file = "bili_ticket_gt_python-0.2.7-cp311-cp311-macosx_11_0_arm64.whl", hash = "sha256:a9d2566ff723512a0585a9e4a4e041f85eb3fb1c21ba71ad5a64747e16cf4d48"},
+    {file = "bili_ticket_gt_python-0.2.7-cp311-none-win_amd64.whl", hash = "sha256:835a5e1d111af2de4292f8638c7e476008ca90d4ed9a9904c9af6c5dd55550fa"},
+    {file = "bili_ticket_gt_python-0.2.7-cp312-cp312-macosx_10_12_x86_64.whl", hash = "sha256:000198cc643b0a8358711006662d6207bfbe2a8b53a26bc61bfa51c7a8429576"},
+    {file = "bili_ticket_gt_python-0.2.7-cp312-cp312-macosx_11_0_arm64.whl", hash = "sha256:3c17222e1b454e196c3a58795640b1d48519f65036780e5776221f0762902f49"},
+    {file = "bili_ticket_gt_python-0.2.7-cp312-cp312-manylinux_2_35_x86_64.whl", hash = "sha256:638aff60325d5294d7ee375abf4f490b9c4492c5af27dab6954f00804ba7b614"},
+    {file = "bili_ticket_gt_python-0.2.7-cp312-none-win_amd64.whl", hash = "sha256:0a24bf2b567f5814eb8a699faf29a142a39c98f9078bfef11efd8a598b565b45"},
+    {file = "bili_ticket_gt_python-0.2.7-cp38-none-win_amd64.whl", hash = "sha256:90951816fc3f0d826431f91bd8a6f53e947090d19766424745d98921d8c47dc0"},
+    {file = "bili_ticket_gt_python-0.2.7-cp39-cp39-macosx_11_0_arm64.whl", hash = "sha256:738035fe155f308ecdf77482956442270e492f5d4ebb52a9c36b01736273ce21"},
+    {file = "bili_ticket_gt_python-0.2.7-cp39-none-win_amd64.whl", hash = "sha256:9eb815eda825e428fe8debf79de4adee975367847aee273987e2d8a035074586"},
+    {file = "bili_ticket_gt_python-0.2.7.tar.gz", hash = "sha256:f087bdfa18e971b1f7c8da26dacab2e69578293207a30da58f50f1ef3d5c9c7e"},
 ]
 
 [[package]]
