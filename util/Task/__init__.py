@@ -67,19 +67,19 @@ class Task:
             trigger="QueryToken",
             source="获取Token",
             dest="创建订单",
-            conditions=lambda: self.queryTokenResult == 0,
+            conditions=lambda: self.queryTokenCode == 0,
         )
         self.machine.add_transition(
             trigger="QueryToken",
             source="获取Token",
             dest="验证码",
-            conditions=lambda: self.queryTokenResult == 1,
+            conditions=lambda: self.queryTokenCode == 1,
         )
         self.machine.add_transition(
             trigger="QueryToken",
             source="获取Token",
             dest="获取Token",
-            conditions=lambda: self.queryTokenResult == 2,
+            conditions=lambda: self.queryTokenCode == 2,
         )
 
         # True-成功, False-失败
@@ -87,13 +87,13 @@ class Task:
             trigger="RiskProcess",
             source="验证码",
             dest="获取Token",
-            conditions=lambda: self.riskProcessResult is True,
+            conditions=lambda: self.riskProcessCode is True,
         )
         self.machine.add_transition(
             trigger="RiskProcess",
             source="验证码",
             dest="验证码",
-            conditions=lambda: self.riskProcessResult is False,
+            conditions=lambda: self.riskProcessCode is False,
         )
 
         # True-成功, False-失败
@@ -101,13 +101,13 @@ class Task:
             trigger="QueryTicket",
             source="等待余票",
             dest="创建订单",
-            conditions=lambda: self.queryTicketResult is True,
+            conditions=lambda: self.queryTicketCode is True,
         )
         self.machine.add_transition(
             trigger="QueryTicket",
             source="等待余票",
             dest="等待余票",
-            conditions=lambda: self.queryTicketResult is False,
+            conditions=lambda: self.queryTicketCode is False,
         )
 
         # 0-成功, 1-刷新, 2-等待, 3-失败
@@ -115,25 +115,25 @@ class Task:
             trigger="CreateOrder",
             source="创建订单",
             dest="创建订单状态",
-            conditions=lambda: self.createOrderResult == 0,
+            conditions=lambda: self.createOrderCode == 0,
         )
         self.machine.add_transition(
             trigger="CreateOrder",
             source="创建订单",
             dest="获取Token",
-            conditions=lambda: self.createOrderResult == 1,
+            conditions=lambda: self.createOrderCode == 1,
         )
         self.machine.add_transition(
             trigger="CreateOrder",
             source="创建订单",
             dest="等待余票",
-            conditions=lambda: self.createOrderResult == 2,
+            conditions=lambda: self.createOrderCode == 2,
         )
         self.machine.add_transition(
             trigger="CreateOrder",
             source="创建订单",
             dest="创建订单",
-            conditions=lambda: self.createOrderResult == 3,
+            conditions=lambda: self.createOrderCode == 3,
         )
 
         # True-成功, False-失败
@@ -141,15 +141,19 @@ class Task:
             trigger="CreateStatus",
             source="创建订单状态",
             dest="完成",
-            conditions=lambda: self.createStatusResult is True,
+            conditions=lambda: self.createStatusCode is True,
         )
         self.machine.add_transition(
             trigger="CreateStatus",
             source="创建订单状态",
             dest="创建订单",
-            conditions=lambda: self.createStatusResult is False,
+            conditions=lambda: self.createStatusCode is False,
         )
 
+        # 正常Sleep
+        self.normalSleep = 0.3
+        # ERR3 Sleep
+        self.errSleep = 4.88
         # 是否已缓存getV2
         self.queryCache = False
 
@@ -209,17 +213,13 @@ class Task:
 
         返回值: 0-成功, 1-风控, 2-未开票, 3-未知
         """
-        self.queryTokenResult = self.api.QueryToken()
+        self.queryTokenCode = self.api.QueryToken()
 
         # 顺路
         if not self.queryCache:
             logger.info("【刷新Token】已缓存商品信息")
             self.api.QueryAmount()
             self.queryCache = True
-
-        # 防风控
-        if self.queryTokenResult == 3:
-            sleep(0.35)
 
     @logger.catch
     def RiskProcessAction(self) -> None:
@@ -232,13 +232,13 @@ class Task:
             case 0:
                 challenge = self.api.GetRiskChallenge()
                 validate = self.cap.Geetest(challenge)
-                self.riskProcessResult = self.api.RiskValidate(validate=validate)
+                self.riskProcessCode = self.api.RiskValidate(validate=validate)
             case 1:
-                self.riskProcessResult = self.api.RiskValidate(validate_mode="phone")
+                self.riskProcessCode = self.api.RiskValidate(validate_mode="phone")
             case 2:
-                self.riskProcessResult = True
+                self.riskProcessCode = True
             case 3:
-                self.riskProcessResult = False
+                self.riskProcessCode = False
 
     @logger.catch
     def QueryTicketAction(self) -> None:
@@ -247,11 +247,7 @@ class Task:
 
         返回值: True-成功, False-失败
         """
-        self.queryTicketResult = self.api.QueryAmount()
-
-        # 防风控
-        if not self.queryTicketResult:
-            sleep(0.35)
+        self.queryTicketCode = self.api.QueryAmount()
 
     @logger.catch
     def CreateOrderAction(self) -> None:
@@ -260,11 +256,7 @@ class Task:
 
         返回值: 0-成功, 1-刷新, 2-等待, 3-失败
         """
-        self.createOrderResult = self.api.CreateOrder()
-
-        if self.createOrderResult in [2, 3]:
-            # 防风控
-            sleep(0.35)
+        self.createOrderCode = self.api.CreateOrder()
 
     @logger.catch
     def CreateStatusAction(self) -> None:
@@ -273,7 +265,7 @@ class Task:
 
         返回值: True-成功, False-失败
         """
-        self.createStatusResult = self.api.GetOrderStatus() if self.api.CreateOrderStatus() else False
+        self.createStatusCode = self.api.GetOrderStatus() if self.api.CreateOrderStatus() else False
 
     @logger.catch
     def DrawFSM(self) -> None:
@@ -298,6 +290,5 @@ class Task:
         }
 
         while self.state != "完成":  # type: ignore
-            sleep(0.15)
             self.trigger(job[self.state])  # type: ignore
         return True
