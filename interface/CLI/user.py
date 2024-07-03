@@ -44,7 +44,9 @@ class UserCli:
 
         selects: 可选择项目
         """
-        selects.append("新建用户配置")
+        if selects[-1] != "新建用户配置":
+            selects.append("新建用户配置")
+
         select = self.data.Inquire(type="List", message="请选择加载的用户配置", choices=selects)
 
         if select == "新建用户配置":

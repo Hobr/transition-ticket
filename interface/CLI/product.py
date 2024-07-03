@@ -48,7 +48,9 @@ class ProductCli:
 
         selects: 可选择项目
         """
-        selects.append("新建商品配置")
+        if selects[-1] != "新建商品配置":
+            selects.append("新建商品配置")
+
         select = self.data.Inquire(type="List", message="请选择加载的商品配置", choices=selects)
 
         if select == "新建商品配置":
