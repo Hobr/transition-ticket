@@ -52,7 +52,6 @@ class Bilibili:
         self.count = count
         self.goldTime = goldTime
 
-        self.err3 = 4.38
         self.scene = "neul-next"
         self.screenPath = 0
         self.skuPath = 0
@@ -75,7 +74,6 @@ class Bilibili:
         # 刚刚验证完
         else:
             url = f"https://show.bilibili.com/api/ticket/order/prepare?project_id={self.projectId}&token={self.token}&gaia_vtoken={self.token}"
-            self.risked = False
 
         params = {
             "project_id": self.projectId,
@@ -362,7 +360,6 @@ class Bilibili:
         elif code in [219, 100009]:
             if self.data.TimestampCheck(timestamp=self.saleStart, duration=self.goldTime):
                 logger.warning(f"【创建订单】目前处于开票{self.goldTime}分钟黄金期, 已为您忽略无票提示!")
-                sleep(self.err3)
                 return 3
             else:
                 logger.warning("【创建订单】库存不足!")
@@ -377,7 +374,6 @@ class Bilibili:
         # 硬控
         elif code == 3:
             logger.error("【创建订单】被硬控了, 需等待几秒钟")
-            sleep(self.err3)
             return 3
 
         # 订单已存在/已购买
