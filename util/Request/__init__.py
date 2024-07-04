@@ -1,6 +1,7 @@
 import logging
 from time import sleep
 
+import hishel
 import httpx
 from fake_useragent import UserAgent
 from loguru import logger
@@ -50,7 +51,7 @@ class Request:
             "User-Agent": UserAgent(os="android", platforms="mobile").random,
         } | header
 
-        self.session = httpx.Client(
+        self.session = hishel.CacheClient(
             cookies=self.cookie,
             headers=self.header,
             timeout=self.timeout,
@@ -66,6 +67,17 @@ class Request:
                 "request": [self.RequestHook],
                 "response": [self.ResponseHook],
             },
+            # 缓存
+            controller=hishel.Controller(
+                # 缓存请求模式
+                cacheable_methods=["GET", "POST"],
+                # 缓存状态码
+                cacheable_status_codes=[200],
+                # 无法新连接时读取缓存
+                allow_stale=False,
+                # 强制刷新缓存
+                always_revalidate=True,
+            ),
         )
 
         # 关闭Httpx自带日志
