@@ -44,13 +44,6 @@ optional = true
 graphviz = "^0.20.3"
 pygraphviz = "^1.13"
 
-[tool.poetry.group.doc]
-optional = true
-
-[tool.poetry.group.doc.dependencies]
-sphinx = "^7.3.7"
-recommonmark = "^0.7.1"
-
 [tool.ruff]
 line-length = 190
 

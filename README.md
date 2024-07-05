@@ -44,7 +44,6 @@ python cli.py
 - [ ] 显示版本号
 - [ ] 短信验证码错误修复
 - [ ] Header补充
-- [ ] UPX
 - [ ] 多种类型活动抢票
 - [ ] 图形界面(PySide6)
 
@@ -58,7 +57,7 @@ pip install poetry virtualenv
 
 virtualenv venv
 source venv/script/activate
-poetry install --with dev,doc,graph
+poetry install --with dev,graph
 pre-commit install
 
 # 更新
