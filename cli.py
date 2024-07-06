@@ -95,7 +95,6 @@ if __name__ == "__main__":
             buyer=userConfig["buyer"],
             count=len(userConfig["buyer"]),
             phone=userConfig["phone"],
-            sleep=settingConfig["request"]["sleep"],
         )
 
         job = Task(
@@ -103,6 +102,7 @@ if __name__ == "__main__":
             cap=cap,
             api=api,
             goldTime=settingConfig["request"]["gold"],
+            sleep=settingConfig["request"]["sleep"],
             isDebug=settingConfig["dev"]["debug"],
         )
 
