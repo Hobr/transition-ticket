@@ -1,8 +1,7 @@
 import json
-import sys
 import webbrowser
 from random import randint
-from time import sleep, time
+from time import time
 
 from loguru import logger
 
@@ -26,7 +25,6 @@ class Bilibili:
         phone: str,
         orderType: int = 1,
         count: int = 1,
-        goldTime: float = 35.0,
     ):
         """
         初始化
@@ -38,7 +36,6 @@ class Bilibili:
         buyer: 购买者信息
         orderType: 订单类型
         count: 购买数量
-        goldTime: 开票黄金时间
         """
         self.net = net
 
@@ -50,7 +47,6 @@ class Bilibili:
 
         self.orderType = orderType
         self.count = count
-        self.goldTime = goldTime
 
         self.scene = "neul-next"
         self.screenPath = 0
@@ -302,51 +298,6 @@ class Bilibili:
         if code == 0:
             self.orderId = res["data"]["orderId"]
             self.orderToken = res["data"]["token"]
-            logger.success("【创建订单】订单创建成功!")
-
-        # Token过期
-        elif "10005" in str(code):
-            logger.warning("【创建订单】Token过期! 即将重新获取")
-
-        # 库存不足 219,100009
-        elif code in [219, 100009]:
-            if self.data.TimestampCheck(timestamp=self.saleStart, duration=self.goldTime):
-                logger.warning(f"【创建订单】目前处于开票{self.goldTime}分钟黄金期, 已为您忽略无票提示!")
-            else:
-                logger.warning("【创建订单】库存不足!")
-
-        # 存在未付款订单
-        elif code in [100079, 100048]:
-            logger.error("【创建订单】存在未付款/未完成订单! 请尽快付款")
-
-        # 硬控
-        elif code == 3:
-            logger.error("【创建订单】被硬控了, 需等待几秒钟")
-
-        # 订单已存在/已购买
-        elif code == 100049:
-            logger.error("【创建订单】该项目每人限购1张, 已存在购买订单")
-            logger.warning("程序正在准备退出...")
-            sleep(5)
-            sys.exit()
-
-        # 本项目需要联系人信息
-        elif code == 209001:
-            logger.error("【创建订单】目前仅支持实名制一人一票类活动哦~(其他类型活动也用不着上脚本吧啊喂)")
-            logger.warning("程序正在准备退出...")
-            sleep(5)
-            sys.exit()
-
-        # 项目/票种不可售 等待开票
-        elif code in [100016, 100017]:
-            logger.error("【创建订单】该项目/票种目前不可售!")
-            logger.warning("程序正在准备退出...")
-            sleep(5)
-            sys.exit()
-
-        # 失败
-        else:
-            logger.error(f"【创建订单】{code}: {msg}")
 
         return code, msg
 

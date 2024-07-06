@@ -94,7 +94,6 @@ if __name__ == "__main__":
             skuId=productConfig["skuId"],
             buyer=userConfig["buyer"],
             count=len(userConfig["buyer"]),
-            goldTime=settingConfig["request"]["gold"],
             phone=userConfig["phone"],
         )
 
@@ -102,6 +101,7 @@ if __name__ == "__main__":
             net=net,
             cap=cap,
             api=api,
+            goldTime=settingConfig["request"]["gold"],
         )
 
         # job.DrawFSM()
