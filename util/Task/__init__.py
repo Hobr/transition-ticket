@@ -127,19 +127,19 @@ class Task:
             trigger="CreateOrder",
             source="创建订单",
             dest="获取Token",
-            conditions=lambda: self.createOrderCode == 1,
+            conditions=lambda: self.createOrderCode in range(100050, 100060),
         )
         self.machine.add_transition(
             trigger="CreateOrder",
             source="创建订单",
             dest="等待余票",
-            conditions=lambda: self.createOrderCode == 2,
+            conditions=lambda: self.createOrderCode == 219 | 100009 and not self.data.TimestampCheck(timestamp=self.api.saleStart, duration=self.goldTime),
         )
         self.machine.add_transition(
             trigger="CreateOrder",
             source="创建订单",
             dest="创建订单",
-            conditions=lambda: self.createOrderCode == 3,
+            conditions=lambda: self.createOrderCode != [0, 219, 100009, *range(100050, 100060)] or self.data.TimestampCheck(timestamp=self.api.saleStart, duration=self.goldTime),
         )
 
         # 创建订单状态结束
@@ -147,13 +147,13 @@ class Task:
             trigger="CreateStatus",
             source="创建订单状态",
             dest="完成",
-            conditions=lambda: self.createStatusCode is True,
+            conditions=lambda: self.createStatusCode == 0,
         )
         self.machine.add_transition(
             trigger="CreateStatus",
             source="创建订单状态",
             dest="创建订单",
-            conditions=lambda: self.createStatusCode is False,
+            conditions=lambda: self.createStatusCode != 0,
         )
 
         # 正常Sleep
