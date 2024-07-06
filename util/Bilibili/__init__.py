@@ -60,13 +60,14 @@ class Bilibili:
         self.risked = False
 
     @logger.catch
-    def QueryToken(self) -> int:
+    def QueryToken(self) -> tuple:
         """
         获取Token
 
-        返回: 0-成功, 1-风控, 2-未知
+        返回: 状态码
         """
         logger.info("【获取Token】正在尝试获取Token...")
+
         # 成功
         if not self.risked:
             url = f"https://show.bilibili.com/api/ticket/order/prepare?project_id={self.projectId}"
@@ -87,44 +88,25 @@ class Bilibili:
         }
         res = self.net.Response(method="post", url=url, params=params)
         code = res["errno"]
+        msg = res["msg"]
 
-        # 成功
-        if code == 0:
-            logger.success("【获取Token】Token获取成功!")
-            self.token = res["data"]["token"]
-            return 0
+        # 处理
+        match code:
+            # 成功
+            case 0:
+                self.token = res["data"]["token"]
+            # 验证
+            case -401:
+                riskParams = res["data"]["ga_data"]["riskParams"]
+                self.mid = riskParams["mid"]
+                self.decisionType = riskParams["decision_type"]
+                self.buvid = riskParams["buvid"]
+                self.ip = riskParams["ip"]
+                self.scene = riskParams["scene"]
+                self.ua = riskParams["ua"]
+                self.voucher = riskParams["v_voucher"]
 
-        # 风控
-        elif code == -401:
-            riskParams = res["data"]["ga_data"]["riskParams"]
-            self.mid = riskParams["mid"]
-            self.decisionType = riskParams["decision_type"]
-            self.buvid = riskParams["buvid"]
-            self.ip = riskParams["ip"]
-            self.scene = riskParams["scene"]
-            self.ua = riskParams["ua"]
-            self.voucher = riskParams["v_voucher"]
-            logger.error("【获取Token】需要验证! 下面进入自动过验证")
-            return 1
-
-        # projectID/ScreenId/SkuID错误
-        elif code in [100080, 100082]:
-            logger.error("【获取Token】项目/场次/价位不存在!")
-            logger.warning("程序正在准备退出...")
-            sleep(5)
-            sys.exit()
-
-        # 停售
-        elif code == 100039:
-            logger.error("【获取Token】早停售了你抢牛魔呢")
-            logger.warning("程序正在准备退出...")
-            sleep(5)
-            sys.exit()
-
-        # 未知
-        else:
-            logger.error(f"【获取Token】{code}: {res['msg']}")
-            return 2
+        return code, msg
 
     @logger.catch
     def GetSaleStartTime(self) -> int:

@@ -1,4 +1,5 @@
 import logging
+import sys
 from time import sleep, time
 
 from loguru import logger
@@ -62,7 +63,7 @@ class Task:
             dest="获取Token",
         )
 
-        # 0-成功, 1-验证码, 2-失败
+        # 获取Token结束
         self.machine.add_transition(
             trigger="QueryToken",
             source="获取Token",
@@ -73,16 +74,16 @@ class Task:
             trigger="QueryToken",
             source="获取Token",
             dest="验证码",
-            conditions=lambda: self.queryTokenCode == 1,
+            conditions=lambda: self.queryTokenCode == -401,
         )
         self.machine.add_transition(
             trigger="QueryToken",
             source="获取Token",
             dest="获取Token",
-            conditions=lambda: self.queryTokenCode == 2,
+            conditions=lambda: self.queryTokenCode not in [0, -401],
         )
 
-        # True-成功, False-失败
+        # 验证码结束
         self.machine.add_transition(
             trigger="RiskProcess",
             source="验证码",
@@ -96,7 +97,7 @@ class Task:
             conditions=lambda: self.riskProcessCode is False,
         )
 
-        # True-成功, False-失败
+        # 等待余票结束
         self.machine.add_transition(
             trigger="QueryTicket",
             source="等待余票",
@@ -110,7 +111,7 @@ class Task:
             conditions=lambda: self.queryTicketCode is False,
         )
 
-        # 0-成功, 1-刷新, 2-等待, 3-失败
+        # 创建订单结束
         self.machine.add_transition(
             trigger="CreateOrder",
             source="创建订单",
@@ -136,7 +137,7 @@ class Task:
             conditions=lambda: self.createOrderCode == 3,
         )
 
-        # True-成功, False-失败
+        # 创建订单状态结束
         self.machine.add_transition(
             trigger="CreateStatus",
             source="创建订单状态",
@@ -209,10 +210,35 @@ class Task:
     def QueryTokenAction(self) -> None:
         """
         获取Token
-
-        返回值: 0-成功, 1-风控, 2-未开票, 3-未知
         """
-        self.queryTokenCode = self.api.QueryToken()
+        self.queryTokenCode, msg = self.api.QueryToken()
+
+        match self.queryTokenCode:
+            # 成功
+            case 0:
+                logger.success("【获取Token】Token获取成功!")
+
+            # 验证
+            case -401:
+                logger.error("【获取Token】需要验证! 下面进入自动过验证")
+
+            # projectID/ScreenId/SkuID错误
+            case 100080 | 100082:
+                logger.error("【获取Token】项目/场次/价位不存在!")
+                logger.warning("程序正在准备退出...")
+                sleep(5)
+                sys.exit()
+
+            # 停售
+            case 100039:
+                logger.error("【获取Token】早停售了你抢牛魔呢")
+                logger.warning("程序正在准备退出...")
+                sleep(5)
+                sys.exit()
+
+            # 不知道
+            case _:
+                logger.error(f"【获取Token】{self.queryTokenCode}: {msg}")
 
         # 顺路
         if not self.queryCache:
