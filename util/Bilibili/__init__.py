@@ -1,5 +1,4 @@
 import json
-import webbrowser
 from random import randint
 from time import time
 
@@ -306,18 +305,7 @@ class Bilibili:
         """
         url = f"https://show.bilibili.com/api/ticket/order/createstatus?token={self.orderToken}&project_id={self.projectId}&orderId={self.orderId}"
         res = self.net.Response(method="get", url=url)
-        code = res["errno"]
-        msg = res["msg"]
-
-        # 成功
-        if code == 0:
-            logger.success("【创建订单状态】锁单成功!")
-
-        # 失败
-        else:
-            logger.error(f"【创建订单状态】{code}: {msg}")
-
-        return code, msg
+        return res["errno"], res["msg"]
 
     @logger.catch
     def GetOrderStatus(self) -> tuple:
@@ -326,16 +314,4 @@ class Bilibili:
         """
         url = f"https://show.bilibili.com/api/ticket/order/info?order_id={self.orderId}"
         res = self.net.Response(method="get", url=url)
-        code = res["errno"]
-        msg = res["msg"]
-
-        # 成功
-        if code == 0:
-            logger.success("【获取订单状态】请在打开的浏览器页面进行支付!")
-            webbrowser.open(f"https://show.bilibili.com/platform/orderDetail.html?order_id={self.orderId}")
-
-        # 失败
-        else:
-            logger.error(f"【获取订单状态】{code}: {msg}")
-
-        return code, msg
+        return res["errno"], res["msg"], self.orderId

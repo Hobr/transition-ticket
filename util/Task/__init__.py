@@ -1,5 +1,6 @@
 import logging
 import sys
+import webbrowser
 from time import sleep, time
 
 from loguru import logger
@@ -389,7 +390,26 @@ class Task:
         """
         创建订单状态
         """
-        self.createStatusCode = self.api.GetOrderStatus() if self.api.CreateOrderStatus() else False
+        code, msg = self.api.CreateOrderStatus()
+        match code:
+            # 正常
+            case 0:
+                logger.success("【创建订单状态】锁单成功!")
+
+            # 不知道
+            case _:
+                logger.error(f"【创建订单状态】{code}: {msg}")
+
+        self.createStatusCode, msg, orderId = self.api.GetOrderStatus()
+        match self.createStatusCode:
+            # 成功
+            case 0:
+                logger.success("【获取订单状态】请在打开的浏览器页面进行支付!")
+                webbrowser.open(f"https://show.bilibili.com/platform/orderDetail.html?order_id={orderId}")
+
+            # 不知道
+            case _:
+                logger.error(f"【获取订单状态】{code}: {msg}")
 
     @logger.catch
     def DrawFSM(self) -> None:
