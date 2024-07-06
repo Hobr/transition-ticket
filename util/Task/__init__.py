@@ -394,7 +394,7 @@ class Task:
             # 库存不足 219,100009
             case 219 | 100009:
                 if self.data.TimestampCheck(timestamp=self.api.saleStart, duration=self.goldTime):
-                    logger.warning(f"【创建订单】目前处于开票{self.goldTime}分钟黄金期, 已为您忽略无票提示!")
+                    logger.warning(f"【创建订单】库存不足! 目前处于开票{self.goldTime}分钟黄金期, 脚本将持续申请下单!")
                 else:
                     logger.warning("【创建订单】库存不足!")
 
