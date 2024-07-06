@@ -218,16 +218,16 @@ class Task:
                     sleep(60)
                     countdown -= 60
 
-                elif 600 > countdown >= 60:
+                elif 600 > countdown > 60:
                     logger.info(f"【等待开票】准备开票! 需要等待 {countdown/60:.1f} 分钟")
                     sleep(5)
                     countdown -= 5
 
-                elif 60 > countdown > 1:
-                    if countdown == 10:
+                elif countdown == 60:
                         logger.info("【等待开票】即将开票! 正在提前获取Token...")
                         self.QueryTokenAction()
 
+                elif 60 > countdown > 1:
                     logger.info(f"【等待开票】即将开票! 需要等待 {countdown-1} 秒")
                     sleep(1)
                     countdown -= 1
