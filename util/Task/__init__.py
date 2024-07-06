@@ -236,9 +236,9 @@ class Task:
                 elif countdown == 60:
                     logger.info("【等待开票】即将开票! 正在提前获取Token...")
                     self.QueryTokenAction()
+                    self.skipToken = True
                     if self.queryTokenCode == -401:
                         self.RiskProcessAction()
-                        self.skipToken = True
 
                 elif 60 > countdown > 1:
                     logger.info(f"【等待开票】即将开票! 需要等待 {countdown-1} 秒")
