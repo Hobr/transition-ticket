@@ -65,7 +65,7 @@ poetry update
 pre-commit autoupdate
 
 # 打包
-pyinstaller --clean --noconfirm --log-level WARN cli.spec
+pyinstaller --clean --noconfirm --log-level WARN --upx-dir=$(where upx) cli.spec
 ```
 
 ## 感谢

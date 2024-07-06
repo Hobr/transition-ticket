@@ -368,7 +368,6 @@ class Bilibili:
         # 存在未付款订单
         elif code in [100079, 100048]:
             logger.error("【创建订单】存在未付款/未完成订单! 请尽快付款")
-            sleep(0.5)
             return 3
 
         # 硬控
