@@ -20,6 +20,7 @@ class Task:
         net: Request,
         cap: Captcha,
         api: Bilibili,
+        sleep: int = 0.35,
         goldTime: float = 35.0,
         isDebug: bool = False,
     ):
@@ -29,6 +30,7 @@ class Task:
         net: 网络实例
         cap: 验证码实例
         api: Bilibili实例
+        sleep: 任务间请求间隔时间
         goldTime: 开票黄金时间
         isDebug: 调试模式
         """
@@ -173,7 +175,7 @@ class Task:
         )
 
         # 正常Sleep
-        self.normalSleep = 0.35
+        self.normalSleep = sleep
         # 减速Sleep
         self.slowSleep = 1
         # ERR3 Sleep

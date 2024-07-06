@@ -31,6 +31,8 @@ class SettingCli:
             "request": {
                 # 开票黄金时间
                 "gold": 35.0,
+                # 请求间隔
+                "sleep": 1.0,
                 # 超时
                 "timeout": 3.0,
                 # 代理
@@ -92,6 +94,18 @@ class SettingCli:
             return float(time)
 
         @logger.catch
+        def SleepStep() -> float:
+            """
+            请求间隔
+            """
+            interval = self.data.Inquire(
+                type="Text",
+                message="请输入创建订单请求间隔时间(单位:秒), 太快有概率会被风控!",
+                default="0.5",
+            )
+            return float(interval)
+
+        @logger.catch
         def NoticeStep() -> tuple[bool, bool, bool, str]:
             """
             提醒
@@ -140,6 +154,7 @@ class SettingCli:
 
         print("下面开始配置设置!")
         self.config["request"]["gold"] = GoldStep()
+        self.config["request"]["sleep"] = SleepStep()
         (
             self.config["notice"]["system"],
             self.config["notice"]["sound"],
