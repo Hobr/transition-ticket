@@ -109,19 +109,19 @@ class Task:
             trigger="QueryTicket",
             source="等待余票",
             dest="获取Token",
-            conditions=lambda: self.data.TimestampCheck(timestamp=self.refreshTime, duration=self.refreshInterval),
+            conditions=lambda: not self.data.TimestampCheck(timestamp=self.refreshTime, duration=self.refreshInterval),
         )
         self.machine.add_transition(
             trigger="QueryTicket",
             source="等待余票",
             dest="创建订单",
-            conditions=lambda: self.queryTicketCode is True,
+            conditions=lambda: self.queryTicketCode,
         )
         self.machine.add_transition(
             trigger="QueryTicket",
             source="等待余票",
             dest="等待余票",
-            conditions=lambda: self.queryTicketCode is False,
+            conditions=lambda: not self.queryTicketCode,
         )
 
         # 创建订单结束
@@ -135,7 +135,7 @@ class Task:
             trigger="CreateOrder",
             source="创建订单",
             dest="获取Token",
-            conditions=lambda: self.createOrderCode in range(100050, 100060) or self.data.TimestampCheck(timestamp=self.refreshTime, duration=self.refreshInterval),
+            conditions=lambda: self.createOrderCode in range(100050, 100060) or not self.data.TimestampCheck(timestamp=self.refreshTime, duration=self.refreshInterval),
         )
         self.machine.add_transition(
             trigger="CreateOrder",

@@ -147,14 +147,14 @@ class Data:
                     return ""
 
     @logger.catch
-    def TimestampCheck(self, timestamp: int, duration: float = 15.0, timestamp_now: float = datetime.datetime.now().timestamp()) -> bool:
+    def TimestampCheck(self, timestamp: int, duration: float = 15.0) -> bool:
         """
         时间戳有效性检查
 
         timestamp: 开始时间戳
         duration: 持续时间 分钟
         """
-        return timestamp + duration * 60 >= timestamp_now >= timestamp
+        return timestamp + duration * 60 >= datetime.datetime.now().timestamp() >= timestamp
 
     @logger.catch
     def PasswordRSAEncrypt(self, password: str, public_key: str) -> str:
