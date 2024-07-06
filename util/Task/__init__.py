@@ -21,6 +21,7 @@ class Task:
         cap: Captcha,
         api: Bilibili,
         goldTime: float = 35.0,
+        isDebug: bool = False,
     ):
         """
         初始化
@@ -29,6 +30,7 @@ class Task:
         cap: 验证码实例
         api: Bilibili实例
         goldTime: 开票黄金时间
+        isDebug: 调试模式
         """
 
         self.net = net
@@ -159,14 +161,15 @@ class Task:
         # 正常Sleep
         self.normalSleep = 0.35
         # ERR3 Sleep
-        self.errSleep = 4.88
+        self.errSleep = 4.96
         # 是否已缓存getV2
         self.queryCache = False
 
         self.data = Data()
 
-        # 关闭Transitions自带日志
-        logging.getLogger("transitions").setLevel(logging.CRITICAL)
+        if not isDebug:
+            # 关闭Transitions自带日志
+            logging.getLogger("transitions").setLevel(logging.CRITICAL)
 
     @logger.catch
     def WaitAvailableAction(self) -> None:
@@ -356,10 +359,11 @@ class Task:
             case 219 | 100009:
                 if self.data.TimestampCheck(timestamp=self.api.saleStart, duration=self.goldTime):
                     logger.warning(f"【创建订单】目前处于开票{self.goldTime}分钟黄金期, 已为您忽略无票提示!")
-                    # 规避ERR 3刷新
-                    sleep(self.errSleep)
                 else:
                     logger.warning("【创建订单】库存不足!")
+
+                # 规避ERR 3刷新
+                sleep(self.errSleep)
 
             # 存在未付款订单
             case 100079 | 100048:

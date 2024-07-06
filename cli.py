@@ -102,6 +102,7 @@ if __name__ == "__main__":
             cap=cap,
             api=api,
             goldTime=settingConfig["request"]["gold"],
+            isDebug=settingConfig["dev"]["debug"],
         )
 
         # job.DrawFSM()
