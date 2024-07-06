@@ -32,7 +32,7 @@ class SettingCli:
                 # 开票黄金时间
                 "gold": 35.0,
                 # 请求间隔
-                "sleep": 1.0,
+                "sleep": 0.5,
                 # 超时
                 "timeout": 3.0,
                 # 代理
