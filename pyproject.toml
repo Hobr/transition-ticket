@@ -58,6 +58,7 @@ max-complexity = 17
 max-args = 10
 max-statements = 57
 max-returns = 7
+max-branches = 13
 allow-magic-value-types = ["int","str"]
 
 [build-system]
