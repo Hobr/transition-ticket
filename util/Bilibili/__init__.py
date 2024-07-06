@@ -236,6 +236,7 @@ class Bilibili:
         url = f"https://show.bilibili.com/api/ticket/project/getV2?version=134&id={self.projectId}&project_id={self.projectId}&requestSource={self.scene}"
         res = self.net.Response(method="get", url=url)
         code = res["errno"]
+        msg = res["msg"]
 
         # 成功
         if code == 0:
@@ -271,7 +272,7 @@ class Bilibili:
 
         # 失败
         else:
-            logger.error(f"【获取票数】{code}: {res['msg']}")
+            logger.error(f"【获取票数】{code}: {msg}")
             return False
 
     @logger.catch
@@ -307,6 +308,7 @@ class Bilibili:
         }
         res = self.net.Response(method="post", url=url, params=params)
         code = res["errno"]
+        msg = res["msg"]
 
         # 成功
         if code == 0:
@@ -362,7 +364,7 @@ class Bilibili:
 
         # 失败
         else:
-            logger.error(f"【创建订单】{code}: {res['msg']}")
+            logger.error(f"【创建订单】{code}: {msg}")
             return 3
 
     @logger.catch
@@ -375,6 +377,7 @@ class Bilibili:
         url = f"https://show.bilibili.com/api/ticket/order/createstatus?token={self.orderToken}&project_id={self.projectId}&orderId={self.orderId}"
         res = self.net.Response(method="get", url=url)
         code = res["errno"]
+        msg = res["msg"]
 
         # 成功
         if code == 0:
@@ -383,7 +386,7 @@ class Bilibili:
 
         # 失败
         else:
-            logger.error(f"【创建订单状态】{code}: {res['msg']}")
+            logger.error(f"【创建订单状态】{code}: {msg}")
             return False
 
     @logger.catch
@@ -396,6 +399,7 @@ class Bilibili:
         url = f"https://show.bilibili.com/api/ticket/order/info?order_id={self.orderId}"
         res = self.net.Response(method="get", url=url)
         code = res["errno"]
+        msg = res["msg"]
 
         # 成功
         if code == 0:
@@ -405,5 +409,5 @@ class Bilibili:
 
         # 失败
         else:
-            logger.error(f"【获取订单状态】{code}: {res['msg']}")
+            logger.error(f"【获取订单状态】{code}: {msg}")
             return False

@@ -88,13 +88,13 @@ class Task:
             trigger="RiskProcess",
             source="验证码",
             dest="获取Token",
-            conditions=lambda: self.riskProcessCode is True,
+            conditions=lambda: self.riskProcessCode == 0,
         )
         self.machine.add_transition(
             trigger="RiskProcess",
             source="验证码",
             dest="验证码",
-            conditions=lambda: self.riskProcessCode is False,
+            conditions=lambda: self.riskProcessCode != 0,
         )
 
         # 等待余票结束
