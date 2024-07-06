@@ -133,13 +133,13 @@ class Task:
             trigger="CreateOrder",
             source="创建订单",
             dest="等待余票",
-            conditions=lambda: self.createOrderCode == 219 | 100009 and not self.data.TimestampCheck(timestamp=self.api.saleStart, duration=self.goldTime),
+            conditions=lambda: self.createOrderCode in [219, 100009] and not self.data.TimestampCheck(timestamp=self.api.saleStart, duration=self.goldTime),
         )
         self.machine.add_transition(
             trigger="CreateOrder",
             source="创建订单",
             dest="创建订单",
-            conditions=lambda: self.createOrderCode != [0, 219, 100009, *range(100050, 100060)] or self.data.TimestampCheck(timestamp=self.api.saleStart, duration=self.goldTime),
+            conditions=lambda: self.createOrderCode not in [0, 219, 100009, *range(100050, 100060)] or self.data.TimestampCheck(timestamp=self.api.saleStart, duration=self.goldTime),
         )
 
         # 创建订单状态结束
@@ -157,7 +157,7 @@ class Task:
         )
 
         # 正常Sleep
-        self.normalSleep = 0.3
+        self.normalSleep = 0.35
         # ERR3 Sleep
         self.errSleep = 4.88
         # 是否已缓存getV2
@@ -228,8 +228,8 @@ class Task:
         """
         获取Token
         """
+        logger.info("【获取Token】正在尝试获取Token...")
         self.queryTokenCode, msg = self.api.QueryToken()
-
         match self.queryTokenCode:
             # 成功
             case 0:
@@ -268,6 +268,7 @@ class Task:
         """
         验证
         """
+        logger.info("【获取流水】正在尝试获取流水...")
         code, msg, type, data = self.api.RiskInfo()
 
         # 分类处理
@@ -315,6 +316,7 @@ class Task:
         """
         等待余票
         """
+        logger.info("【获取票数】正在蹲票...")
         code, msg, self.queryTicketCode = self.api.QueryAmount()
 
         match code:
@@ -324,16 +326,21 @@ class Task:
                     logger.success("【等待余票】当前可购买")
                 else:
                     logger.warning("【等待余票】当前无票, 系统正在循环蹲票中! 请稍后")
+                    # 刷新
+                    sleep(self.normalSleep)
 
             # 不知道
             case _:
                 logger.error(f"【等待余票】{code}: {msg}")
+                # 刷新
+                sleep(self.normalSleep)
 
     @logger.catch
     def CreateOrderAction(self) -> None:
         """
         创建订单
         """
+        logger.info("【创建订单】正在尝试创建订单...")
         self.createOrderCode, msg = self.api.CreateOrder()
 
         match self.createOrderCode:
@@ -349,16 +356,22 @@ class Task:
             case 219 | 100009:
                 if self.data.TimestampCheck(timestamp=self.api.saleStart, duration=self.goldTime):
                     logger.warning(f"【创建订单】目前处于开票{self.goldTime}分钟黄金期, 已为您忽略无票提示!")
+                    # 规避ERR 3刷新
+                    sleep(self.errSleep)
                 else:
                     logger.warning("【创建订单】库存不足!")
 
             # 存在未付款订单
             case 100079 | 100048:
                 logger.error("【创建订单】存在未付款/未完成订单! 请尽快付款")
+                # 刷新
+                sleep(self.normalSleep)
 
             # 硬控
             case 3:
                 logger.error("【创建订单】被硬控了, 需等待几秒钟")
+                # 规避ERR 3刷新
+                sleep(self.errSleep)
 
             # 订单已存在/已购买
             case 100049:
@@ -384,6 +397,8 @@ class Task:
             # 失败
             case _:
                 logger.error(f"【创建订单】{self.createOrderCode}: {msg}")
+                # 刷新
+                sleep(self.normalSleep)
 
     @logger.catch
     def CreateStatusAction(self) -> None:

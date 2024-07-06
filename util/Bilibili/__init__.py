@@ -4,7 +4,6 @@ from time import time
 
 from loguru import logger
 
-from util.Data import Data
 from util.Request import Request
 
 
@@ -51,7 +50,6 @@ class Bilibili:
         self.screenPath = 0
         self.skuPath = 0
 
-        self.data = Data()
         self.risked = False
 
     @logger.catch
@@ -80,8 +78,6 @@ class Bilibili:
         """
         获取Token
         """
-        logger.info("【获取Token】正在尝试获取Token...")
-
         # 成功
         if not self.risked:
             url = f"https://show.bilibili.com/api/ticket/order/prepare?project_id={self.projectId}"
@@ -127,8 +123,6 @@ class Bilibili:
         """
         获取流水
         """
-        logger.info("【获取流水】正在尝试获取流水...")
-
         url = "https://api.bilibili.com/x/gaia-vgate/v1/register"
         params = {
             "buvid": self.buvid,
@@ -193,14 +187,11 @@ class Bilibili:
                 }
 
             case "phone":
-                if self.phone != "":
-                    params = {
-                        "code": self.phone,
-                        "csrf": self.net.GetCookie()["bili_jct"],
-                        "token": self.token,
-                    }
-                else:
-                    logger.error("【验证】你没有配置实名手机号! 怎么办呢?")
+                params = {
+                    "code": self.phone,
+                    "csrf": self.net.GetCookie()["bili_jct"],
+                    "token": self.token,
+                }
 
             case _:
                 logger.error("【验证】这是什么验证类型?")
@@ -223,7 +214,6 @@ class Bilibili:
         """
         获取票数
         """
-        logger.info("【获取票数】正在蹲票...")
         url = f"https://show.bilibili.com/api/ticket/project/getV2?version=134&id={self.projectId}&project_id={self.projectId}&requestSource={self.scene}"
         res = self.net.Response(method="get", url=url)
         code = res["errno"]
@@ -263,7 +253,6 @@ class Bilibili:
         """
         创建订单
         """
-        logger.info("【创建订单】正在尝试创建订单...")
         url = f"https://show.bilibili.com/api/ticket/order/createV2?project_id={self.projectId}"
         timestamp = int(round(time() * 1000))
         clickPosition = {
