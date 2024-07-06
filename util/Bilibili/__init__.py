@@ -60,6 +60,29 @@ class Bilibili:
         self.risked = False
 
     @logger.catch
+    def GetSaleStartTime(self) -> int:
+        """
+        获取开票时间
+        """
+        url = f"https://show.bilibili.com/api/ticket/project/getV2?version=134&id={self.projectId}&project_id={self.projectId}&requestSource={self.scene}"
+        res = self.net.Response(method="get", url=url)
+        code = res["errno"]
+
+        # 成功
+        if code == 0:
+            for _i, screen in enumerate(res["data"]["screen_list"]):
+                if screen["id"] == self.screenId:
+                    for _j, sku in enumerate(screen["ticket_list"]):
+                        if sku["id"] == self.skuId:
+                            dist = sku["saleStart"]
+                            break
+            logger.info(f"【获取开票时间】开票时间为 {self.data.TimestampFormat(int(dist))}, 当前时间为 {self.data.TimestampFormat(int(time()))}")
+            return dist
+        else:
+            logger.error("【获取开票时间】获取失败!")
+            return 0
+
+    @logger.catch
     def QueryToken(self) -> tuple:
         """
         获取Token
@@ -105,78 +128,6 @@ class Bilibili:
                 self.voucher = riskParams["v_voucher"]
 
         return code, msg
-
-    @logger.catch
-    def GetSaleStartTime(self) -> int:
-        """
-        获取开票时间
-        """
-        url = f"https://show.bilibili.com/api/ticket/project/getV2?version=134&id={self.projectId}&project_id={self.projectId}&requestSource={self.scene}"
-        res = self.net.Response(method="get", url=url)
-        code = res["errno"]
-
-        # 成功
-        if code == 0:
-            for _i, screen in enumerate(res["data"]["screen_list"]):
-                if screen["id"] == self.screenId:
-                    for _j, sku in enumerate(screen["ticket_list"]):
-                        if sku["id"] == self.skuId:
-                            dist = sku["saleStart"]
-                            break
-            logger.info(f"【获取开票时间】开票时间为 {self.data.TimestampFormat(int(dist))}, 当前时间为 {self.data.TimestampFormat(int(time()))}")
-            return dist
-        else:
-            logger.error("【获取开票时间】获取失败!")
-            return 0
-
-    @logger.catch
-    def QueryAmount(self) -> bool:
-        """
-        获取票数
-
-        返回: True-有票, False-无票
-        """
-        logger.info("【获取票数】正在蹲票...")
-        url = f"https://show.bilibili.com/api/ticket/project/getV2?version=134&id={self.projectId}&project_id={self.projectId}&requestSource={self.scene}"
-        res = self.net.Response(method="get", url=url)
-        code = res["errno"]
-
-        # 成功
-        if code == 0:
-            data = res["data"]
-            # 有保存Sku位置
-            if data["screen_list"][self.screenPath]["ticket_list"][self.skuPath]["id"] == self.skuId:
-                self.cost = data["screen_list"][self.screenPath]["ticket_list"][self.skuPath]["price"]
-                self.saleStart = data["screen_list"][self.screenPath]["ticket_list"][self.skuPath]["saleStart"]
-                clickable = data["screen_list"][self.screenPath]["ticket_list"][self.skuPath]["clickable"]
-
-            # 没保存Sku位置
-            else:
-                for i, screen in enumerate(data["screen_list"]):
-                    if screen["id"] == self.screenId:
-                        for j, sku in enumerate(screen["ticket_list"]):
-                            if sku["id"] == self.skuId:
-                                self.cost = sku["price"]
-                                self.saleStart = sku["saleStart"]
-                                clickable = sku["clickable"]
-                                self.screenPath = i
-                                self.skuPath = j
-                                break
-
-            # 有票
-            if clickable:
-                logger.success("【获取票数】当前可购买")
-                return True
-
-            # 无票
-            else:
-                logger.warning("【获取票数】当前无票, 系统正在循环蹲票中! 请稍后")
-                return False
-
-        # 失败
-        else:
-            logger.error(f"【获取票数】{code}: {res['msg']}")
-            return False
 
     @logger.catch
     def RiskInfo(self) -> tuple:
@@ -273,6 +224,55 @@ class Bilibili:
             self.net.RefreshCookie(cookie)
 
         return code, msg
+
+    @logger.catch
+    def QueryAmount(self) -> bool:
+        """
+        获取票数
+
+        返回: True-有票, False-无票
+        """
+        logger.info("【获取票数】正在蹲票...")
+        url = f"https://show.bilibili.com/api/ticket/project/getV2?version=134&id={self.projectId}&project_id={self.projectId}&requestSource={self.scene}"
+        res = self.net.Response(method="get", url=url)
+        code = res["errno"]
+
+        # 成功
+        if code == 0:
+            data = res["data"]
+            # 有保存Sku位置
+            if data["screen_list"][self.screenPath]["ticket_list"][self.skuPath]["id"] == self.skuId:
+                self.cost = data["screen_list"][self.screenPath]["ticket_list"][self.skuPath]["price"]
+                self.saleStart = data["screen_list"][self.screenPath]["ticket_list"][self.skuPath]["saleStart"]
+                clickable = data["screen_list"][self.screenPath]["ticket_list"][self.skuPath]["clickable"]
+
+            # 没保存Sku位置
+            else:
+                for i, screen in enumerate(data["screen_list"]):
+                    if screen["id"] == self.screenId:
+                        for j, sku in enumerate(screen["ticket_list"]):
+                            if sku["id"] == self.skuId:
+                                self.cost = sku["price"]
+                                self.saleStart = sku["saleStart"]
+                                clickable = sku["clickable"]
+                                self.screenPath = i
+                                self.skuPath = j
+                                break
+
+            # 有票
+            if clickable:
+                logger.success("【获取票数】当前可购买")
+                return True
+
+            # 无票
+            else:
+                logger.warning("【获取票数】当前无票, 系统正在循环蹲票中! 请稍后")
+                return False
+
+        # 失败
+        else:
+            logger.error(f"【获取票数】{code}: {res['msg']}")
+            return False
 
     @logger.catch
     def CreateOrder(self) -> int:
