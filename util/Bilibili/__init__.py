@@ -226,7 +226,7 @@ class Bilibili:
         return code, msg
 
     @logger.catch
-    def QueryAmount(self) -> bool:
+    def QueryAmount(self) -> tuple:
         """
         获取票数
 
@@ -238,42 +238,34 @@ class Bilibili:
         code = res["errno"]
         msg = res["msg"]
 
-        # 成功
-        if code == 0:
-            data = res["data"]
-            # 有保存Sku位置
-            if data["screen_list"][self.screenPath]["ticket_list"][self.skuPath]["id"] == self.skuId:
-                self.cost = data["screen_list"][self.screenPath]["ticket_list"][self.skuPath]["price"]
-                self.saleStart = data["screen_list"][self.screenPath]["ticket_list"][self.skuPath]["saleStart"]
-                clickable = data["screen_list"][self.screenPath]["ticket_list"][self.skuPath]["clickable"]
+        match code:
+            # 成功
+            case 0:
+                data = res["data"]
+                path = data["screen_list"][self.screenPath]["ticket_list"][self.skuPath]
 
-            # 没保存Sku位置
-            else:
-                for i, screen in enumerate(data["screen_list"]):
-                    if screen["id"] == self.screenId:
-                        for j, sku in enumerate(screen["ticket_list"]):
-                            if sku["id"] == self.skuId:
-                                self.cost = sku["price"]
-                                self.saleStart = sku["saleStart"]
-                                clickable = sku["clickable"]
-                                self.screenPath = i
-                                self.skuPath = j
-                                break
+                # 有保存Sku位置
+                if path["id"] == self.skuId:
+                    self.cost = path["price"]
+                    self.saleStart = path["saleStart"]
+                    clickable = path["clickable"]
 
-            # 有票
-            if clickable:
-                logger.success("【获取票数】当前可购买")
-                return True
+                # 没保存Sku位置
+                else:
+                    for i, screen in enumerate(data["screen_list"]):
+                        if screen["id"] == self.screenId:
+                            for j, sku in enumerate(screen["ticket_list"]):
+                                if sku["id"] == self.skuId:
+                                    self.cost = sku["price"]
+                                    self.saleStart = sku["saleStart"]
+                                    clickable = sku["clickable"]
+                                    self.screenPath = i
+                                    self.skuPath = j
+                                    break
+            case _:
+                clickable = False
 
-            # 无票
-            else:
-                logger.warning("【获取票数】当前无票, 系统正在循环蹲票中! 请稍后")
-                return False
-
-        # 失败
-        else:
-            logger.error(f"【获取票数】{code}: {msg}")
-            return False
+        return code, msg, clickable
 
     @logger.catch
     def CreateOrder(self) -> int:

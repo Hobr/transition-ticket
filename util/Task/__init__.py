@@ -242,14 +242,14 @@ class Task:
 
         # 顺路
         if not self.queryCache:
-            logger.info("【刷新Token】已缓存商品信息")
+            logger.info("【获取Token】已缓存商品信息")
             self.api.QueryAmount()
             self.queryCache = True
 
     @logger.catch
     def RiskProcessAction(self) -> None:
         """
-        验证码
+        验证
         """
         code, msg, type, data = self.api.RiskInfo()
 
@@ -297,17 +297,25 @@ class Task:
     def QueryTicketAction(self) -> None:
         """
         等待余票
-
-        返回值: True-成功, False-失败
         """
-        self.queryTicketCode = self.api.QueryAmount()
+        code, msg, self.queryTicketCode = self.api.QueryAmount()
+
+        match code:
+            # 成功
+            case 0:
+                if self.queryTicketCode:
+                    logger.success("【等待余票】当前可购买")
+                else:
+                    logger.warning("【等待余票】当前无票, 系统正在循环蹲票中! 请稍后")
+
+            # 不知道
+            case _:
+                logger.error(f"【等待余票】{code}: {msg}")
 
     @logger.catch
     def CreateOrderAction(self) -> None:
         """
         创建订单
-
-        返回值: 0-成功, 1-刷新, 2-等待, 3-失败
         """
         self.createOrderCode = self.api.CreateOrder()
 
@@ -315,8 +323,6 @@ class Task:
     def CreateStatusAction(self) -> None:
         """
         创建订单状态
-
-        返回值: True-成功, False-失败
         """
         self.createStatusCode = self.api.GetOrderStatus() if self.api.CreateOrderStatus() else False
 
