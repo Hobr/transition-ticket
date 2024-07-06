@@ -147,14 +147,13 @@ class Data:
                     return ""
 
     @logger.catch
-    def TimestampCheck(self, timestamp: int, duration: float = 15.0) -> bool:
+    def TimestampCheck(self, timestamp: int, duration: float = 15.0, timestamp_now: float = datetime.datetime.now().timestamp()) -> bool:
         """
         时间戳有效性检查
 
         timestamp: 开始时间戳
         duration: 持续时间 分钟
         """
-        timestamp_now = datetime.datetime.now().timestamp()
         return timestamp + duration * 60 >= timestamp_now >= timestamp
 
     @logger.catch

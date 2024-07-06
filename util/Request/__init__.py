@@ -103,7 +103,11 @@ class Request:
 
         try:
             if isJson:
-                return methods[method](url=url, **({"params": params} if method == "get" else {"data": params})).json()
+                dist = methods[method](url=url, **({"params": params} if method == "get" else {"data": params}))
+                if dist.status_code == 200:
+                    return dist.json()
+                else:
+                    return {"code": 114514, "errno": 114515, "msg": f"请求错误: {dist.status_code}", "message": f"请求错误: {dist.status_code}"}
             else:
                 methods[method](url=url, **({"params": params} if method == "get" else {"data": params}))
                 return {}
