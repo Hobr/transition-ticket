@@ -202,7 +202,6 @@ class Task:
 
             if countdown == 0:
                 logger.info("【等待开票】等待结束! 开始抢票")
-                sleep(0.003)
         else:
             logger.info("【等待开票】已开票! 开始进入抢票模式")
 
