@@ -172,7 +172,17 @@ class Task:
         """
         等待开票
         """
-        start_time = self.api.GetSaleStartTime()
+        code, start_time = self.api.GetSaleStartTime()
+
+        match code:
+            # 成功
+            case 0:
+                logger.info(f"【获取开票时间】开票时间为 {self.data.TimestampFormat(int(start_time))}, 当前时间为 {self.data.TimestampFormat(int(time()))}")
+
+            # 不知道
+            case _:
+                logger.error("【获取开票时间】获取失败!")
+
         countdown = start_time - int(time())
         logger.info("【等待开票】本机时间已校准!")
 

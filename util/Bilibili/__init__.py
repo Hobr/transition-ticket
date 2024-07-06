@@ -56,7 +56,7 @@ class Bilibili:
         self.risked = False
 
     @logger.catch
-    def GetSaleStartTime(self) -> int:
+    def GetSaleStartTime(self) -> tuple:
         """
         获取开票时间
         """
@@ -72,11 +72,9 @@ class Bilibili:
                         if sku["id"] == self.skuId:
                             dist = sku["saleStart"]
                             break
-            logger.info(f"【获取开票时间】开票时间为 {self.data.TimestampFormat(int(dist))}, 当前时间为 {self.data.TimestampFormat(int(time()))}")
-            return dist
+            return code, dist
         else:
-            logger.error("【获取开票时间】获取失败!")
-            return 0
+            return 114514, 0
 
     @logger.catch
     def QueryToken(self) -> tuple:
