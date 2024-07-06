@@ -108,6 +108,12 @@ class Task:
         self.machine.add_transition(
             trigger="QueryTicket",
             source="等待余票",
+            dest="获取Token",
+            conditions=lambda: self.data.TimestampCheck(timestamp=self.refreshTime, duration=self.refreshInterval),
+        )
+        self.machine.add_transition(
+            trigger="QueryTicket",
+            source="等待余票",
             dest="创建订单",
             conditions=lambda: self.queryTicketCode is True,
         )
@@ -129,7 +135,7 @@ class Task:
             trigger="CreateOrder",
             source="创建订单",
             dest="获取Token",
-            conditions=lambda: self.createOrderCode in range(100050, 100060),
+            conditions=lambda: self.createOrderCode in range(100050, 100060) or self.data.TimestampCheck(timestamp=self.refreshTime, duration=self.refreshInterval),
         )
         self.machine.add_transition(
             trigger="CreateOrder",
@@ -160,8 +166,14 @@ class Task:
 
         # 正常Sleep
         self.normalSleep = 0.35
+        # 减速Sleep
+        self.slowSleep = 1
         # ERR3 Sleep
         self.errSleep = 4.96
+        # 刷新Token间隔
+        self.refreshInterval = 7.5
+        # 上次刷新Token时间
+        self.refreshTime = 0
         # 是否已缓存getV2
         self.queryCache = False
 
@@ -212,6 +224,10 @@ class Task:
                     countdown -= 5
 
                 elif 60 > countdown > 1:
+                    if countdown == 10:
+                        logger.info("【等待开票】即将开票! 正在提前获取Token...")
+                        self.QueryTokenAction()
+
                     logger.info(f"【等待开票】即将开票! 需要等待 {countdown-1} 秒")
                     sleep(1)
                     countdown -= 1
@@ -231,12 +247,13 @@ class Task:
         """
         获取Token
         """
-        logger.info("【获取Token】正在尝试获取Token...")
+        logger.info("【获取Token】正在刷新Token...")
         self.queryTokenCode, msg = self.api.QueryToken()
         match self.queryTokenCode:
             # 成功
             case 0:
                 logger.success("【获取Token】Token获取成功!")
+                self.refreshTime = int(time())
 
             # 验证
             case -401:
@@ -331,6 +348,12 @@ class Task:
                     logger.warning("【等待余票】当前无票, 系统正在循环蹲票中! 请稍后")
                     # 刷新
                     sleep(self.normalSleep)
+
+            # 太快了
+            case 100001:
+                logger.error("【等待余票】请求过快, 将减慢请求速度!")
+                # 减速
+                sleep(self.slowSleep)
 
             # 不知道
             case _:
