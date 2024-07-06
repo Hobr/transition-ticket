@@ -229,8 +229,6 @@ class Bilibili:
     def QueryAmount(self) -> tuple:
         """
         获取票数
-
-        返回: True-有票, False-无票
         """
         logger.info("【获取票数】正在蹲票...")
         url = f"https://show.bilibili.com/api/ticket/project/getV2?version=134&id={self.projectId}&project_id={self.projectId}&requestSource={self.scene}"
@@ -268,11 +266,9 @@ class Bilibili:
         return code, msg, clickable
 
     @logger.catch
-    def CreateOrder(self) -> int:
+    def CreateOrder(self) -> tuple:
         """
         创建订单
-
-        返回: 0-成功, 1-Token过期, 2-库存不足, 3-失败
         """
         logger.info("【创建订单】正在尝试创建订单...")
         url = f"https://show.bilibili.com/api/ticket/order/createV2?project_id={self.projectId}"
@@ -307,31 +303,25 @@ class Bilibili:
             self.orderId = res["data"]["orderId"]
             self.orderToken = res["data"]["token"]
             logger.success("【创建订单】订单创建成功!")
-            return 0
 
         # Token过期
         elif "10005" in str(code):
             logger.warning("【创建订单】Token过期! 即将重新获取")
-            return 1
 
         # 库存不足 219,100009
         elif code in [219, 100009]:
             if self.data.TimestampCheck(timestamp=self.saleStart, duration=self.goldTime):
                 logger.warning(f"【创建订单】目前处于开票{self.goldTime}分钟黄金期, 已为您忽略无票提示!")
-                return 3
             else:
                 logger.warning("【创建订单】库存不足!")
-                return 2
 
         # 存在未付款订单
         elif code in [100079, 100048]:
             logger.error("【创建订单】存在未付款/未完成订单! 请尽快付款")
-            return 3
 
         # 硬控
         elif code == 3:
             logger.error("【创建订单】被硬控了, 需等待几秒钟")
-            return 3
 
         # 订单已存在/已购买
         elif code == 100049:
@@ -357,14 +347,13 @@ class Bilibili:
         # 失败
         else:
             logger.error(f"【创建订单】{code}: {msg}")
-            return 3
+
+        return code, msg
 
     @logger.catch
-    def CreateOrderStatus(self) -> bool:
+    def CreateOrderStatus(self) -> tuple:
         """
         创建订单状态
-
-        返回: True-成功, False-失败
         """
         url = f"https://show.bilibili.com/api/ticket/order/createstatus?token={self.orderToken}&project_id={self.projectId}&orderId={self.orderId}"
         res = self.net.Response(method="get", url=url)
@@ -374,19 +363,17 @@ class Bilibili:
         # 成功
         if code == 0:
             logger.success("【创建订单状态】锁单成功!")
-            return True
 
         # 失败
         else:
             logger.error(f"【创建订单状态】{code}: {msg}")
-            return False
+
+        return code, msg
 
     @logger.catch
-    def GetOrderStatus(self) -> bool:
+    def GetOrderStatus(self) -> tuple:
         """
         获取订单状态
-
-        返回: True-成功, False-失败
         """
         url = f"https://show.bilibili.com/api/ticket/order/info?order_id={self.orderId}"
         res = self.net.Response(method="get", url=url)
@@ -397,9 +384,9 @@ class Bilibili:
         if code == 0:
             logger.success("【获取订单状态】请在打开的浏览器页面进行支付!")
             webbrowser.open(f"https://show.bilibili.com/platform/orderDetail.html?order_id={self.orderId}")
-            return True
 
         # 失败
         else:
             logger.error(f"【获取订单状态】{code}: {msg}")
-            return False
+
+        return code, msg
