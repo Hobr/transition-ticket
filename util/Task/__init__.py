@@ -250,20 +250,48 @@ class Task:
     def RiskProcessAction(self) -> None:
         """
         验证码
-
-        返回值: 0-极验验证, 1手机号验证, 2-取消验证, 3-失败
         """
-        match self.api.RiskInfo():
+        code, msg, type, data = self.api.RiskInfo()
+
+        # 分类处理
+        match code:
             case 0:
-                challenge = self.api.GetRiskChallenge()
-                validate = self.cap.Geetest(challenge)
-                self.riskProcessCode = self.api.RiskValidate(validate=validate)
-            case 1:
-                self.riskProcessCode = self.api.RiskValidate(validate_mode="phone")
-            case 2:
-                self.riskProcessCode = True
-            case 3:
-                self.riskProcessCode = False
+                match type:
+                    case "geetest":
+                        logger.info(f"【验证】验证类型为极验验证码! 流水号: {data}")
+                        validate = self.cap.Geetest(data)
+                        self.riskProcessCode, msg = self.api.RiskValidate(validate=validate)
+
+                    case "phone":
+                        logger.info(f"【验证】验证类型为手机号确认验证! 绑定手机号: {data}")
+                        self.riskProcessCode, msg = self.api.RiskValidate(validateMode="phone")
+
+                    case _:
+                        logger.error(f"【验证】{type}类型验证暂未支持!")
+                        self.riskProcessCode = 114514
+                        msg = ""
+
+            # 获取其他地方验证了, 无需验证
+            case 100000:
+                logger.info("【验证】你是双开/在其他地方验证了吗? 视作已验证处理")
+                self.riskProcessCode = 0
+                msg = ""
+
+            # 不知道
+            case _:
+                logger.error(f"【验证】信息获取 {code}: {msg}")
+                self.riskProcessCode = 114514
+                msg = ""
+
+        # 状态查询
+        match self.riskProcessCode:
+            # 成功
+            case 0:
+                logger.info("【验证】验证成功!")
+
+            # 不知道
+            case _:
+                logger.error(f"【验证】校验 {code}: {msg}")
 
     @logger.catch
     def QueryTicketAction(self) -> None:

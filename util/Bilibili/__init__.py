@@ -63,8 +63,6 @@ class Bilibili:
     def QueryToken(self) -> tuple:
         """
         获取Token
-
-        返回: 状态码
         """
         logger.info("【获取Token】正在尝试获取Token...")
 
@@ -181,11 +179,9 @@ class Bilibili:
             return False
 
     @logger.catch
-    def RiskInfo(self) -> int:
+    def RiskInfo(self) -> tuple:
         """
         获取流水
-
-        返回: 0-极验验证, 1手机号验证, 2-取消验证, 3-失败
         """
         logger.info("【获取流水】正在尝试获取流水...")
 
@@ -203,94 +199,80 @@ class Bilibili:
         }
         res = self.net.Response(method="post", url=url, params=params)
         code = res["code"]
+        msg = res["message"]
 
-        # 成功
-        if code == 0:
-            data = res["data"]
-            self.token = data["token"]
-            match data["type"]:
-                case "geetest":
-                    self.challenge = data["geetest"]["challenge"]
-                    self.gt = data["geetest"]["gt"]
-                    logger.info(f"【验证】验证类型为极验验证码! 流水号: {self.challenge}")
-                    return 0
-                case "phone":
-                    logger.info(f"【验证】验证类型为手机号确认验证! 绑定手机号: {data['phone']['tel']}")
-                    return 1
-                case "sms":
-                    logger.error("【验证】sms 验证暂不支持")
-                    return 3
-                case "biliword":
-                    logger.error("【验证】biliword 验证暂不支持")
-                    return 3
-                case _:
-                    logger.error("【验证】未知类型")
-                    return 3
+        # 处理
+        match code:
+            # 成功
+            case 0:
+                data = res["data"]
+                self.token = data["token"]
+                type = data["type"]
 
-        # 获取其他地方验证了, 无需验证
-        elif code == 100000:
-            logger.info("【获取流水】你是双开/在其他地方验证了吗? 视作已验证处理")
-            return 2
+                match type:
+                    case "geetest":
+                        self.challenge = data["geetest"]["challenge"]
+                        self.gt = data["geetest"]["gt"]
+                        dist = self.challenge
+                    case "phone":
+                        dist = data["phone"]["tel"]
 
-        # 失败
-        else:
-            logger.error(f"【获取流水】{code}: {res['message']}")
-            return 2
+                    case _:
+                        dist = ""
+
+            # 不知道
+            case _:
+                type = ""
+                dist = ""
+
+        return code, msg, type, dist
 
     @logger.catch
-    def GetRiskChallenge(self) -> str:
-        """
-        获取流水号
-        """
-        return self.challenge
-
-    @logger.catch
-    def RiskValidate(self, validate: str = "", validate_mode: str = "geetest") -> bool:
+    def RiskValidate(self, validate: str = "", validateMode: str = "geetest") -> tuple:
         """
         校验
 
         validate: 校验值
-
-        返回值: True-成功, False-失败
+        validateMode: 验证方式
         """
         url = "https://api.bilibili.com/x/gaia-vgate/v1/validate"
-        if validate_mode == "geetest":
-            params = {
-                "challenge": self.challenge,
-                "csrf": self.net.GetCookie()["bili_jct"],
-                "seccode": validate + "|jordan",
-                "token": self.token,
-                "validate": validate,
-            }
-        elif validate_mode == "phone":
-            if self.phone != "":
+
+        # 处理
+        match validateMode:
+            case "geetest":
                 params = {
-                    "code": self.phone,
+                    "challenge": self.challenge,
                     "csrf": self.net.GetCookie()["bili_jct"],
+                    "seccode": validate + "|jordan",
                     "token": self.token,
+                    "validate": validate,
                 }
-            else:
-                logger.error("【验证】你没有配置实名手机号! 怎么办呢?")
-                return False
-        else:
-            return False
+
+            case "phone":
+                if self.phone != "":
+                    params = {
+                        "code": self.phone,
+                        "csrf": self.net.GetCookie()["bili_jct"],
+                        "token": self.token,
+                    }
+                else:
+                    logger.error("【验证】你没有配置实名手机号! 怎么办呢?")
+
+            case _:
+                logger.error("【验证】这是什么验证类型?")
 
         res = self.net.Response(method="get", url=url, params=params)
         code = res["code"]
+        msg = res["message"]
 
         # 成功&有效
         if code == 0 and res["data"]["is_valid"] == 1:
             self.risked = True
             cookie = self.net.GetCookie()
             cookie["x-bili-gaia-vtoken"] = self.token
-            logger.info("【验证】验证成功!")
             self.net.RefreshCookie(cookie)
-            return True
 
-        # 失败
-        else:
-            logger.error(f"【验证】{code}: {res['message']}")
-            return False
+        return code, msg
 
     @logger.catch
     def CreateOrder(self) -> int:
