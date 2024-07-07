@@ -38,8 +38,8 @@ class Task:
         self.net = net
         self.cap = cap
         self.api = api
-        self.normalSleep = sleep
 
+        self.normalSleep = sleep
         self.goldTime = goldTime
 
         self.states = [
