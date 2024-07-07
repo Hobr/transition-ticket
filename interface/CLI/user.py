@@ -14,13 +14,15 @@ class UserCli:
     """
 
     @logger.catch
-    def __init__(self, conf: Config):
+    def __init__(self, conf: Config, isEncrypt: bool = True):
         """
         初始化
 
         conf: 配置实例
         """
         self.conf = conf
+
+        self.isEncrypt = isEncrypt
 
         self.data = Data()
         self.net = Request()
@@ -53,7 +55,7 @@ class UserCli:
             return self.Generate()
 
         else:
-            self.config = self.conf.Load(filename=select, decrypt=True)
+            self.config = self.conf.Load(filename=select, decrypt=self.isEncrypt)
             net = Request(cookie=self.config["cookie"], header=self.config["header"])
             Login(net=net).Status()
             return self.config
@@ -191,5 +193,5 @@ class UserCli:
         self.config["header"] = self.net.GetHeader()
         self.config["buyer"] = BuyerStep()
         self.config["phone"] = PhoneStep()
-        self.conf.Save(FilenameStep(name=self.config["buyer"][0]["name"]), self.config, encrypt=True)
+        self.conf.Save(FilenameStep(name=self.config["buyer"][0]["name"]), self.config, encrypt=self.isEncrypt)
         return self.config

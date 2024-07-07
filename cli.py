@@ -61,23 +61,23 @@ if __name__ == "__main__":
 
     # 初始化
     # 用户数据文件
+    settingData = Config(dir="setting")
     userData = Config(dir="user")
     productData = Config(dir="product")
-    settingData = Config(dir="setting")
 
     # 验证
     cap = Captcha()
 
     # 检测配置文件情况
+    settingList = settingData.List()
     userList = userData.List()
     productList = productData.List()
-    settingList = settingData.List()
 
     while True:
         # 读取配置
-        userConfig = UserCli(conf=userData).Select(selects=userList) if userList != [] else UserCli(conf=userData).Generate()
-        productConfig = ProductCli(conf=productData).Select(selects=productList) if productList != [] else ProductCli(conf=productData).Generate()
         settingConfig = SettingCli(conf=settingData).Select(selects=settingList) if settingList != [] else SettingCli(conf=settingData).Generate()
+        userConfig = UserCli(conf=userData, isEncrypt=settingConfig["dev"]["isEncrypt"]).Select(selects=userList) if userList != [] else UserCli(conf=userData).Generate()
+        productConfig = ProductCli(conf=productData).Select(selects=productList) if productList != [] else ProductCli(conf=productData).Generate()
 
         net = Request(
             cookie=userConfig["cookie"],

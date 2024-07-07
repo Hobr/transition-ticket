@@ -49,6 +49,8 @@ class SettingCli:
             },
             # 开发者
             "dev": {
+                # 加密用户数据
+                "isEncrypt": True,
                 # 开发者模式
                 "debug": False,
             },
