@@ -352,7 +352,7 @@ class Task:
         """
         logger.info("【获取票数】正在蹲票...")
         code, msg, clickable, salenum = self.api.QueryAmount()
-        self.queryTicketCode = clickable or salenum == 2  # 2: 可售 4: 已售罄 8: 暂时售罄
+        self.queryTicketCode = clickable or salenum != 4  # 2: 可售 4: 已售罄 8: 暂时售罄
 
         match code:
             # 成功
