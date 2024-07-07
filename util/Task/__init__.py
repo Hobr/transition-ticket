@@ -356,14 +356,19 @@ class Task:
         等待余票
         """
         logger.info("【获取票数】正在蹲票...")
-        code, msg, clickable, saleable = self.api.QueryAmount()
-        self.queryTicketCode = clickable or saleable
+        code, msg, clickable, salenum = self.api.QueryAmount()
+        self.queryTicketCode = clickable or salenum != 4  # 2: 可售 4: 已售罄 8: 暂时售罄
 
         match code:
             # 成功
             case 0:
                 if self.queryTicketCode:
-                    logger.success("【等待余票】当前可购买")
+                    if salenum == 2:
+                        logger.success("【等待余票】当前可购买")
+                    elif salenum == 8:
+                        logger.warning("【等待余票】暂时售罄")
+                    else:
+                        logger.warning("【等待余票】未知num! 请提交给开发者")
                 else:
                     logger.warning("【等待余票】当前无票, 系统正在循环蹲票中! 请稍后")
                     # 刷新
