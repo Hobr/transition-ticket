@@ -66,7 +66,7 @@ class SettingCli:
         if selects[-1] != "新建系统配置":
             selects.append("新建系统配置")
 
-        select = self.data.Inquire(type="List", message="请选择加载的设置配置", choices=selects)
+        select = self.data.Inquire(type="List", message="请选择加载的系统配置", choices=selects)
 
         if select == "新建系统配置":
             return self.Generate()
