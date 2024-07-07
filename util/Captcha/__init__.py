@@ -33,11 +33,11 @@ class Captcha:
             self.gtPy = ClickPy()
         except ImportError:
             self.verify = "Manual"
-            logger.warning("【登录】无法导入极验自动验证，请手动验证")
+            logger.warning("【验证】无法导入极验自动验证，请手动验证")
 
         self.verify = verify
         self.gt = gt
-        self.rt = "abcdefghijklmnop"  # rt固定即可
+        self.rt = "abcdefghijklmnop"  # rt固定16位字符串即可
 
         self.geetest_path = self.AssestDir("geetest/index.html")
 
@@ -48,7 +48,7 @@ class Captcha:
         elif self.verify == "Manual":
             return self.Manual(challenge)
         else:
-            logger.error("【登录】verify参数错误")
+            logger.error("【验证】verify参数错误")
             return ""
 
     @logger.catch
@@ -64,8 +64,11 @@ class Captcha:
             validate = self.gtPy.simple_match_retry(self.gt, challenge)
             logger.info(f"【极验文字点选验证】验证结果: {validate}")
             return validate
-        except Exception:
-            raise
+        except Exception as e:
+            logger.error(f"【验证】{e}")
+            self.verify = "Manual"
+            logger.warning("【验证】无法使用极验自动验证，请手动验证")
+            return self.Geetest(challenge)
 
     @logger.catch
     def Manual(self, challenge) -> str:
@@ -78,7 +81,7 @@ class Captcha:
         browser_list = [i for i in list(browsers.browsers()) if i["browser_type"] != "msie"]
 
         if not browser_list:
-            logger.error("【登录】未找到可用浏览器/WebDriver! 建议选择其他方式登录")
+            logger.error("【验证】未找到可用浏览器/WebDriver! 建议选择其他方式登录")
 
         selenium_drivers = {
             "chrome": webdriver.Chrome,
@@ -94,7 +97,7 @@ class Captcha:
             driver = selenium_drivers[browser_type]()
 
             if not driver:
-                logger.error("【登录】所有浏览器/WebDriver尝试登录均失败")
+                logger.error("【验证】所有浏览器/WebDriver尝试登录均失败")
 
             driver.maximize_window()
             try:
@@ -117,7 +120,7 @@ class Captcha:
                 return validate
 
             except Exception as e:
-                logger.error(f"【登录】{e}")
+                logger.error(f"【验证】{e}")
                 driver.quit()
 
         return ""
