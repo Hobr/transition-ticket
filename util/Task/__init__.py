@@ -53,7 +53,9 @@ class Task:
             State(name="完成"),
         ]
 
+        # 状态机更新时请取消此处及self.DrawFSM()注释以重新生成FSM图
         # from transitions.extensions import GraphMachine
+        # self.machine = GraphMachine(
         self.machine = Machine(
             model=self,
             states=self.states,
@@ -189,6 +191,9 @@ class Task:
         self.queryCache = False
 
         self.data = Data()
+
+        # 取消以绘制FSM图
+        # self.DrawFSM()
 
         if not isDebug:
             # 关闭Transitions自带日志

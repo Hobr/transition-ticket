@@ -106,8 +106,6 @@ if __name__ == "__main__":
             isDebug=settingConfig["dev"]["debug"],
         )
 
-        # job.DrawFSM()
-
         # 任务流
         if not job.Run():
             break
