@@ -178,7 +178,7 @@ class Task:
         # ERR3 Sleep
         self.errSleep = 4.96
         # 重试创建订单间隔
-        self.refreshInterval = 1.5
+        self.refreshInterval = 0.95
         # 上次重试创建订单时间
         self.refreshTime = 0
         # 是否跳过Token获取
