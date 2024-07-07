@@ -85,6 +85,7 @@ class Bilibili:
         # 刚刚验证完
         else:
             url = f"https://show.bilibili.com/api/ticket/order/prepare?project_id={self.projectId}&token={self.token}&gaia_vtoken={self.token}"
+            self.risked = False
 
         params = {
             "project_id": self.projectId,
