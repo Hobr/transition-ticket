@@ -271,7 +271,7 @@ class Task:
 
             # 验证
             case -401:
-                logger.error("【获取Token】需要验证! 下面进入自动过验证")
+                logger.warning("【获取Token】需要验证! 下面进入自动过验证")
 
             # projectID/ScreenId/SkuID错误
             case 100080 | 100082:
