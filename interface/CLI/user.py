@@ -165,7 +165,7 @@ class UserCli:
                 type="Text",
                 message="请输入你的B站号绑定的手机号, 如果错误有可能无法通过验证码",
             )
-            if len(phone) != 11 and len(phone) != 0:
+            if 0 < len(phone) < 8 or len(phone) > 13:
                 logger.error("【绑定手机号】手机号格式错误, 请重新输入!")
                 return PhoneStep()
             elif len(phone) == 0:
