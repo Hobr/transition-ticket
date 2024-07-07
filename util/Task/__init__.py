@@ -351,7 +351,8 @@ class Task:
         等待余票
         """
         logger.info("【获取票数】正在蹲票...")
-        code, msg, self.queryTicketCode = self.api.QueryAmount()
+        code, msg, clickable, saleable = self.api.QueryAmount()
+        self.queryTicketCode = clickable or saleable
 
         match code:
             # 成功
