@@ -32,7 +32,7 @@ class SettingCli:
                 # 开票黄金时间
                 "gold": 35.0,
                 # 请求间隔
-                "sleep": 0.5,
+                "sleep": 1.2,
                 # 超时
                 "timeout": 3.0,
                 # 代理
@@ -101,7 +101,7 @@ class SettingCli:
             interval = self.data.Inquire(
                 type="Text",
                 message="请输入创建订单请求间隔时间(单位:秒), 太快有概率会被风控!",
-                default="0.5",
+                default="1.2",
             )
             return float(interval)
 
