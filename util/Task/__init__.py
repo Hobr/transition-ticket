@@ -121,14 +121,8 @@ class Task:
         self.machine.add_transition(
             trigger="QueryTicket",
             source="等待余票",
-            dest="获取Token",
-            conditions=lambda: not self.data.TimestampCheck(timestamp=self.refreshTime, duration=self.refreshInterval),
-        )
-        self.machine.add_transition(
-            trigger="QueryTicket",
-            source="等待余票",
             dest="创建订单",
-            conditions=lambda: self.queryTicketCode,
+            conditions=lambda: self.queryTicketCode or not self.data.TimestampCheck(timestamp=self.refreshTime, duration=self.refreshInterval),
         )
         self.machine.add_transition(
             trigger="QueryTicket",
@@ -148,7 +142,7 @@ class Task:
             trigger="CreateOrder",
             source="创建订单",
             dest="获取Token",
-            conditions=lambda: self.createOrderCode in range(100050, 100060) or not self.data.TimestampCheck(timestamp=self.refreshTime, duration=self.refreshInterval),
+            conditions=lambda: self.createOrderCode in range(100050, 100060),
         )
         self.machine.add_transition(
             trigger="CreateOrder",
@@ -160,7 +154,9 @@ class Task:
             trigger="CreateOrder",
             source="创建订单",
             dest="创建订单",
-            conditions=lambda: self.createOrderCode not in [0, 219, 100009, *range(100050, 100060)] or self.data.TimestampCheck(timestamp=self.api.saleStart, duration=self.goldTime),
+            conditions=lambda: self.createOrderCode not in [0, 219, 100009, *range(100050, 100060)]
+            or self.data.TimestampCheck(timestamp=self.api.saleStart, duration=self.goldTime)
+            or not self.data.TimestampCheck(timestamp=self.refreshTime, duration=self.refreshInterval),
         )
 
         # 创建订单状态结束
@@ -181,9 +177,9 @@ class Task:
         self.slowSleep = 1
         # ERR3 Sleep
         self.errSleep = 4.96
-        # 刷新Token间隔
-        self.refreshInterval = 7.5
-        # 上次刷新Token时间
+        # 重试创建订单间隔
+        self.refreshInterval = 1.5
+        # 上次重试创建订单时间
         self.refreshTime = 0
         # 是否跳过Token获取
         self.skipToken = False
@@ -272,7 +268,6 @@ class Task:
             # 成功
             case 0:
                 logger.success("【获取Token】Token获取成功!")
-                self.refreshTime = int(time())
 
             # 验证
             case -401:
@@ -357,7 +352,7 @@ class Task:
         """
         logger.info("【获取票数】正在蹲票...")
         code, msg, clickable, salenum = self.api.QueryAmount()
-        self.queryTicketCode = clickable or salenum != 4  # 2: 可售 4: 已售罄 8: 暂时售罄
+        self.queryTicketCode = clickable or salenum == 2  # 2: 可售 4: 已售罄 8: 暂时售罄
 
         match code:
             # 成功
@@ -393,6 +388,7 @@ class Task:
         """
         logger.info("【创建订单】正在尝试创建订单...")
         self.createOrderCode, msg = self.api.CreateOrder()
+        self.refreshTime = int(time())
 
         match self.createOrderCode:
             # 成功
