@@ -29,8 +29,6 @@ class SettingCli:
         self.config = {
             # 网络
             "request": {
-                # 开票黄金时间
-                "gold": 35.0,
                 # 请求间隔
                 "sleep": 1.2,
                 # 超时
@@ -153,7 +151,6 @@ class SettingCli:
             return filename
 
         print("下面开始配置设置!")
-        self.config["request"]["gold"] = GoldStep()
         self.config["request"]["sleep"] = SleepStep()
         (
             self.config["notice"]["system"],

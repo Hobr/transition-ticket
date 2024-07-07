@@ -101,7 +101,6 @@ if __name__ == "__main__":
             net=net,
             cap=cap,
             api=api,
-            goldTime=settingConfig["request"]["gold"],
             sleep=settingConfig["request"]["sleep"],
             isDebug=settingConfig["dev"]["debug"],
         )
