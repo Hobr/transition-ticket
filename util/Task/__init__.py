@@ -51,7 +51,12 @@ class Task:
 
         # 状态机更新时请取消此处及self.DrawFSM()注释以重新生成FSM图
         # from transitions.extensions import GraphMachine
+
+        # 状态机状态网页显示体验
+        # from transitions_gui import WebMachine
+
         # self.machine = GraphMachine(
+        # self.machine = WebMachine(
         self.machine = Machine(
             model=self,
             states=self.states,
@@ -513,7 +518,13 @@ class Task:
             "创建订单": "CreateOrder",
             "创建订单状态": "CreateStatus",
         }
+        try:
+            while self.state != "完成":  # type: ignore
+                self.trigger(job[self.state])  # type: ignore
+            return True
+        except KeyboardInterrupt:
+            logger.error("【任务】任务被中断!")
 
-        while self.state != "完成":  # type: ignore
-            self.trigger(job[self.state])  # type: ignore
-        return True
+            # 状态机状态网页显示体验
+            # self.machine.stop_server()
+            return False

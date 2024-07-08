@@ -34,12 +34,12 @@ optional = true
 [tool.poetry.group.dev.dependencies]
 ruff = "^0.5.0"
 pyupgrade = "^3.15.2"
-snakeviz = "^2.2.0"
 
 [tool.poetry.group.graph]
 optional = true
 
 [tool.poetry.group.graph.dependencies]
+transitions-gui = "^0.9.0"
 graphviz = "^0.20.3"
 pygraphviz = "^1.13"
 
