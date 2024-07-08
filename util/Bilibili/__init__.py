@@ -286,7 +286,6 @@ class Bilibili:
 
         # 成功
         if code == 0:
-            self.orderId = res["data"]["orderId"]
             self.orderToken = res["data"]["token"]
 
         return code, msg
@@ -296,8 +295,9 @@ class Bilibili:
         """
         创建订单状态
         """
-        url = f"https://show.bilibili.com/api/ticket/order/createstatus?token={self.orderToken}&project_id={self.projectId}&orderId={self.orderId}"
+        url = f"https://show.bilibili.com/api/ticket/order/createstatus?token={self.orderToken}&project_id={self.projectId}"
         res = self.net.Response(method="get", url=url)
+        self.orderId = res["data"]["payParam"]["orderId"]
         return res["errno"], res["msg"]
 
     @logger.catch
