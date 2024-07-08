@@ -1,5 +1,4 @@
 import atexit
-import os
 import shutil
 import sys
 import threading
@@ -23,10 +22,6 @@ def cleanup_meipass() -> None:
 atexit.register(cleanup_meipass)
 
 if __name__ == "__main__":
-    # 删除缓存
-    if os.path.exists(".cache"):
-        shutil.rmtree(".cache")
-
     # 丢锅
     print(
         """
