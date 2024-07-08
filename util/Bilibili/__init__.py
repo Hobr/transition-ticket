@@ -230,6 +230,7 @@ class Bilibili:
                     self.cost = path["price"]
                     clickable = path["clickable"]
                     salenum = path["sale_flag_number"]
+                    num = path["num"]
 
                 # 没保存Sku位置
                 else:
@@ -240,6 +241,7 @@ class Bilibili:
                                     self.cost = sku["price"]
                                     clickable = sku["clickable"]
                                     salenum = sku["sale_flag_number"]
+                                    num = path["num"]
                                     self.screenPath = i
                                     self.skuPath = j
                                     break
@@ -247,7 +249,7 @@ class Bilibili:
                 clickable = False
                 salenum = 4
 
-        return code, msg, clickable, salenum
+        return code, msg, clickable, salenum, num
 
     @logger.catch
     def CreateOrder(self) -> tuple:

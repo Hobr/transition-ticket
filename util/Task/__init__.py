@@ -353,9 +353,10 @@ class Task:
         """
         等待余票
         """
-        logger.info("【获取票数】正在蹲票...")
-        code, msg, clickable, salenum = self.api.QueryAmount()
-        self.queryTicketCode = clickable or salenum != 4  # 2: 可售 4: 已售罄 8: 暂时售罄
+        logger.info("【等待余票】正在蹲票...")
+        code, msg, clickable, salenum, num = self.api.QueryAmount()
+        self.queryTicketCode = clickable or salenum == 2 or num > 0
+        logger.info(f"【等待余票】可点击状态{clickable} 状态{salenum} 数量{num}, 总状态{self.queryTicketCode}")
 
         match code:
             # 成功
@@ -367,9 +368,6 @@ class Task:
 
                         case 8:
                             logger.warning("【等待余票】暂时售罄")
-
-                        case _:
-                            logger.warning(f"【等待余票】未知num{salenum} clickable{clickable}! 请提交给开发者")
 
                 else:
                     logger.warning("【等待余票】当前无票, 系统正在循环蹲票中! 请稍后")
