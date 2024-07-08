@@ -241,7 +241,7 @@ class Bilibili:
                                     self.cost = sku["price"]
                                     clickable = sku["clickable"]
                                     salenum = sku["sale_flag_number"]
-                                    num = path["num"]
+                                    num = sku["num"]
                                     self.screenPath = i
                                     self.skuPath = j
                                     break
