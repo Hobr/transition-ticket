@@ -145,14 +145,13 @@ class Task:
             trigger="CreateOrder",
             source="创建订单",
             dest="等待余票",
-            conditions=lambda: self.createOrderCode in [219, 100009] and not self.data.TimestampCheck(timestamp=self.goldTime, duration=self.goldInterval),
+            conditions=lambda: self.createOrderCode in [219, 100009],
         )
         self.machine.add_transition(
             trigger="CreateOrder",
             source="创建订单",
             dest="创建订单",
             conditions=lambda: self.createOrderCode not in [0, 219, 100009, *range(100050, 100060)]
-            or self.data.TimestampCheck(timestamp=self.goldTime, duration=self.goldInterval)
             or not self.data.TimestampCheck(timestamp=self.refreshTime, duration=self.refreshInterval),
         )
 
@@ -179,11 +178,6 @@ class Task:
         self.refreshInterval = 2.1
         # 上次重试创建订单时间
         self.refreshTime = 0
-
-        # 黄金期开始时间
-        self.goldTime = 0
-        # 黄金期持续时间
-        self.goldInterval = 12.5
 
         # Code
         self.skipToken = False
@@ -368,8 +362,6 @@ class Task:
             # 成功
             case 0:
                 if self.queryTicketCode:
-                    self.goldTime = int(time())
-
                     match salenum:
                         case 2:
                             logger.success("【等待余票】当前可购买")
@@ -418,11 +410,6 @@ class Task:
             # 库存不足 219,100009
             case 219 | 100009:
                 logger.warning("【创建订单】库存不足!")
-
-                if self.data.TimestampCheck(timestamp=self.goldTime, duration=self.goldInterval):
-                    logger.warning(f"【创建订单】无票! 由于{((int(time()-self.goldTime))/60):.2f}分钟内有过余票, 无视无票直到{self.goldInterval}分钟后......")
-                    # 规避ERR 3刷新
-                    sleep(self.errSleep)
 
             # 存在未付款订单
             case 100079 | 100048:

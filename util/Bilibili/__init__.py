@@ -95,7 +95,6 @@ class Bilibili:
             "order_type": self.orderType,
             "token": "",
             "requestSource": self.scene,
-            "newRisk": True,
         }
         res = self.net.Response(method="post", url=url, params=params)
         code = res["errno"]
@@ -275,7 +274,6 @@ class Bilibili:
             "token": self.token,
             "deviceId": "",
             "clickPosition": clickPosition,
-            "newRisk": True,
             "requestSource": self.scene,
         }
         res = self.net.Response(method="post", url=url, params=params)

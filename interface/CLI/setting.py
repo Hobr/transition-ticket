@@ -82,18 +82,6 @@ class SettingCli:
         """
 
         @logger.catch
-        def GoldStep() -> float:
-            """
-            开票黄金时间
-            """
-            time = self.data.Inquire(
-                type="Text",
-                message="请输入开票黄金时间(单位:分钟), 在开票后的相应时间内会无视无票提示且自动规避ERR3",
-                default="35.0",
-            )
-            return float(time)
-
-        @logger.catch
         def SleepStep() -> float:
             """
             请求间隔
