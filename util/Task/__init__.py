@@ -355,7 +355,7 @@ class Task:
         """
         logger.info("【等待余票】正在蹲票...")
         code, msg, clickable, salenum, num = self.api.QueryAmount()
-        self.queryTicketCode = clickable or salenum == 2 or num > 0
+        self.queryTicketCode = clickable or salenum != 4 or num > 0
         logger.info(f"【等待余票】可点击状态{clickable} 状态{salenum} 数量{num}, 总状态{self.queryTicketCode}")
 
         match code:
@@ -418,7 +418,7 @@ class Task:
 
             # 硬控
             case 3:
-                logger.error("【创建订单】被硬控了, 需等待几秒钟")
+                logger.error("【创建订单】ERR 3! 需等待几秒钟(目前的研究结论是 该实名购买人被B站拉清单了)")
                 # 规避ERR 3刷新
                 sleep(self.errSleep)
 
