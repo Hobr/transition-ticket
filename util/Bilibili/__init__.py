@@ -50,6 +50,7 @@ class Bilibili:
         self.screenPath = 0
         self.skuPath = 0
 
+        self.cost = 0
         self.risked = False
 
     @logger.catch
@@ -248,6 +249,7 @@ class Bilibili:
             case _:
                 clickable = False
                 salenum = 4
+                num = 0
 
         return code, msg, clickable, salenum, num
 

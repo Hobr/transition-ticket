@@ -32,12 +32,11 @@ class Task:
         sleep: 任务间请求间隔时间
         isDebug: 调试模式
         """
-
         self.net = net
         self.cap = cap
         self.api = api
 
-        self.normalSleep = sleep
+        self.sleep = sleep
 
         self.states = [
             State(name="开始"),
@@ -182,11 +181,6 @@ class Task:
             dest="创建订单",
             conditions=lambda: self.createStatusCode != 0,
         )
-
-        # 减速Sleep
-        self.slowSleep = 1
-        # ERR3 Sleep
-        self.errSleep = 4.96
 
         # 重试创建订单间隔
         self.refreshInterval = 2.1
@@ -370,35 +364,33 @@ class Task:
         """
         logger.info("【等待余票】正在蹲票...")
         code, msg, clickable, salenum, num = self.api.QueryAmount()
-        self.queryTicketCode = clickable or salenum == 2 or num > 0
-        logger.warning(f"【等待余票】可点击状态{clickable} 状态{salenum} 数量{num}, 可下单状态{self.queryTicketCode}")
+        self.queryTicketCode = clickable or salenum != 4 or num > 0
 
         match code:
             # 成功
             case 0:
+                logger.warning(f"【等待余票】可点击状态{clickable} 状态{salenum} 数量{num}, 可下单状态{self.queryTicketCode}")
                 if self.queryTicketCode:
                     match salenum:
                         case 2:
                             logger.success("【等待余票】当前可购买")
 
                         case 8:
-                            logger.warning("【等待余票】暂时售罄")
+                            logger.warning("【等待余票】暂时售罄, 等待回流!")
+
+                        case 4:
+                            logger.warning("【等待余票】已售罄")
+                            # 刷新
+                            sleep(self.sleep)
 
                 else:
                     # 刷新
-                    sleep(self.normalSleep)
-
-            # 太快了
-            case 100001:
-                logger.error("【等待余票】请求过快, 将减慢请求速度!")
-                # 减速
-                sleep(self.slowSleep)
-
+                    sleep(self.sleep)
             # 不知道
             case _:
                 logger.error(f"【等待余票】{code}: {msg}")
                 # 刷新
-                sleep(self.normalSleep)
+                sleep(self.sleep)
 
     @logger.catch
     def CreateOrderAction(self) -> None:
@@ -421,20 +413,20 @@ class Task:
             # 库存不足 219,100009
             case 219 | 100009:
                 logger.warning("【创建订单】库存不足!")
-                # 规避ERR 3刷新
-                sleep(self.errSleep)
+                # 刷新
+                sleep(self.sleep)
 
             # 存在未付款订单
             case 100079 | 100048:
-                logger.error("【创建订单】存在未付款/未完成订单! 请尽快付款")
+                logger.error("【创建订单】存在未付款/未完成订单! 脚本将暂停15秒, 请尽快付款")
                 # 刷新
-                sleep(self.normalSleep)
+                sleep(15)
 
             # 硬控
             case 3:
-                logger.error("【创建订单】ERR 3! 需等待几秒钟(目前的研究结论是 该实名购买人被B站拉清单了)")
-                # 规避ERR 3刷新
-                sleep(self.errSleep)
+                logger.error("【创建订单】ERR 3! 目前的研究结论是 该实名购买人被B站拉清单了!")
+                # 刷新
+                sleep(self.sleep)
 
             # 订单已存在/已购买
             case 100049:
@@ -466,11 +458,12 @@ class Task:
 
             # 失败
             case _:
-                logger.error(f"【创建订单】{self.createOrderCode}: {msg}")
                 if msg == "请求错误: 429":
                     logger.info("【创建订单】无需在意! 这是服务器全局的限制")
+                else:
+                    logger.error(f"【创建订单】{self.createOrderCode}: {msg}")
                 # 刷新
-                sleep(self.normalSleep)
+                sleep(self.sleep)
 
     @logger.catch
     def CreateStatusAction(self) -> None:
