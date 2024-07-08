@@ -39,14 +39,8 @@ class Request:
 
         self.header = {
             "Accept": "*/*",
-            "Accept-Language": "zh-CN,zh;q=0.9",
-            "Authority": "show.bilibili.com",
+            "Accept-Encoding": "gzip, deflate",
             "Connection": "keep-alive",
-            "Referer": "https://show.bilibili.com",
-            "Origin": "https://show.bilibili.com/",
-            "Sec-Fetch-Dest": "empty",
-            "Sec-Fetch-Mode": "cors",
-            "Sec-Fetch-Site": "same-origin",
             "User-Agent": UserAgent(os="android", platforms="mobile").random,
         } | header
 
