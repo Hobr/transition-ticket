@@ -61,7 +61,7 @@ class Notice:
         )  # type: ignore
 
     @logger.catch
-    def Sound(self, time: int = 2) -> None:
+    def Sound(self, time: int = 3) -> None:
         """
         声音
         """
