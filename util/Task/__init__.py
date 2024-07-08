@@ -185,8 +185,13 @@ class Task:
         # 黄金期持续时间
         self.goldInterval = 12.5
 
-        # 是否跳过Token获取
+        # Code
         self.skipToken = False
+        self.queryTokenCode = 114514
+        self.riskProcessCode = 114514
+        self.queryTicketCode = False
+        self.createOrderCode = 114514
+        self.createStatusCode = 114514
 
         # 是否已缓存getV2
         self.queryCache = False
