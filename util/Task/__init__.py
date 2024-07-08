@@ -145,14 +145,13 @@ class Task:
             trigger="CreateOrder",
             source="创建订单",
             dest="等待余票",
-            conditions=lambda: self.createOrderCode in [219, 100009],
+            conditions=lambda: self.createOrderCode not in [0, *range(100050, 100060)],
         )
         self.machine.add_transition(
             trigger="CreateOrder",
             source="创建订单",
             dest="创建订单",
-            conditions=lambda: self.createOrderCode not in [0, 219, 100009, *range(100050, 100060)]
-            or not self.data.TimestampCheck(timestamp=self.refreshTime, duration=self.refreshInterval),
+            conditions=lambda: not self.data.TimestampCheck(timestamp=self.refreshTime, duration=self.refreshInterval),
         )
 
         # 创建订单状态结束
@@ -410,6 +409,8 @@ class Task:
             # 库存不足 219,100009
             case 219 | 100009:
                 logger.warning("【创建订单】库存不足!")
+                # 规避ERR 3刷新
+                sleep(self.errSleep)
 
             # 存在未付款订单
             case 100079 | 100048:
