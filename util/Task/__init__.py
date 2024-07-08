@@ -453,6 +453,8 @@ class Task:
             # 失败
             case _:
                 logger.error(f"【创建订单】{self.createOrderCode}: {msg}")
+                if msg == "请求错误: 429":
+                    logger.info("【创建订单】无需在意! 这是服务器全局的限制")
                 # 刷新
                 sleep(self.normalSleep)
 
