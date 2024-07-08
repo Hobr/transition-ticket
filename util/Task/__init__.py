@@ -363,15 +363,17 @@ class Task:
             # 成功
             case 0:
                 if self.queryTicketCode:
-                    if salenum == 2:
-                        logger.success("【等待余票】当前可购买")
-                        self.goldTime = int(time())
+                    self.goldTime = int(time())
 
-                    elif salenum == 8:
-                        logger.warning("【等待余票】暂时售罄")
+                    match salenum:
+                        case 2:
+                            logger.success("【等待余票】当前可购买")
 
-                    else:
-                        logger.warning("【等待余票】未知num! 请提交给开发者")
+                        case 8:
+                            logger.warning("【等待余票】暂时售罄")
+
+                        case _:
+                            logger.warning(f"【等待余票】未知num{salenum} clickable{clickable}! 请提交给开发者")
 
                 else:
                     logger.warning("【等待余票】当前无票, 系统正在循环蹲票中! 请稍后")
@@ -410,14 +412,12 @@ class Task:
 
             # 库存不足 219,100009
             case 219 | 100009:
-                if self.data.TimestampCheck(timestamp=self.goldTime, duration=self.goldInterval):
-                    logger.warning(f"【创建订单】{((int(time()-self.goldTime))/60):.2f}分钟内有过余票, 无视无票直到{self.goldInterval}分钟后......")
+                logger.warning("【创建订单】库存不足!")
 
+                if self.data.TimestampCheck(timestamp=self.goldTime, duration=self.goldInterval):
+                    logger.warning(f"【创建订单】无票! 由于{((int(time()-self.goldTime))/60):.2f}分钟内有过余票, 无视无票直到{self.goldInterval}分钟后......")
                     # 规避ERR 3刷新
                     sleep(self.errSleep)
-
-                else:
-                    logger.warning("【创建订单】库存不足!")
 
             # 存在未付款订单
             case 100079 | 100048:
