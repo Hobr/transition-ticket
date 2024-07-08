@@ -27,7 +27,7 @@ class Notice:
         self.net = Request()
         self.login = Login(net=self.net)
 
-        self.appName = "Bilibili_Show_Python"
+        self.appName = "Transition-Ticket"
         self.appIconPath = self.AssestDir("assest/icon.ico")
         self.audioPath = self.AssestDir("assest/alarm.wav")
 

@@ -43,13 +43,14 @@ class Captcha:
 
     @logger.catch
     def Geetest(self, challenge: str) -> str:
-        if self.verify == "Auto":
-            return self.Auto(challenge)
-        elif self.verify == "Manual":
-            return self.Manual(challenge)
-        else:
-            logger.error("【验证】verify参数错误")
-            return ""
+        match self.verify:
+            case "Auto":
+                return self.Auto(challenge)
+            case "Manual":
+                return self.Manual(challenge)
+            case _:
+                logger.error("【验证】verify参数错误")
+                return ""
 
     @logger.catch
     def Auto(self, challenge: str) -> str:
