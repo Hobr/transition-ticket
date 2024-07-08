@@ -370,7 +370,7 @@ class Task:
         """
         logger.info("【等待余票】正在蹲票...")
         code, msg, clickable, salenum, num = self.api.QueryAmount()
-        self.queryTicketCode = clickable or salenum != 4 or num > 0
+        self.queryTicketCode = clickable or salenum == 2 or num > 0
         logger.warning(f"【等待余票】可点击状态{clickable} 状态{salenum} 数量{num}, 可下单状态{self.queryTicketCode}")
 
         match code:
