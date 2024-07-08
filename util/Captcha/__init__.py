@@ -33,7 +33,7 @@ class Captcha:
             self.gtPy = ClickPy()
         except ImportError:
             self.verify = "Manual"
-            logger.warning("【验证】无法导入极验自动验证，请手动验证")
+            logger.warning("【验证】无法导入极验自动验证, 将使用手动验证!")
 
         self.verify = verify
         self.gt = gt
@@ -67,7 +67,7 @@ class Captcha:
         except Exception as e:
             logger.error(f"【验证】{e}")
             self.verify = "Manual"
-            logger.warning("【验证】无法使用极验自动验证，请手动验证")
+            logger.warning("【验证】无法使用极验自动验证, 请手动验证")
             return self.Geetest(challenge)
 
     @logger.catch
@@ -92,8 +92,8 @@ class Captcha:
 
         for browser in browser_list:
             browser_type = browser["browser_type"]
-            print("请从打开的浏览器中手动验证，获取极验校验值")
-            print("建议点选文字时，持续两秒以上，以保证能通过校验")
+            print("请从打开的浏览器中手动验证, 获取极验校验值")
+            print("建议点选文字时, 持续两秒以上, 以保证能通过校验")
             driver = selenium_drivers[browser_type]()
 
             if not driver:

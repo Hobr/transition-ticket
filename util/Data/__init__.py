@@ -26,10 +26,10 @@ class CustomThemes(GreenPassion):
 
         self.Checkbox.selected_icon = "✔"  # Checkbox选项 的启用图标 # type: ignore
         self.Checkbox.unselected_icon = "✘"  # Checkbox选项 的未启用图标 # type: ignore
-        self.Checkbox.selection_color = "\033[1;35;106m"  # Checkbox选项 的选中颜色(紫，蓝) # type: ignore
+        self.Checkbox.selection_color = "\033[1;35;106m"  # Checkbox选项 的选中颜色(紫, 蓝) # type: ignore
         self.Checkbox.selected_color = "\033[93m"  # Checkbox选项 的启用颜色(黄) # type: ignore
 
-        self.List.selection_color = "\033[1;35;106m"  # List选项 的选中颜色(紫，蓝) # type: ignore
+        self.List.selection_color = "\033[1;35;106m"  # List选项 的选中颜色(紫, 蓝) # type: ignore
 
         self.Question.mark_color = "\033[93m"  # [?] 中 ? 的颜色(黄) # type: ignore
         self.Question.brackets_color = "\033[96m"  # [?] 中 [] 的颜色(蓝) # type: ignore
