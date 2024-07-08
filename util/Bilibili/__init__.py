@@ -229,7 +229,6 @@ class Bilibili:
                 # 有保存Sku位置
                 if path["id"] == self.skuId:
                     self.cost = path["price"]
-                    self.saleStart = path["saleStart"]
                     clickable = path["clickable"]
                     salenum = path["sale_flag_number"]
 
@@ -240,7 +239,6 @@ class Bilibili:
                             for j, sku in enumerate(screen["ticket_list"]):
                                 if sku["id"] == self.skuId:
                                     self.cost = sku["price"]
-                                    self.saleStart = sku["saleStart"]
                                     clickable = sku["clickable"]
                                     salenum = sku["sale_flag_number"]
                                     self.screenPath = i
