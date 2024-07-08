@@ -20,16 +20,24 @@
 
 注意:
 
-1. 现仅支持部分活动, 主要是类似于BW2024这样的*实名制 一人一票 无选座*活动, 后期会增加更多类型的票务支持;
-2. 如使用浏览器登录功能, 您的电脑里必须安装Chrome/Edge/Firefox浏览器, 如有安装还是提供无法启动, 则需要自行安装其中一个浏览器的Web Driver.
+1. MacOS/Linux用户请根据*手动安装*流程安装进行使用;
+2. 现仅支持部分活动, 主要是类似于BW2024这样的*实名制 一人一票 无选座*活动, 后期会增加更多类型的票务支持;
+3. 如使用浏览器登录功能, 您的电脑里必须安装Chrome/Edge/Firefox浏览器, 如有安装还是提供无法启动, 则需要自行安装其中一个浏览器的Web Driver.
+
+### 手动安装
+
+- Python >=3.10,<3.13
 
 ```bash
+git clone https://github.com/biliticket/transition-ticket.git
+cd transition-ticket
 pip config set global.index-url https://pypi.tuna.tsinghua.edu.cn/simple
-pip install poetry virtualenv pre-commit
+pip install virtualenv
 
 virtualenv venv
 source venv/script/activate
-poetry install
+pip config set global.index-url https://pypi.tuna.tsinghua.edu.cn/simple
+pip install -r requirements.txt
 python cli.py
 ```
 
@@ -62,6 +70,7 @@ pre-commit install
 
 # 更新
 poetry update
+pip freeze > requirements.txt
 pre-commit autoupdate
 
 # 打包

@@ -13,27 +13,11 @@ permissions:
 
 jobs:
   build:
-    runs-on: ${{ matrix.os }}
-
-    strategy:
-      matrix:
-        os: [ubuntu-latest, windows-latest, macos-latest]
+    runs-on: windows-latest
 
     steps:
       - name: Checkout
         uses: actions/checkout@v4
-
-      - name: Install dependencies on Ubuntu
-        if: matrix.os == 'ubuntu-latest'
-        run: |
-          sudo apt-get update
-          sudo apt-get install -y portaudio19-dev
-
-      - name: Install dependencies on macOS
-        if: matrix.os == 'macos-latest'
-        run: |
-          brew update
-          brew install portaudio
 
       - name: Install Python
         uses: actions/setup-python@v5
@@ -54,16 +38,7 @@ jobs:
       - name: Package
         run: poetry run pyinstaller --clean --noconfirm --log-level WARN cli.spec
 
-      - name: Rename Release Files with Tag on Ubuntu/MacOS
-        if: matrix.os != 'windows-latest'
-        run: |
-          tag=${GITHUB_REF#refs/tags/}
-          for file in dist/*; do
-            mv "$file" "dist/${tag}-${file##*/}"
-          done
-
-      - name: Rename Release Files with Tag on Windows
-        if: matrix.os == 'windows-latest'
+      - name: Rename
         run: |
           $tag = $env:GITHUB_REF -replace 'refs/tags/', ''
           Get-ChildItem -Path dist | ForEach-Object {
