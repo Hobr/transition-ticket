@@ -459,7 +459,7 @@ class Task:
             # 失败
             case _:
                 if msg == "请求错误: 429":
-                    logger.info("【创建订单】无需在意! 这是服务器全局的限制")
+                    logger.info("【创建订单】429! 无需在意, 这是服务器全局的限制")
                 else:
                     logger.error(f"【创建订单】{self.createOrderCode}: {msg}")
                 # 刷新
@@ -484,7 +484,8 @@ class Task:
         match self.createStatusCode:
             # 成功
             case 0:
-                logger.success("【获取订单状态】请在打开的浏览器页面进行支付!")
+                logger.success("【获取订单状态】请在打开的浏览器页面/APP内进行支付! 网页未打开请手动点击下面链接")
+                logger.success(f"【获取订单状态】https://show.bilibili.com/platform/orderDetail.html?order_id={orderId}")
                 webbrowser.open(f"https://show.bilibili.com/platform/orderDetail.html?order_id={orderId}")
 
             # 不知道
