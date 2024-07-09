@@ -92,13 +92,13 @@ class Request:
                 if dist.status_code == 200:
                     return dist.json()
                 else:
-                    return {"code": 114514, "errno": 114515, "msg": f"请求错误: {dist.status_code}", "message": f"请求错误: {dist.status_code}"}
+                    return {"code": 114514, "errno": 114514, "msg": f"请求错误: {dist.status_code}", "message": f"请求错误: {dist.status_code}"}
             else:
                 methods[method](url=url, **({"params": params} if method == "get" else {"data": params}))
                 return {}
 
         except (httpx.RequestError, httpx.HTTPStatusError, httpx.StreamError) as e:
-            return {"code": 114514, "errno": 114515, "msg": f"请求错误: {e}", "message": f"请求错误: {e}"}
+            return {"code": 114514, "errno": 114514, "msg": f"请求错误: {e}", "message": f"请求错误: {e}"}
 
     @logger.catch
     def GetCookie(self) -> dict:
