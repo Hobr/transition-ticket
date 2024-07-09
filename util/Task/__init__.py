@@ -572,7 +572,7 @@ class Task:
                     sleepTime = self.availableSchedule[i + 1][1]
                     break
 
-            logger.info(f"【等待余票】票仓可能出票, 请求间隔将自动调整至{sleepTime:.2f}秒")
+            logger.info(f"【创建订单】票仓可能出票, 请求间隔将自动调整至{sleepTime:.2f}秒")
             sleep(sleepTime)
 
         # 常规试探
