@@ -147,7 +147,7 @@ class Task:
             trigger="CreateOrder",
             source="创建订单",
             dest="创建订单",
-            conditions=lambda: not self.data.TimestampCheck(timestamp=self.refreshTime, duration=self.refreshInterval),
+            conditions=lambda: not self.data.TimestampCheck(timestamp=self.refreshTime, duration=self.refreshInterval) or self.createOrderCode == 429,
         )
         ## 下单成功
         self.machine.add_transition(
@@ -465,6 +465,7 @@ class Task:
             case _:
                 if msg == "请求错误: 429":
                     logger.info("【创建订单】429! 无需在意, 这是服务器全局的限制")
+                    self.createOrderCode = 429
                 else:
                     logger.error(f"【创建订单】{self.createOrderCode}: {msg}")
                 # 刷新
