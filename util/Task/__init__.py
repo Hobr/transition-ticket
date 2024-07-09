@@ -441,6 +441,7 @@ class Task:
             # 成功
             case 0:
                 logger.success("【创建订单】订单创建成功!")
+                self.availableTime = int(time())
 
             # Token过期
             case x if 100050 <= x <= 100059:
@@ -580,7 +581,7 @@ class Task:
                     sleepTime = self.availableSchedule[i + 1][1]
                     break
 
-            logger.info(f"【等待余票】票仓可能出票, 请求间隔将自动调整至{sleepTime}秒")
+            logger.info(f"【等待余票】票仓可能出票, 请求间隔将自动调整至{sleepTime:.2f}秒")
             sleep(sleepTime)
 
         # 常规试探
