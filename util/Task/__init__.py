@@ -383,34 +383,30 @@ class Task:
         """
         等待余票
         """
-        logger.info("【等待余票】正在蹲票...")
         code, msg, clickable, salenum, num = self.api.QueryAmount()
         self.queryTicketCode = clickable or salenum != 4 or num > 0
 
         match code:
             # 成功
             case 0:
+                # 可购
                 if self.queryTicketCode:
                     match salenum:
                         case 2:
-                            logger.success(f"【等待余票】当前可购买, 票数:{num}")
+                            logger.warning(f"【等待余票】有票了! 票数:{num}")
 
                         case 8:
-                            logger.warning("【等待余票】暂时售罄, 等待回流!")
-
-                        case 4:
-                            logger.warning("【等待余票】已售罄")
-                            # 刷新
-                            sleep(self.sleep)
+                            logger.info("【等待余票】暂时售罄, 等待回流!")
 
                         case _:
                             logger.warning(f"【等待余票】可点击状态{clickable} 状态{salenum} 数量{num}, 可下单状态{self.queryTicketCode}")
-                            # 刷新
-                            sleep(self.sleep)
 
+                # 不可购
                 else:
+                    logger.info("【等待余票】暂时无票, 持续查询票仓中......")
                     # 刷新
                     sleep(self.sleep)
+
             # 不知道
             case _:
                 logger.error(f"【等待余票】{code}: {msg}")
@@ -564,7 +560,7 @@ class Task:
             return True
 
         except KeyboardInterrupt:
-            logger.error("【任务】任务被中断!")
+            logger.error("【状态机】任务被中断!")
 
             # 状态机状态网页显示体验
             # self.machine.stop_server()
