@@ -34,6 +34,7 @@ class Captcha:
         except ImportError:
             self.verify = "Manual"
             logger.warning("【验证】无法导入极验自动验证, 将使用手动验证!")
+            logger.warning("【验证】这种情况一般是因为系统版本略老!")
 
         self.verify = verify
         self.gt = gt
