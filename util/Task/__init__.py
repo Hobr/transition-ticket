@@ -1,12 +1,13 @@
 import logging
 import sys
+import threading
 import webbrowser
 from time import sleep, time
 
 from loguru import logger
 from transitions import Machine, State
 
-from util import Bilibili, Captcha, Data, Request
+from util import Bilibili, Captcha, Data, Notice, Request
 
 
 class Task:
@@ -20,6 +21,7 @@ class Task:
         net: Request,
         cap: Captcha,
         api: Bilibili,
+        notice: dict,
         sleep: float = 0.5,
         isDebug: bool = False,
     ):
@@ -29,6 +31,7 @@ class Task:
         net: 网络实例
         cap: 验证码实例
         api: Bilibili实例
+        notice: 通知设置
         sleep: 默认请求间请求间隔时间
         isDebug: 调试模式
         """
@@ -44,7 +47,7 @@ class Task:
             State(name="等待余票", on_enter="QueryTicketAction"),
             State(name="创建订单", on_enter="CreateOrderAction"),
             State(name="创建订单状态", on_enter="CreateStatusAction"),
-            State(name="完成"),
+            State(name="完成", on_enter="FinishAction"),
         ]
 
         # 状态机更新时请取消此处及self.DrawFSM()注释以重新生成FSM图
@@ -512,13 +515,13 @@ class Task:
             case 0:
                 logger.success("【创建订单状态】锁单成功!")
 
-                self.createStatusCode, msg, orderId = self.api.GetOrderStatus()
+                self.createStatusCode, msg, self.orderId = self.api.GetOrderStatus()
                 match self.createStatusCode:
                     # 成功
                     case 0:
                         logger.success("【获取订单状态】请在打开的浏览器页面/APP内进行支付! 网页未打开请手动点击下面链接")
-                        logger.success(f"【获取订单状态】https://show.bilibili.com/platform/orderDetail.html?order_id={orderId}")
-                        webbrowser.open(f"https://show.bilibili.com/platform/orderDetail.html?order_id={orderId}")
+                        logger.success(f"【获取订单状态】https://show.bilibili.com/platform/orderDetail.html?order_id={self.orderId}")
+                        webbrowser.open(f"https://show.bilibili.com/platform/orderDetail.html?order_id={self.orderId}")
 
                     # 不知道
                     case _:
@@ -532,6 +535,31 @@ class Task:
                     logger.warning("【创建订单状态】锁单失败, 鉴定为假单! 继续锁")
                 else:
                     logger.error(f"【创建订单状态】{code}: {msg}")
+
+    @logger.catch
+    def FinishAction(self) -> None:
+        """
+        抢票完成
+        """
+        notice = Notice(title="抢票", message=f"下单成功! 请在十分钟内支付, 链接:https://show.bilibili.com/platform/orderDetail.html?order_id={self.orderId}")
+        mode = self.notice
+        logger.success("【抢票】下单成功! 请在十分钟内支付")
+
+        # 通知
+        noticeThread = []
+        t1 = threading.Thread(target=notice.Message)
+        t2 = threading.Thread(target=notice.Sound)
+        t3 = threading.Thread(target=notice.PushPlus, args=(mode["plusPush"],))
+
+        if mode["system"]:
+            noticeThread.append(t1)
+        if mode["sound"]:
+            noticeThread.append(t2)
+        if mode["wechat"]:
+            noticeThread.append(t3)
+
+        for t in noticeThread:
+            t.start()
 
     @logger.catch
     def AutoSleep(self) -> None:

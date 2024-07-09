@@ -1,12 +1,11 @@
 import atexit
 import shutil
 import sys
-import threading
 
 from loguru import logger
 
 from interface import ProductCli, SettingCli, UserCli
-from util import Bilibili, Captcha, Config, Notice, Request, Task
+from util import Bilibili, Captcha, Config, Request, Task
 
 
 def cleanup_meipass() -> None:
@@ -97,6 +96,7 @@ if __name__ == "__main__":
             net=net,
             cap=cap,
             api=api,
+            notice=settingConfig["notice"],
             sleep=settingConfig["request"]["sleep"],
             isDebug=settingConfig["dev"]["debug"],
         )
@@ -104,25 +104,3 @@ if __name__ == "__main__":
         # 任务流
         if not job.Run():
             break
-
-        notice = Notice(title="抢票", message="下单成功! 请在十分钟内支付")
-        mode = settingConfig["notice"]
-        logger.success("【抢票】下单成功! 请在十分钟内支付")
-
-        # 通知
-        noticeThread = []
-        t1 = threading.Thread(target=notice.Message)
-        t2 = threading.Thread(target=notice.Sound)
-        t3 = threading.Thread(target=notice.PushPlus, args=(mode["plusPush"],))
-
-        if mode["system"]:
-            noticeThread.append(t1)
-        if mode["sound"]:
-            noticeThread.append(t2)
-        if mode["wechat"]:
-            noticeThread.append(t3)
-
-        for t in noticeThread:
-            t.start()
-
-        logger.info("【通知】本轮抢票结束, 正在重启...")
