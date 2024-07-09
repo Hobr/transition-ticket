@@ -202,13 +202,13 @@ class Task:
             # 0-0
             [0, 0.0],
             # 0-1
-            [1.0, self.sleep / 2],
+            [1.0, self.sleep / 1.5],
             # 1-5
             [5.0, self.sleep],
             # 5-9.9
-            [9.9, self.sleep * 2],
+            [9.9, self.sleep * 1.5],
             # 9.9-10.5
-            [10.5, self.sleep / 2],
+            [10.5, self.sleep / 1.5],
         ]
 
         # 是否有过ERR3

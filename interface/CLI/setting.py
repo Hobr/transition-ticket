@@ -30,7 +30,7 @@ class SettingCli:
             # 网络
             "request": {
                 # 请求间隔
-                "sleep": 0.5,
+                "sleep": 0.8,
                 # 超时
                 "timeout": 3.0,
                 # 代理
@@ -89,7 +89,7 @@ class SettingCli:
             interval = self.data.Inquire(
                 type="Text",
                 message="请输入创建订单请求间隔时间(单位:秒), 太快有概率会被风控!",
-                default="0.5",
+                default="0.8",
             )
             return float(interval)
 

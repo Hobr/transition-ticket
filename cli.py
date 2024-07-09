@@ -66,7 +66,11 @@ if __name__ == "__main__":
         settingConfig = SettingCli(conf=settingData).Select(selects=settingList) if settingList != [] else SettingCli(conf=settingData).Generate()
 
         userList = userData.List()
-        userConfig = UserCli(conf=userData, isEncrypt=settingConfig["dev"]["isEncrypt"]).Select(selects=userList) if userList != [] else UserCli(conf=userData).Generate()
+        userConfig = (
+            UserCli(conf=userData, isEncrypt=settingConfig["dev"]["isEncrypt"]).Select(selects=userList)
+            if userList != []
+            else UserCli(conf=userData, isEncrypt=settingConfig["dev"]["isEncrypt"]).Generate()
+        )
 
         productList = productData.List()
         productConfig = ProductCli(conf=productData).Select(selects=productList) if productList != [] else ProductCli(conf=productData).Generate()
