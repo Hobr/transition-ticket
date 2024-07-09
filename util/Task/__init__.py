@@ -29,14 +29,12 @@ class Task:
         net: 网络实例
         cap: 验证码实例
         api: Bilibili实例
-        sleep: 任务间请求间隔时间
+        sleep: 默认请求间请求间隔时间
         isDebug: 调试模式
         """
         self.net = net
         self.cap = cap
         self.api = api
-
-        self.sleep = sleep
 
         self.states = [
             State(name="开始"),
@@ -191,6 +189,24 @@ class Task:
         self.refreshInterval = 2.1
         # 上次重试创建订单时间
         self.refreshTime = 0
+
+        # 默认请求间请求间隔时间
+        self.sleep = sleep
+        # 快速间隔
+        self.fastSleep = self.sleep / 2
+        # 慢速间隔
+        self.slowSleep = self.sleep * 2
+
+        # 是否有过ERR3
+        self.err3 = False
+        # ERR3 Sleep
+        self.err3Sleep = 4.96
+        # 上次ERR3时间
+        self.err3Time = 0
+        # ERR3结束间隔
+        self.err3Interval = 3.0
+
+        # 速度
 
         # Code
         self.skipToken = False
@@ -374,17 +390,21 @@ class Task:
         match code:
             # 成功
             case 0:
-                logger.warning(f"【等待余票】可点击状态{clickable} 状态{salenum} 数量{num}, 可下单状态{self.queryTicketCode}")
                 if self.queryTicketCode:
                     match salenum:
                         case 2:
-                            logger.success("【等待余票】当前可购买")
+                            logger.success(f"【等待余票】当前可购买, 票数:{num}")
 
                         case 8:
                             logger.warning("【等待余票】暂时售罄, 等待回流!")
 
                         case 4:
                             logger.warning("【等待余票】已售罄")
+                            # 刷新
+                            sleep(self.sleep)
+
+                        case _:
+                            logger.warning(f"【等待余票】可点击状态{clickable} 状态{salenum} 数量{num}, 可下单状态{self.queryTicketCode}")
                             # 刷新
                             sleep(self.sleep)
 
@@ -419,7 +439,7 @@ class Task:
             case 219 | 100009:
                 logger.warning("【创建订单】库存不足!")
                 # 刷新
-                sleep(self.sleep)
+                self.AutoSleep()
 
             # 存在未付款订单
             case 100079 | 100048:
@@ -429,9 +449,10 @@ class Task:
 
             # 硬控
             case 3:
-                logger.error("【创建订单】ERR 3! 目前的研究结论是 该实名购买人被B站拉清单了!")
+                logger.error("【创建订单】ERR 3! 请不要对同一实名制购票人开多个脚本, 否则会被B站限流")
+                self.err3Time = int(time())
                 # 刷新
-                sleep(self.sleep)
+                self.AutoSleep()
 
             # 订单已存在/已购买
             case 100049:
@@ -469,7 +490,7 @@ class Task:
                 else:
                     logger.error(f"【创建订单】{self.createOrderCode}: {msg}")
                 # 刷新
-                sleep(self.sleep)
+                self.AutoSleep()
 
     @logger.catch
     def CreateStatusAction(self) -> None:
@@ -498,6 +519,26 @@ class Task:
             case _:
                 logger.error(f"【获取订单状态】{code}: {msg}")
 
+            # 不知道
+            case _:
+                if code == 100009:
+                    logger.warning("【创建订单状态】锁单失败, 鉴定为假单! 继续锁")
+                else:
+                    logger.error(f"【创建订单状态】{code}: {msg}")
+
+    @logger.catch
+    def AutoSleep(self) -> None:
+        if self.err3:
+            if self.data.TimestampCheck(timestamp=self.err3Time, duration=self.err3Interval):
+                sleep(self.err3Sleep)
+                logger.info(f"【ERR3】因{((int(time())-self.err3Time)/60):.2f}分钟内触发过ERR3, 3分钟内请求间隔将延长至4.96秒")
+            else:
+                logger.info("【ERR3】3分钟内未触发, 已恢复到原有速度!")
+                self.err3 = False
+                sleep(self.sleep)
+        else:
+            sleep(self.sleep)
+
     @logger.catch
     def DrawFSM(self) -> None:
         """
@@ -523,6 +564,7 @@ class Task:
             while self.state != "完成":  # type: ignore
                 self.trigger(job[self.state])  # type: ignore
             return True
+
         except KeyboardInterrupt:
             logger.error("【任务】任务被中断!")
 
