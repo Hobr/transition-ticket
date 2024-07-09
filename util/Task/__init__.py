@@ -455,6 +455,8 @@ class Task:
             # 请慢一点
             case 100001:
                 logger.warning("【创建订单】100001: 请慢一点 (无需在意, 这是服务器全局的限制)")
+                # 刷新
+                self.AutoSleepInterval()
 
             # 硬控
             case 3:
@@ -523,6 +525,9 @@ class Task:
                     case _:
                         logger.error(f"【获取订单状态】{code}: {msg}")
 
+                        # 刷新
+                        self.AutoSleepInterval()
+
             # 不知道
             case _:
                 self.createStatusCode = code
@@ -531,6 +536,9 @@ class Task:
                     logger.warning("【创建订单状态】锁单失败, 鉴定为假单! 继续锁")
                 else:
                     logger.error(f"【创建订单状态】{code}: {msg}")
+
+                # 刷新
+                self.AutoSleepInterval()
 
     @logger.catch
     def FinishAction(self) -> None:
