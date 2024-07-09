@@ -39,6 +39,49 @@ class Task:
         self.cap = cap
         self.api = api
 
+        self.notice = notice
+        self.sleep = sleep
+
+        self.data = Data()
+        self.queryCache = False
+        self.orderId = 0
+
+        # 重试创建订单间隔
+        self.refreshInterval = 2.1
+        # 上次重试创建订单时间
+        self.refreshTime = 0
+
+        # 上次有票时间
+        self.availableTime = 0
+        # 有票期内间隔
+        self.availableSchedule = [
+            # 0-0
+            [0, 0.0],
+            # 0-1
+            [1.0, self.sleep / 1.5],
+            # 1-5
+            [5.0, self.sleep],
+            # 5-9.9
+            [9.9, self.sleep * 1.5],
+            # 9.9-10.5
+            [10.5, self.sleep / 1.5],
+        ]
+
+        # ERR3间隔
+        self.err3Sleep = 4.96
+        # 上次ERR3时间
+        self.err3Time = 0
+        # ERR3结束间隔
+        self.err3Interval = 1.5
+
+        # Code
+        self.skipToken = False
+        self.queryTokenCode = 114514
+        self.riskProcessCode = 114514
+        self.queryTicketCode = False
+        self.createOrderCode = 114514
+        self.createStatusCode = 114514
+
         self.states = [
             State(name="开始"),
             State(name="等待开票", on_enter="WaitAvailableAction"),
@@ -190,50 +233,6 @@ class Task:
             # 假单
             conditions=lambda: self.createStatusCode != 0,
         )
-
-        # 重试创建订单间隔
-        self.refreshInterval = 2.1
-        # 上次重试创建订单时间
-        self.refreshTime = 0
-
-        # 普通间隔
-        self.sleep = sleep
-
-        # 上次有票时间
-        self.availableTime = 0
-        # 有票期内间隔
-        self.availableSchedule = [
-            # 0-0
-            [0, 0.0],
-            # 0-1
-            [1.0, self.sleep / 1.5],
-            # 1-5
-            [5.0, self.sleep],
-            # 5-9.9
-            [9.9, self.sleep * 1.5],
-            # 9.9-10.5
-            [10.5, self.sleep / 1.5],
-        ]
-
-        # ERR3间隔
-        self.err3Sleep = 4.96
-        # 上次ERR3时间
-        self.err3Time = 0
-        # ERR3结束间隔
-        self.err3Interval = 1.5
-
-        # Code
-        self.skipToken = False
-        self.queryTokenCode = 114514
-        self.riskProcessCode = 114514
-        self.queryTicketCode = False
-        self.createOrderCode = 114514
-        self.createStatusCode = 114514
-
-        # 是否已缓存getV2
-        self.queryCache = False
-
-        self.data = Data()
 
         # 取消以绘制FSM图
         # self.DrawFSM()
@@ -563,6 +562,9 @@ class Task:
 
     @logger.catch
     def AutoSleep(self) -> None:
+        """
+        自动Sleep策略
+        """
         # ERR3
         if self.data.TimestampCheck(timestamp=self.err3Time, duration=self.err3Interval):
             logger.info(f"【ERR3】因{((int(time())-self.err3Time)/60):.2f}分钟内触发过ERR3, {self.err3Interval}分钟内请求间隔将延长至{self.err3Sleep}秒")
