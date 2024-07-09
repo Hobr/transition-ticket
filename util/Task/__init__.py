@@ -410,23 +410,23 @@ class Task:
                             logger.warning(f"【等待余票】有票了! 票数:{num}")
 
                         case 8:
-                            logger.info("【等待余票】暂时售罄, 等待回流!")
+                            logger.info("【等待余票】暂时售罄, 等待放票!")
 
                         case _:
                             logger.warning(f"【等待余票】可点击状态{clickable} 状态{salenum} 数量{num}, 可下单状态{self.queryTicketCode}")
 
                 # 不可购
                 else:
-                    logger.info("【等待余票】暂时无票, 持续查询票仓中......")
+                    logger.info("【等待余票】暂时无票, 持续查询票仓中...")
                     self.availableTime = 0
                     # 刷新
-                    sleep(self.sleep)
+                    sleep(self.sleep / 2)
 
             # 不知道
             case _:
                 logger.error(f"【等待余票】{code}: {msg}")
                 # 刷新
-                sleep(self.sleep)
+                sleep(self.sleep / 2)
 
     @logger.catch
     def CreateOrderAction(self) -> None:
@@ -497,8 +497,10 @@ class Task:
             # 失败
             case _:
                 if msg == "请求错误: 429":
-                    logger.info("【创建订单】429! 无需在意, 这是服务器全局的限制")
+                    logger.warning("【创建订单】429: 请求错误 (无需在意, 这是服务器全局的限制)")
                     self.createOrderCode = 429
+                elif msg == "请慢一点":
+                    logger.warning("【创建订单】100001: 请慢一点 (无需在意, 这是服务器全局的限制)")
                 else:
                     logger.error(f"【创建订单】{self.createOrderCode}: {msg}")
                 # 刷新
