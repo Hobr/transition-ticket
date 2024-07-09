@@ -211,8 +211,6 @@ class Task:
             [10.5, self.sleep / 1.5],
         ]
 
-        # 是否有过ERR3
-        self.err3 = False
         # ERR3间隔
         self.err3Sleep = 4.96
         # 上次ERR3时间
@@ -537,14 +535,9 @@ class Task:
     @logger.catch
     def AutoSleep(self) -> None:
         # ERR3
-        if self.err3:
-            if self.data.TimestampCheck(timestamp=self.err3Time, duration=self.err3Interval):
-                sleep(self.err3Sleep)
-                logger.info(f"【ERR3】因{((int(time())-self.err3Time)/60):.2f}分钟内触发过ERR3, {self.err3Interval}分钟内请求间隔将延长至{self.err3Sleep}秒")
-            else:
-                logger.info("【ERR3】3分钟内未触发, 已恢复到原有速度!")
-                self.err3 = False
-                sleep(self.sleep)
+        if self.data.TimestampCheck(timestamp=self.err3Time, duration=self.err3Interval):
+            logger.info(f"【ERR3】因{((int(time())-self.err3Time)/60):.2f}分钟内触发过ERR3, {self.err3Interval}分钟内请求间隔将延长至{self.err3Sleep}秒")
+            sleep(self.err3Sleep)
 
         # 票仓有票时
         elif self.data.TimestampCheck(timestamp=self.availableTime, duration=self.availableSchedule[-1][0]):
@@ -555,6 +548,8 @@ class Task:
                 if not self.data.TimestampCheck(timestamp=self.availableTime, duration=start) and self.data.TimestampCheck(timestamp=self.availableTime, duration=end):
                     sleepTime = self.availableSchedule[i + 1][1]
                     break
+
+            logger.info(f"【等待余票】票仓可能出票, 请求间隔将自动调整至{sleepTime}秒")
             sleep(sleepTime)
 
         # 常规试探
