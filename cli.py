@@ -80,6 +80,7 @@ if __name__ == "__main__":
             timeout=settingConfig["request"]["timeout"],
             proxy=settingConfig["request"]["proxy"],
             isDebug=settingConfig["dev"]["debug"],
+            rest=settingConfig["request"]["rest"],
         )
 
         api = Bilibili(

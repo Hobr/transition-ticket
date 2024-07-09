@@ -20,6 +20,7 @@ class Request:
         proxy: str | None = None,
         redirect: bool = True,
         isDebug: bool = False,
+        rest: float = 60.0,
     ):
         """
         初始化
@@ -29,6 +30,7 @@ class Request:
         proxy: 代理
         redirect: 重定向
         isDebug: 调试模式
+        rest: 412风控间隔
         """
 
         self.cookie = cookie
@@ -36,6 +38,7 @@ class Request:
         self.proxy = proxy
         self.redirect = redirect
         self.isDebug = isDebug
+        self.rest = rest
 
         self.header = {
             "Accept": "*/*",
@@ -143,8 +146,8 @@ class Request:
         # 错误
         if response.status_code != 200:
             if response.status_code == 412:
-                logger.error("【Request响应】IP被B站封禁(412风控)!!!!! 下面暂停工作30秒, 请更换IP后再次使用(重启路由器/使用手机流量热点/代理...)")
-                sleep(30)
+                logger.error(f"【Request响应】IP被B站封禁(412风控)!!!!! 下面暂停工作{self.rest}秒, 请更换IP后再次使用(重启路由器/使用手机流量热点/代理...)")
+                sleep(self.rest)
 
             # 等于100001
             elif response.status_code == 429 or "show.bilibili.com" not in str(request.url):
