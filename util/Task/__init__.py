@@ -145,7 +145,9 @@ class Task:
             trigger="CreateOrder",
             source="创建订单",
             dest="创建订单",
-            conditions=lambda: not self.data.TimestampCheck(timestamp=self.refreshTime, duration=self.refreshInterval) or self.createOrderCode == 429,
+            conditions=lambda: not self.data.TimestampCheck(timestamp=self.refreshTime, duration=self.refreshInterval)
+            or self.createOrderCode in [429, 100001]
+            or self.data.TimestampCheck(timestamp=self.availableTime, duration=self.availableSchedule[-1][0]),
         )
         ## 下单成功
         self.machine.add_transition(
@@ -190,23 +192,33 @@ class Task:
         # 上次重试创建订单时间
         self.refreshTime = 0
 
-        # 默认请求间请求间隔时间
+        # 普通间隔
         self.sleep = sleep
-        # 快速间隔
-        self.fastSleep = self.sleep / 2
-        # 慢速间隔
-        self.slowSleep = self.sleep * 2
+
+        # 上次有票时间
+        self.availableTime = 0
+        # 有票期内间隔
+        self.availableSchedule = [
+            # 0-0
+            [0, 0.0],
+            # 0-1
+            [1.0, self.sleep / 2],
+            # 1-5
+            [5.0, self.sleep],
+            # 5-9.9
+            [9.9, self.sleep * 2],
+            # 9.9-10.5
+            [10.5, self.sleep / 2],
+        ]
 
         # 是否有过ERR3
         self.err3 = False
-        # ERR3 Sleep
+        # ERR3间隔
         self.err3Sleep = 4.96
         # 上次ERR3时间
         self.err3Time = 0
         # ERR3结束间隔
-        self.err3Interval = 3.0
-
-        # 速度
+        self.err3Interval = 1.5
 
         # Code
         self.skipToken = False
@@ -391,6 +403,7 @@ class Task:
             case 0:
                 # 可购
                 if self.queryTicketCode:
+                    self.availableTime = int(time())
                     match salenum:
                         case 2:
                             logger.warning(f"【等待余票】有票了! 票数:{num}")
@@ -404,6 +417,7 @@ class Task:
                 # 不可购
                 else:
                     logger.info("【等待余票】暂时无票, 持续查询票仓中......")
+                    self.availableTime = 0
                     # 刷新
                     sleep(self.sleep)
 
@@ -522,14 +536,28 @@ class Task:
 
     @logger.catch
     def AutoSleep(self) -> None:
+        # ERR3
         if self.err3:
             if self.data.TimestampCheck(timestamp=self.err3Time, duration=self.err3Interval):
                 sleep(self.err3Sleep)
-                logger.info(f"【ERR3】因{((int(time())-self.err3Time)/60):.2f}分钟内触发过ERR3, 3分钟内请求间隔将延长至4.96秒")
+                logger.info(f"【ERR3】因{((int(time())-self.err3Time)/60):.2f}分钟内触发过ERR3, {self.err3Interval}分钟内请求间隔将延长至{self.err3Sleep}秒")
             else:
                 logger.info("【ERR3】3分钟内未触发, 已恢复到原有速度!")
                 self.err3 = False
                 sleep(self.sleep)
+
+        # 票仓有票时
+        elif self.data.TimestampCheck(timestamp=self.availableTime, duration=self.availableSchedule[-1][0]):
+            for i in range(len(self.availableSchedule) - 1):
+                start = self.availableSchedule[i][0]
+                end = self.availableSchedule[i + 1][0]
+                # 超过start, 未满足end
+                if not self.data.TimestampCheck(timestamp=self.availableTime, duration=start) and self.data.TimestampCheck(timestamp=self.availableTime, duration=end):
+                    sleepTime = self.availableSchedule[i + 1][1]
+                    break
+            sleep(sleepTime)
+
+        # 常规试探
         else:
             sleep(self.sleep)
 
