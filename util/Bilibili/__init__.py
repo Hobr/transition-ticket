@@ -51,6 +51,7 @@ class Bilibili:
         self.skuPath = 0
 
         self.cost = 0
+        self.orderId = 0
         self.risked = False
 
     @logger.catch
@@ -298,8 +299,12 @@ class Bilibili:
         """
         url = f"https://show.bilibili.com/api/ticket/order/createstatus?token={self.orderToken}&project_id={self.projectId}"
         res = self.net.Response(method="get", url=url)
-        self.orderId = res["data"]["payParam"]["orderId"]
-        return res["errno"], res["msg"]
+        code = res["errno"]
+
+        if code == 0:
+            self.orderId = res["data"]["payParam"]["orderId"]
+
+        return code, res["msg"]
 
     @logger.catch
     def GetOrderStatus(self) -> tuple:
