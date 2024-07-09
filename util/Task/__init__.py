@@ -67,13 +67,6 @@ class Task:
             [10.5, self.sleep / 1.5],
         ]
 
-        # ERR3间隔
-        self.err3Sleep = 4.96
-        # 上次ERR3时间
-        self.err3Time = 0
-        # ERR3结束间隔
-        self.err3Interval = 1.5
-
         # Code
         self.skipToken = False
         self.queryTokenCode = 114514
@@ -451,7 +444,7 @@ class Task:
             case 219 | 100009:
                 logger.warning("【创建订单】库存不足!")
                 # 刷新
-                self.AutoSleep()
+                self.AutoSleepInterval()
 
             # 存在未付款订单
             case 100079 | 100048:
@@ -466,9 +459,8 @@ class Task:
             # 硬控
             case 3:
                 logger.error("【创建订单】ERR 3! 请不要对同一实名制购票人开多个脚本, 否则会被B站限流")
-                self.err3Time = int(time())
                 # 刷新
-                self.AutoSleep()
+                self.AutoSleepInterval()
 
             # 订单已存在/已购买
             case 100049:
@@ -506,7 +498,7 @@ class Task:
                 else:
                     logger.error(f"【创建订单】{self.createOrderCode}: {msg}")
                 # 刷新
-                self.AutoSleep()
+                self.AutoSleepInterval()
 
     @logger.catch
     def CreateStatusAction(self) -> None:
@@ -566,17 +558,12 @@ class Task:
             t.start()
 
     @logger.catch
-    def AutoSleep(self) -> None:
+    def AutoSleepInterval(self) -> None:
         """
         自动Sleep策略
         """
-        # ERR3
-        if self.data.TimestampCheck(timestamp=self.err3Time, duration=self.err3Interval):
-            logger.info(f"【ERR3】因{((int(time())-self.err3Time)/60):.2f}分钟内触发过ERR3, {self.err3Interval}分钟内请求间隔将延长至{self.err3Sleep}秒")
-            sleep(self.err3Sleep)
-
         # 票仓有票时
-        elif self.data.TimestampCheck(timestamp=self.availableTime, duration=self.availableSchedule[-1][0]):
+        if self.data.TimestampCheck(timestamp=self.availableTime, duration=self.availableSchedule[-1][0]):
             for i in range(len(self.availableSchedule) - 1):
                 start = self.availableSchedule[i][0]
                 end = self.availableSchedule[i + 1][0]
