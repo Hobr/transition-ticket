@@ -31,6 +31,8 @@ class SettingCli:
             "request": {
                 # 请求间隔
                 "sleep": 0.8,
+                # 412风控间隔
+                "rest": 60.0,
                 # 超时
                 "timeout": 3.0,
                 # 代理
@@ -94,6 +96,18 @@ class SettingCli:
             return float(interval)
 
         @logger.catch
+        def RestStep() -> float:
+            """
+            412风控间隔
+            """
+            rest = self.data.Inquire(
+                type="Text",
+                message="请输入触发412风控时暂停的时间(单位:秒), 建议高于默认值!",
+                default="60",
+            )
+            return float(rest)
+
+        @logger.catch
         def NoticeStep() -> tuple[bool, bool, bool, str]:
             """
             提醒
@@ -142,6 +156,7 @@ class SettingCli:
 
         print("下面开始配置设置!")
         self.config["request"]["sleep"] = SleepStep()
+        self.config["request"]["rest"] = RestStep()
         (
             self.config["notice"]["system"],
             self.config["notice"]["sound"],
