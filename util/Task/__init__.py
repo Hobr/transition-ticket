@@ -69,121 +69,122 @@ class Task:
         )
 
         # 等待开票结束
-        ## 倒计时30s时已获取Token
         self.machine.add_transition(
             trigger="WaitAvailable",
             source="等待开票",
             dest="创建订单",
+            # 倒计时30s时已获取Token
             conditions=lambda: self.skipToken,
         )
-        ## 无倒计时
         self.machine.add_transition(
             trigger="WaitAvailable",
             source="等待开票",
             dest="获取Token",
+            # 无倒计时, 开始获取Token
             conditions=lambda: not self.skipToken,
         )
 
         # 获取Token结束
-        ## Token获取成功
         self.machine.add_transition(
             trigger="QueryToken",
             source="获取Token",
             dest="创建订单",
+            # 获取成功
             conditions=lambda: self.queryTokenCode == 0,
         )
-        ## Token过期
         self.machine.add_transition(
             trigger="QueryToken",
             source="获取Token",
             dest="验证码",
+            # 触发验证
             conditions=lambda: self.queryTokenCode == -401,
         )
-        ## Token获取失败
         self.machine.add_transition(
             trigger="QueryToken",
             source="获取Token",
             dest="获取Token",
+            # 获取失败
             conditions=lambda: self.queryTokenCode not in [0, -401],
         )
 
         # 验证码结束
-        ## 验证成功
         self.machine.add_transition(
             trigger="RiskProcess",
             source="验证码",
             dest="获取Token",
+            # 验证成功
             conditions=lambda: self.riskProcessCode == 0,
         )
-        ## 验证失败
         self.machine.add_transition(
             trigger="RiskProcess",
             source="验证码",
             dest="验证码",
+            # 验证失败
             conditions=lambda: self.riskProcessCode != 0,
         )
 
-        # 等待余票结束
-        ## 有票 或 超过定时create时间
         self.machine.add_transition(
             trigger="QueryTicket",
             source="等待余票",
             dest="创建订单",
-            conditions=lambda: self.queryTicketCode or not self.data.TimestampCheck(timestamp=self.refreshTime, duration=self.refreshInterval),
+            # 有票
+            conditions=lambda: self.queryTicketCode
+            # 超过定时刷新时间
+            or not self.data.TimestampCheck(timestamp=self.refreshTime, duration=self.refreshInterval),
         )
-        ## 无票
         self.machine.add_transition(
             trigger="QueryTicket",
             source="等待余票",
             dest="等待余票",
+            # 无票
             conditions=lambda: not self.queryTicketCode,
         )
 
         # 创建订单结束
-        ## 超过定时create时间刷新失败
-        self.machine.add_transition(
-            trigger="CreateOrder",
-            source="创建订单",
-            dest="创建订单",
-            conditions=lambda: not self.data.TimestampCheck(timestamp=self.refreshTime, duration=self.refreshInterval)
-            or self.createOrderCode in [429, 100001]
-            or self.data.TimestampCheck(timestamp=self.availableTime, duration=self.availableSchedule[-1][0]),
-        )
-        ## 下单成功
         self.machine.add_transition(
             trigger="CreateOrder",
             source="创建订单",
             dest="创建订单状态",
+            # 下单成功
             conditions=lambda: self.createOrderCode == 0,
         )
-        ## Token过期
         self.machine.add_transition(
             trigger="CreateOrder",
             source="创建订单",
             dest="获取Token",
+            # Token过期
             conditions=lambda: self.createOrderCode in range(100050, 100060),
         )
-        ## 非预定情况
+        self.machine.add_transition(
+            trigger="CreateOrder",
+            source="创建订单",
+            dest="创建订单",
+            # 失败重试
+            conditions=lambda: self.createOrderCode in [429, 100001]
+            # 冲刺模式
+            or self.data.TimestampCheck(timestamp=self.availableTime, duration=self.availableSchedule[-1][0]),
+        )
         self.machine.add_transition(
             trigger="CreateOrder",
             source="创建订单",
             dest="等待余票",
-            conditions=lambda: self.createOrderCode not in [0, *range(100050, 100060)],
+            # 非预定情况
+            conditions=lambda: self.createOrderCode not in [0, 429, 100001, *range(100050, 100060)],
         )
 
         # 创建订单状态结束
-        ## 锁单成功
         self.machine.add_transition(
             trigger="CreateStatus",
             source="创建订单状态",
             dest="完成",
+            # 锁单成功
             conditions=lambda: self.createStatusCode == 0,
         )
-        ## 假单
         self.machine.add_transition(
             trigger="CreateStatus",
             source="创建订单状态",
             dest="创建订单",
+            # 假单
             conditions=lambda: self.createStatusCode != 0,
         )
 
