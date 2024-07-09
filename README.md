@@ -30,6 +30,11 @@
 - Python >=3.10,<3.13
 
 ```bash
+# MacOS
+brew install portaudio
+# Ubuntu
+sudo apt-get install portaudio19-dev
+
 git clone https://github.com/biliticket/transition-ticket.git
 cd transition-ticket
 pip config set global.index-url https://pypi.tuna.tsinghua.edu.cn/simple
