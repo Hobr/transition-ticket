@@ -459,6 +459,10 @@ class Task:
                 # 刷新
                 sleep(15)
 
+            # 请慢一点
+            case 100001:
+                logger.warning("【创建订单】100001: 请慢一点 (无需在意, 这是服务器全局的限制)")
+
             # 硬控
             case 3:
                 logger.error("【创建订单】ERR 3! 请不要对同一实名制购票人开多个脚本, 否则会被B站限流")
@@ -499,8 +503,6 @@ class Task:
                 if msg == "请求错误: 429":
                     logger.warning("【创建订单】429: 请求错误 (无需在意, 这是服务器全局的限制)")
                     self.createOrderCode = 429
-                elif msg == "请慢一点":
-                    logger.warning("【创建订单】100001: 请慢一点 (无需在意, 这是服务器全局的限制)")
                 else:
                     logger.error(f"【创建订单】{self.createOrderCode}: {msg}")
                 # 刷新
