@@ -503,24 +503,22 @@ class Task:
             case 0:
                 logger.success("【创建订单状态】锁单成功!")
 
-            # 不知道
-            case _:
-                logger.error(f"【创建订单状态】{code}: {msg}")
+                self.createStatusCode, msg, orderId = self.api.GetOrderStatus()
+                match self.createStatusCode:
+                    # 成功
+                    case 0:
+                        logger.success("【获取订单状态】请在打开的浏览器页面/APP内进行支付! 网页未打开请手动点击下面链接")
+                        logger.success(f"【获取订单状态】https://show.bilibili.com/platform/orderDetail.html?order_id={orderId}")
+                        webbrowser.open(f"https://show.bilibili.com/platform/orderDetail.html?order_id={orderId}")
 
-        self.createStatusCode, msg, orderId = self.api.GetOrderStatus()
-        match self.createStatusCode:
-            # 成功
-            case 0:
-                logger.success("【获取订单状态】请在打开的浏览器页面/APP内进行支付! 网页未打开请手动点击下面链接")
-                logger.success(f"【获取订单状态】https://show.bilibili.com/platform/orderDetail.html?order_id={orderId}")
-                webbrowser.open(f"https://show.bilibili.com/platform/orderDetail.html?order_id={orderId}")
-
-            # 不知道
-            case _:
-                logger.error(f"【获取订单状态】{code}: {msg}")
+                    # 不知道
+                    case _:
+                        logger.error(f"【获取订单状态】{code}: {msg}")
 
             # 不知道
             case _:
+                self.createStatusCode = code
+
                 if code == 100009:
                     logger.warning("【创建订单状态】锁单失败, 鉴定为假单! 继续锁")
                 else:
