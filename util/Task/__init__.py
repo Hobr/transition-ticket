@@ -44,7 +44,6 @@ class Task:
 
         self.data = Data()
         self.queryCache = False
-        self.orderId = 0
 
         # 重试创建订单间隔
         self.refreshInterval = 2.1
@@ -57,14 +56,14 @@ class Task:
         self.availableSchedule = [
             # 0-0
             [0, 0.0],
-            # 0-1
-            [1.0, self.sleep / 1.5],
-            # 1-5
+            # 0-1.25
+            [1.25, self.sleep / 1.5],
+            # 1.25-5
             [5.0, self.sleep],
-            # 5-9.9
-            [9.9, self.sleep * 1.5],
-            # 9.9-10.5
-            [10.5, self.sleep / 1.5],
+            # 5-9.75
+            [9.75, self.sleep * 1.5],
+            # 9.75-10.75
+            [10.75, self.sleep / 1.5],
         ]
 
         # Code
@@ -197,6 +196,13 @@ class Task:
         self.machine.add_transition(
             trigger="CreateOrder",
             source="创建订单",
+            dest="完成",
+            # 订单已存在
+            conditions=lambda: self.createOrderCode in [100079, 100048],
+        )
+        self.machine.add_transition(
+            trigger="CreateOrder",
+            source="创建订单",
             dest="创建订单",
             # 失败重试
             conditions=lambda: self.createOrderCode in [429, 100001]
@@ -208,7 +214,7 @@ class Task:
             source="创建订单",
             dest="等待余票",
             # 非预定情况
-            conditions=lambda: self.createOrderCode not in [0, 429, 100001, *range(100050, 100060)],
+            conditions=lambda: self.createOrderCode not in [0, 100079, 100048, 429, 100001, *range(100050, 100060)],
         )
 
         # 创建订单状态结束
@@ -383,6 +389,7 @@ class Task:
             # 不知道
             case _:
                 logger.error(f"【验证】校验 {code}: {msg}")
+                sleep(self.sleep)
 
     @logger.catch
     def QueryTicketAction(self) -> None:
@@ -436,6 +443,10 @@ class Task:
                 logger.success(f"【创建订单】订单创建成功! {msg}")
                 self.availableTime = int(time())
 
+            # 存在未付款订单
+            case 100079 | 100048:
+                logger.success("【创建订单】存在未付款/未完成订单! 无需再次创建")
+
             # Token过期
             case x if 100050 <= x <= 100059:
                 logger.warning("【创建订单】Token过期! 即将重新获取")
@@ -446,21 +457,15 @@ class Task:
                 # 刷新
                 self.AutoSleepInterval()
 
-            # 存在未付款订单
-            case 100079 | 100048:
-                logger.error("【创建订单】存在未付款/未完成订单! 脚本将暂停15秒, 请尽快付款")
-                # 刷新
-                sleep(15)
-
             # 请慢一点
             case 100001:
-                logger.warning("【创建订单】100001: 请慢一点 (无需在意, 这是服务器全局的限制)")
+                logger.warning("【创建订单】100001! 服务器卡卡卡咔咔咔咔卡卡卡(无需在意)")
                 # 刷新
                 self.AutoSleepInterval()
 
             # 硬控
             case 3:
-                logger.error("【创建订单】ERR 3! 请不要对同一实名制购票人开多个脚本, 否则会被B站限流")
+                logger.error("【创建订单】ERR 3! 请不要开多个脚本给同一实名制购票人(身份证)抢票, 否则会被B站限流")
                 # 刷新
                 self.AutoSleepInterval()
 
@@ -495,12 +500,13 @@ class Task:
             # 失败
             case _:
                 if msg == "请求错误: 429":
-                    logger.warning("【创建订单】429: 请求错误 (无需在意, 这是服务器全局的限制)")
+                    logger.warning("【创建订单】429! 服务器卡卡卡咔咔咔咔卡卡卡 开始猛凿")
                     self.createOrderCode = 429
+
                 else:
                     logger.error(f"【创建订单】{self.createOrderCode}: {msg}")
-                # 刷新
-                self.AutoSleepInterval()
+                    # 刷新
+                    self.AutoSleepInterval()
 
     @logger.catch
     def CreateStatusAction(self) -> None:
@@ -513,30 +519,22 @@ class Task:
             case 0:
                 logger.success(f"【创建订单状态】锁单成功! {msg}")
 
-                self.createStatusCode, msg, self.orderId = self.api.GetOrderStatus()
+                self.createStatusCode, msg = self.api.GetOrderStatus()
                 match self.createStatusCode:
                     # 成功
                     case 0:
-                        logger.success("【获取订单状态】请在打开的浏览器页面/APP内进行支付! 网页未打开请手动点击下面链接")
-                        logger.success(f"【获取订单状态】https://show.bilibili.com/platform/orderDetail.html?order_id={self.orderId}")
-                        webbrowser.open(f"https://show.bilibili.com/platform/orderDetail.html?order_id={self.orderId}")
+                        logger.success("【获取订单状态】订单状态获取成功!")
 
                     # 不知道
                     case _:
                         logger.error(f"【获取订单状态】{code}: {msg}")
-
                         # 刷新
                         self.AutoSleepInterval()
 
             # 不知道
             case _:
                 self.createStatusCode = code
-
-                if code == 100009:
-                    logger.warning("【创建订单状态】锁单失败, 鉴定为假单! 继续锁")
-                else:
-                    logger.error(f"【创建订单状态】{code}: {msg}")
-
+                logger.error(f"【创建订单状态】{code}: {msg}")
                 # 刷新
                 self.AutoSleepInterval()
 
@@ -545,21 +543,22 @@ class Task:
         """
         抢票完成
         """
-        notice = Notice(title="抢票", message=f"下单成功! 请在十分钟内支付, 链接:https://show.bilibili.com/platform/orderDetail.html?order_id={self.orderId}")
-        mode = self.notice
-        logger.success("【抢票】下单成功! 请在十分钟内支付")
+        url = f"https://show.bilibili.com/platform/orderDetail.html?order_id={self.api.orderId}"
+        notice = Notice(title="抢票", message=f"下单成功! 请在十分钟内支付, 链接:{url}")
+        logger.success(f"【获取订单状态】下单成功! 请在十分钟内支付, 链接:{url}")
+        webbrowser.open(url)
 
         # 通知
         noticeThread = []
         t1 = threading.Thread(target=notice.Message)
         t2 = threading.Thread(target=notice.Sound)
-        t3 = threading.Thread(target=notice.PushPlus, args=(mode["plusPush"],))
+        t3 = threading.Thread(target=notice.PushPlus, args=(self.notice["plusPush"],))
 
-        if mode["system"]:
+        if self.notice["system"]:
             noticeThread.append(t1)
-        if mode["sound"]:
+        if self.notice["sound"]:
             noticeThread.append(t2)
-        if mode["wechat"]:
+        if self.notice["wechat"]:
             noticeThread.append(t3)
 
         for t in noticeThread:
@@ -580,7 +579,7 @@ class Task:
                     sleepTime = self.availableSchedule[i + 1][1]
                     break
 
-            logger.info(f"【创建订单】票仓可能出票, 请求间隔将自动调整至{sleepTime:.2f}秒")
+            logger.info(f"【创建订单】出票期, 请求间隔将自动调整至{sleepTime:.2f}秒")
             sleep(sleepTime)
 
         # 常规试探

@@ -52,6 +52,7 @@ class Bilibili:
 
         self.cost = 0
         self.orderId = 0
+        self.orderToken = ""
         self.risked = False
 
     @logger.catch
@@ -286,9 +287,14 @@ class Bilibili:
         code = res["errno"]
         msg = res["msg"]
 
-        # 成功
-        if code == 0:
-            self.orderToken = res["data"]["token"]
+        match code:
+            # 成功
+            case 0:
+                self.orderToken = res["data"]["token"]
+
+            # 存在订单
+            case 100079 | 100048:
+                self.orderId = res["data"]["order_id"]
 
         return code, msg
 
@@ -313,4 +319,4 @@ class Bilibili:
         """
         url = f"https://show.bilibili.com/api/ticket/order/info?order_id={self.orderId}"
         res = self.net.Response(method="get", url=url)
-        return res["errno"], res["msg"], self.orderId
+        return res["errno"], res["msg"]
