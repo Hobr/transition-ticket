@@ -502,11 +502,11 @@ class Task:
                 if msg == "请求错误: 429":
                     logger.warning("【创建订单】429! 服务器卡卡卡咔咔咔咔卡卡卡 开始猛凿")
                     self.createOrderCode = 429
-
                 else:
                     logger.error(f"【创建订单】{self.createOrderCode}: {msg}")
-                    # 刷新
-                    self.AutoSleepInterval()
+
+                # 刷新
+                self.AutoSleepInterval()
 
     @logger.catch
     def CreateStatusAction(self) -> None:
