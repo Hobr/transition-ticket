@@ -287,8 +287,9 @@ class Bilibili:
         msg = res["msg"]
 
         # 成功
-        if code == 0:
+        if "data" in res and "token" in res["data"]:
             self.orderToken = res["data"]["token"]
+            code = 0
 
         return code, msg
 
@@ -301,8 +302,9 @@ class Bilibili:
         res = self.net.Response(method="get", url=url)
         code = res["errno"]
 
-        if code == 0:
-            self.orderId = res["data"]["payParam"]["orderId"]
+        if "data" in res and "order_id" in res["data"]:
+            self.orderId = res["data"]["order_id"]
+            code = 0
 
         return code, res["msg"]
 
