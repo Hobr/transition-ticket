@@ -60,10 +60,10 @@ class Task:
             [1.25, self.sleep / 1.5],
             # 1.25-5
             [5.0, self.sleep],
-            # 5-9.75
-            [9.75, self.sleep * 1.5],
-            # 9.75-10.75
-            [10.75, self.sleep / 1.5],
+            # 5-8
+            [8, self.sleep * 1.5],
+            # 8-10.5
+            [10.5, self.sleep / 1.5],
         ]
 
         # Code
@@ -500,7 +500,7 @@ class Task:
             # 失败
             case _:
                 if msg == "请求错误: 429":
-                    logger.warning("【创建订单】429! 服务器卡卡卡咔咔咔咔卡卡卡 开始猛凿")
+                    logger.warning("【创建订单】429! 服务器卡卡卡咔咔咔咔卡卡卡(无需在意)")
                     self.createOrderCode = 429
                 else:
                     logger.error(f"【创建订单】{self.createOrderCode}: {msg}")
