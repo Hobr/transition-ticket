@@ -49,6 +49,8 @@ class Task:
         self.refreshInterval = 2.1
         # 上次重试创建订单时间
         self.refreshTime = 0
+        # 上次推送时间
+        self.pushTime = 0
 
         # 上次有票时间
         self.availableTime = 0
@@ -446,6 +448,9 @@ class Task:
             # 存在未付款订单
             case 100079:
                 logger.success("【创建订单】存在未付款/未完成订单! 无需再次创建")
+                if int(time()) - self.pushTime >= 150:
+                    self.PushNotice(title='检查订单', message=f"{self.api.phone}存在未付款/未完成订单!")
+                    self.pushTime = int(time())
 
             # Token过期
             case x if 100050 <= x <= 100059:
@@ -544,11 +549,17 @@ class Task:
         抢票完成
         """
         url = f"https://show.bilibili.com/platform/orderDetail.html?order_id={self.api.orderId}"
-        notice = Notice(title="抢票", message=f"下单成功! 请在十分钟内支付, 链接:{url}")
-        logger.success(f"【完成】下单成功! 请在十分钟内支付, 链接:{url}")
+        msg = f"{self.api.phone} 下单成功! 请在十分钟内支付, 链接:{url}"
+        self.PushNotice(title='抢票成功', message=msg)
+        logger.success(f"【完成】{msg}")
         webbrowser.open(url)
 
-        # 通知
+    @logger.catch
+    def PushNotice(self, title: str, message: str) -> None:
+        """
+        推送通知
+        """
+        notice = Notice(title=title, message=message)
         noticeThread = []
         t1 = threading.Thread(target=notice.Message)
         t2 = threading.Thread(target=notice.Sound)
