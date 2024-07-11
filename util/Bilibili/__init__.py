@@ -293,7 +293,7 @@ class Bilibili:
                 self.orderToken = res["data"]["token"]
 
             # 存在订单
-            case 100079 | 100048:
+            case 100079:
                 self.orderId = res["data"]["order_id"]
 
         return code, msg

@@ -198,7 +198,7 @@ class Task:
             source="创建订单",
             dest="完成",
             # 订单已存在
-            conditions=lambda: self.createOrderCode in [100079, 100048],
+            conditions=lambda: self.createOrderCode == 100079,
         )
         self.machine.add_transition(
             trigger="CreateOrder",
@@ -214,7 +214,7 @@ class Task:
             source="创建订单",
             dest="等待余票",
             # 非预定情况
-            conditions=lambda: self.createOrderCode not in [0, 100079, 100048, 429, 100001, *range(100050, 100060)],
+            conditions=lambda: self.createOrderCode not in [0, 100079, 429, 100001, *range(100050, 100060)],
         )
 
         # 创建订单状态结束
@@ -444,7 +444,7 @@ class Task:
                 self.availableTime = int(time())
 
             # 存在未付款订单
-            case 100079 | 100048:
+            case 100079:
                 logger.success("【创建订单】存在未付款/未完成订单! 无需再次创建")
 
             # Token过期
@@ -545,7 +545,7 @@ class Task:
         """
         url = f"https://show.bilibili.com/platform/orderDetail.html?order_id={self.api.orderId}"
         notice = Notice(title="抢票", message=f"下单成功! 请在十分钟内支付, 链接:{url}")
-        logger.success(f"【获取订单状态】下单成功! 请在十分钟内支付, 链接:{url}")
+        logger.success(f"【完成】下单成功! 请在十分钟内支付, 链接:{url}")
         webbrowser.open(url)
 
         # 通知
