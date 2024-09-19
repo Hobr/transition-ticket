@@ -1,8 +1,8 @@
 import smtplib
-import requests,json,re
+import requests,json
 from loguru import logger
 #from i18n import *
-#from globals import load_config
+
 
 
 
