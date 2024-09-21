@@ -46,8 +46,25 @@ class SettingCli:
                 "sound": False,
                 # 微信提醒
                 "wechat": False,
-                # Plus Push Token
-                "plusPush": "",
+                # push plus token
+                "pushplus_token": "",
+                # 钉钉推送token
+                "dingding_token": "",
+                # 企业微信推送token
+                "wx_token": "",
+                # 企业微信推送token
+                "ftqq_token": "",
+                # bark推送token
+                "bark_token": "",
+                # smtp邮件推送
+                "smtp_mail_host": "",
+                "smtp_mail_user":"",
+                "smtp_mail_pass":"",
+                "smtp_sender":"",
+                "smtp_receiver":"",
+               
+            
+            
             },
             # 开发者
             "dev": {
@@ -116,7 +133,16 @@ class SettingCli:
                 "system": False,
                 "sound": False,
                 "wechat": False,
-                "plusPush": "",
+                "dingding_token": "",
+                "ftqq_token": "",
+                "bark_token": "",
+                "wx_token": "",
+                "smtp_mail_host": "",
+                "smtp_mail_user":"",
+                "smtp_mail_pass":"",
+                "smtp_sender":"",
+                "smtp_receiver":"",
+                "pushplus_token": "",
             }
             select = self.data.Inquire(
                 type="Checkbox",
@@ -124,22 +150,93 @@ class SettingCli:
                 choices=[
                     ("系统提醒", "system"),
                     ("音频提醒", "sound"),
-                    ("微信提醒(Push Plus)", "wechat"),
+                    ("微信提醒(Push Plus)", "pushplus"),
+                    ("bark推送","bark"),
+                    ("钉钉推送", "dingding"),
+                    ("企业微信推送", "wx"),
+                    ("smtp邮件推送","smtp"),
+                    ("方糖推送","ftqq")
+                    
                 ],
                 default=["系统提醒", "音频提醒"],
             )
             for i in select:
                 dist[i] = True
 
-            if "wechat" in select:
+            if "pushplus" in select:
                 token = self.data.Inquire(
                     type="Text",
                     message="请输入Push Plus Token",
                     default="",
                 )
-                dist["plusPush"] = token
+                dist["pushplus_token"] = token
+            
+            if "bark" in select:
+                token = self.data.Inquire(
+                    type="Text",
+                    message="请输入bark推送的token",
+                    default="",
+                )
+                dist["bark_token"] = token
+            
+            if "dingding" in select:
+                token = self.data.Inquire(
+                    type="Text",
+                    message="请输入钉钉推送的token",
+                    default="",
+                )
+                dist["dingding_token"] = token
+                
+            if "wx" in select:
+                token = self.data.Inquire(
+                    type="Text",
+                    message="请输入企业微信推送的token",
+                    default="",
+                )
+                dist["wx_token"] = token
+                
+            if "ftqq" in select:
+                token = self.data.Inquire(
+                    type="Text",
+                    message="请输入方糖推送的token",
+                    default="",
+                )
+                dist["ftqq_token"] = token
+            
+            if "smtp" in select:
+                host = self.data.Inquire(
+                    type="Text",
+                    message="请输入smtp服务器地址",
+                    default="",
+                )
+                user=self.data.Inquire(
+                    type='Text',
+                    message="请输入用户名",
+                    default="",
+                 )
+                passwd=self.data.Inquire(
+                    type='Text',
+                    message="请输入密码",
+                    default="",
+                )
+                smtp_sender=self.data.Inquire(
+                    type='Text',
+                    message="请输入发件人邮箱",
+                    default="",
+                )
+                smtp_receivers=self.data.Inquire(
+                    type='Text',
+                    message="请输入收件人邮箱,可群发，按照['123456@123.com','123456@123.com']格式输入",
+                    default="",
+                )
+                dist['smtp_mail_host']=host
+                dist['smtp_mail_user']=user
+                dist['smtp_mail_pass']=passwd
+                dist['smtp_sender']=smtp_sender
+                dist['smtp_receivers']=smtp_receivers
+                
 
-            return dist["system"], dist["sound"], dist["wechat"], dist["plusPush"]
+            return dist["system"], dist["sound"], dist["wechat"], dist["pushplus_token"],dist['bark_token'],dist['dingding_token'],dist['ftqq_token'],dist['wx_token'],dist['smtp_mail_host'],dist['smtp_mail_pass'],dist['smtp_mail_user'],dist['smtp_receivers']
 
         @logger.catch
         def FilenameStep() -> str:
