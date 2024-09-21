@@ -1,6 +1,7 @@
 import smtplib
-import requests,json
+import json
 from loguru import logger
+from util.Request import Request
 #from i18n import *
 
 
@@ -10,59 +11,50 @@ class PUSH():
     def __init__(self,config):
         self.config = config
         self.title="BTP有新推送消息"
+        self.net = Request()
         self.headers = {
         "Content-Type": "application/json",
         "Charset": "UTF-8"
          }
-        #dingding
-        try:
-         self.dingding_token=config['dingding_token']
-        except:
-            logger.error("dingding_not_set")
-            #logger.error(i18n_format("webhook_not_set"))
+        if 'dingding_token' in config:
+            self.dingding_token=config['dingding_token']
+        else:
             self.dingding_token=''
-        #push_plus
-        try:
+        if 'pushplus_token' in config:
             self.pushplus_token=config['pushplus_token']
-        except:
-            logger.error("pushplus_not_set")
-            #logger.error(i18n_format("pushplus_not_set"))
+        else:
             self.pushplus_token=''
-        #smtp
-        try:
+        if 'smtp_mail_host' in config:
             self.smtp_mail_host=config['smtp_mail_host']
-            self.smtp_mail_user=config['smtp_mail_user']
-            self.smtp_mail_pass=config['smtp_mail_pass']
-            self.smtp_sender=config['smtp_sender']
-            self.smtp_receivers=config['smtp_receivers']
-        except:
-            logger.error("smtp_not_set")
-            #logger.error(i18n_format("smtp_not_set"))
+        else:
             self.smtp_mail_host=""
+        if 'smtp_mail_user' in config:
+            self.smtp_mail_user=config['smtp_mail_user']
+        else:
             self.smtp_mail_user=""
+        if 'smtp_mail_pass' in config:
+            self.smtp_mail_pass=config['smtp_mail_pass']
+        else:
             self.smtp_mail_pass=""
+        if 'smtp_sender' in config:
+            self.smtp_sender=config['smtp_sender']
+        else:
             self.smtp_sender=""
+        if 'smtp_receivers' in config:
+            self.smtp_receivers=config['smtp_receivers']
+        else:
             self.smtp_receivers=['']
-        #bark
-        try:
+        if 'bark_token' in config:
             self.bark_token=config['bark_token']
-        except:
-            logger.error("bark_not_set")
-            #logger.error(i18n_format("bark_not_set"))
+        else:
             self.bark_token=""
-        #ftqq
-        try:
+        if 'ftqq_token' in config:
             self.ftqq_token=config['ftqq_token']
-        except:
-            logger.error("ftqq_not_set")
-            #logger.error(i18n_format("ftqq_not_set"))
+        else:
             self.ftqq_token=""
-        #wx
-        try:
+        if 'wx_token' in config:
             self.wx_token=config['wx_token']
-        except:
-            logger.error("webhook_not_set")
-            #logger.error(i18n_format("wx_not_set"))
+        else:
             self.wx_token=""
         
                   
@@ -96,7 +88,7 @@ class PUSH():
         # 对请求的数据进行json封装
         message_json = json.dumps(msg)
         # 发送请求
-        info = requests.post(url, data=message_json, headers=self.headers)
+        info = self.net.Response(method='post',url=url, params=message_json,isJson=True)
         # 打印返回的结果
         logger.info(info.text)
         
@@ -113,7 +105,7 @@ class PUSH():
       }
       
       try:
-        info=requests.post(url, json=data,headers=self.headers)
+        info=self.net.Response(method='post',url=url, params=data,isJson=True)
         logger.debug(info.text)
         #logger.info(i18n_format("pushplus_send_success"))
         logger.info("pushplus_send_success")
@@ -128,7 +120,7 @@ class PUSH():
         }
         url=f"https://sctapi.ftqq.com/{self.ftqq_token}.send"
         try:
-         info=requests.post(url, data=data,headers=self.headers)
+         info=self.net.Response(method='post',url=url, params=data,isJson=True)
          logger.debug(info.text)
          #logger.info(i18n_format("bark_send_success"))
          logger.info("bark_send_success")
@@ -146,7 +138,7 @@ class PUSH():
              }
           }
         try:
-            info=requests.post(url, json=data,headers=self.headers)
+            info=self.net.Response(method='post',url=url, params=data,isJson=True)
             logger.debug(info.text)
             #logger.info(i18n_format("wx_send_success"))
             logger.info("wx_send_success")
@@ -215,7 +207,7 @@ class PUSH():
         }
         url=f'https://api.day.app/{self.bark_token}'
         try:
-          info=requests.post(url,json=data)
+          info=self.net.Response(method='post',url=url, params=data,isJson=True)
           logger.info("bark_send_success")
           logger.debug(info.text)
           #logger.info(i18n_format("bark_send_success"))
@@ -225,7 +217,7 @@ class PUSH():
 if __name__ == "__main__":
     config={}
     #只需要填入token即可，不要全部链接
-    config['dingding_token']=""
+    config['dingding_token']="123456"
     config['wx_token']=''
     config['pushplus_token']=''
     config['bark_token']=""  
@@ -236,5 +228,5 @@ if __name__ == "__main__":
     config['smtp_receivers']=['']  #可群发
     config['ftqq_token']=''
     push_self=PUSH(config)  #传config创建对象
-    PUSH.push(push_self,"test")  #以后每次调用就可以了
-    PUSH.push(push_self,"test2")
+    PUSH.push("test")  #以后每次调用就可以了
+    PUSH.push("test2")
