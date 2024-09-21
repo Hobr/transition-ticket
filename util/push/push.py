@@ -186,7 +186,7 @@ class PUSH():
             #退出
             smtpObj.quit() 
             #logger.info(i18n_format("send_success"))
-            logger.info("send_success")
+            logger.info("smtp_send_success")
           except smtplib.SMTPException as e:
             logger.error(e) #打印错误
             
@@ -228,5 +228,5 @@ if __name__ == "__main__":
     config['smtp_receivers']=['']  #可群发
     config['ftqq_token']=''
     push_self=PUSH(config)  #传config创建对象
-    PUSH.push("test")  #以后每次调用就可以了
-    PUSH.push("test2")
+    PUSH.push(push_self,"test")  #以后每次调用就可以了
+    PUSH.push(push_self,"test2")
