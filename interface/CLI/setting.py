@@ -44,27 +44,24 @@ class SettingCli:
                 "system": False,
                 # 音频提醒
                 "sound": False,
-                # 微信提醒
-                "wechat": False,
-                # push plus token
-                "pushplus_token": "",
-                # 钉钉推送token
-                "dingding_token": "",
-                # 企业微信推送token
-                "wx_token": "",
-                # 企业微信推送token
-                "ftqq_token": "",
-                # bark推送token
-                "bark_token": "",
-                # smtp邮件推送
-                "smtp_mail_host": "",
-                "smtp_mail_user":"",
-                "smtp_mail_pass":"",
-                "smtp_sender":"",
-                "smtp_receiver":"",
-               
-            
-            
+                # pushplus提醒
+                "pushplus": "",
+                # 钉钉
+                "dingding": "",
+                # 企业微信
+                "wx": "",
+                # 方糖
+                "ftqq": "",
+                # bark
+                "bark": "",
+                # smtp
+                "smtp": {
+                    "smtp_mail_host": "",
+                    "smtp_mail_user": "",
+                    "smtp_mail_pass": "",
+                    "smtp_sender": "",
+                    "smtp_receiver": "",
+                },
             },
             # 开发者
             "dev": {
@@ -130,19 +127,28 @@ class SettingCli:
             提醒
             """
             dist = {
+                # 系统提醒
                 "system": False,
+                # 音频提醒
                 "sound": False,
-                "wechat": False,
-                "dingding_token": "",
-                "ftqq_token": "",
-                "bark_token": "",
-                "wx_token": "",
-                "smtp_mail_host": "",
-                "smtp_mail_user":"",
-                "smtp_mail_pass":"",
-                "smtp_sender":"",
-                "smtp_receiver":"",
-                "pushplus_token": "",
+                # pushplus提醒
+                "pushplus": "",
+                # 钉钉
+                "dingding": "",
+                # 企业微信
+                "wx": "",
+                # 方糖
+                "ftqq": "",
+                # bark
+                "bark": "",
+                # smtp
+                "smtp": {
+                    "mail_host": "",
+                    "mail_user": "",
+                    "mail_pass": "",
+                    "sender": "",
+                    "receiver": "",
+                },
             }
             select = self.data.Inquire(
                 type="Checkbox",
@@ -151,12 +157,11 @@ class SettingCli:
                     ("系统提醒", "system"),
                     ("音频提醒", "sound"),
                     ("微信提醒(Push Plus)", "pushplus"),
-                    ("bark推送","bark"),
+                    ("bark推送", "bark"),
                     ("钉钉推送", "dingding"),
                     ("企业微信推送", "wx"),
-                    ("smtp邮件推送","smtp"),
-                    ("方糖推送","ftqq")
-                    
+                    ("smtp邮件推送", "smtp"),
+                    ("方糖推送", "ftqq"),
                 ],
                 default=["系统提醒", "音频提醒"],
             )
@@ -169,74 +174,73 @@ class SettingCli:
                     message="请输入Push Plus Token",
                     default="",
                 )
-                dist["pushplus_token"] = token
-            
+                dist["pushplus"] = token
+
             if "bark" in select:
                 token = self.data.Inquire(
                     type="Text",
                     message="请输入bark推送的token",
                     default="",
                 )
-                dist["bark_token"] = token
-            
+                dist["bark"] = token
+
             if "dingding" in select:
                 token = self.data.Inquire(
                     type="Text",
                     message="请输入钉钉推送的token",
                     default="",
                 )
-                dist["dingding_token"] = token
-                
+                dist["dingding"] = token
+
             if "wx" in select:
                 token = self.data.Inquire(
                     type="Text",
                     message="请输入企业微信推送的token",
                     default="",
                 )
-                dist["wx_token"] = token
-                
+                dist["wx"] = token
+
             if "ftqq" in select:
                 token = self.data.Inquire(
                     type="Text",
                     message="请输入方糖推送的token",
                     default="",
                 )
-                dist["ftqq_token"] = token
-            
+                dist["ftqq"] = token
+
             if "smtp" in select:
                 host = self.data.Inquire(
                     type="Text",
                     message="请输入smtp服务器地址",
                     default="",
                 )
-                user=self.data.Inquire(
-                    type='Text',
+                user = self.data.Inquire(
+                    type="Text",
                     message="请输入用户名",
                     default="",
-                 )
-                passwd=self.data.Inquire(
-                    type='Text',
+                )
+                passwd = self.data.Inquire(
+                    type="Text",
                     message="请输入密码",
                     default="",
                 )
-                smtp_sender=self.data.Inquire(
-                    type='Text',
+                smtp_sender = self.data.Inquire(
+                    type="Text",
                     message="请输入发件人邮箱",
                     default="",
                 )
-                smtp_receivers=self.data.Inquire(
-                    type='Text',
+                smtp_receivers = self.data.Inquire(
+                    type="Text",
                     message="请输入收件人邮箱,可群发，按照['123456@123.com','123456@123.com']格式输入",
                     default="",
                 )
-                dist['smtp_mail_host']=host
-                dist['smtp_mail_user']=user
-                dist['smtp_mail_pass']=passwd
-                dist['smtp_sender']=smtp_sender
-                dist['smtp_receivers']=smtp_receivers
-                
+                dist["smtp"]["mail_host"] = host
+                dist["smtp"]["mail_user"] = user
+                dist["smtp"]["mail_pass"] = passwd
+                dist["smtp"]["sender"] = smtp_sender
+                dist["smtp"]["receivers"] = smtp_receivers
 
-            return dist["system"], dist["sound"], dist["wechat"], dist["pushplus_token"],dist['bark_token'],dist['dingding_token'],dist['ftqq_token'],dist['wx_token'],dist['smtp_mail_host'],dist['smtp_mail_pass'],dist['smtp_mail_user'],dist['smtp_receivers']
+            return dist
 
         @logger.catch
         def FilenameStep() -> str:
@@ -254,12 +258,7 @@ class SettingCli:
         print("下面开始配置设置!")
         self.config["request"]["sleep"] = SleepStep()
         self.config["request"]["rest"] = RestStep()
-        (
-            self.config["notice"]["system"],
-            self.config["notice"]["sound"],
-            self.config["notice"]["wechat"],
-            self.config["notice"]["plusPush"],
-        ) = NoticeStep()
+        self.config["notice"] = NoticeStep()
 
         self.conf.Save(FilenameStep(), self.config)
         logger.info("【设置配置初始化】配置已保存!")

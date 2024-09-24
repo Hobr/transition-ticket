@@ -552,14 +552,30 @@ class Task:
         noticeThread = []
         t1 = threading.Thread(target=notice.Message)
         t2 = threading.Thread(target=notice.Sound)
-        t3 = threading.Thread(target=notice.PushPlus, args=(self.notice["plusPush"],))
+        t3 = threading.Thread(target=notice.PushPlus, args=(self.notice["pushplus"],))
+        t4 = threading.Thread(target=notice.Ding, args=(self.notice["dingding"],))
+        t5 = threading.Thread(target=notice.WX, args=(self.notice["wx"],))
+        t6 = threading.Thread(target=notice.FTQQ, args=(self.notice["ftqq"],))
+        t7 = threading.Thread(target=notice.Bark, args=(self.notice["bark"],))
+        t8 = threading.Thread(target=notice.Mail, args=(self.notice["smtp"],))
 
         if self.notice["system"]:
             noticeThread.append(t1)
         if self.notice["sound"]:
             noticeThread.append(t2)
-        if self.notice["wechat"]:
+
+        if len(self.notice["pushplus"]) > 0:
             noticeThread.append(t3)
+        if len(self.notice["dingding"]) > 0:
+            noticeThread.append(t4)
+        if len(self.notice["wx"]) > 0:
+            noticeThread.append(t5)
+        if len(self.notice["ftqq"]) > 0:
+            noticeThread.append(t6)
+        if len(self.notice["bark"]) > 0:
+            noticeThread.append(t7)
+        if len(self.notice["smtp"]["mail_host"]) > 0:
+            noticeThread.append(t8)
 
         for t in noticeThread:
             t.start()
