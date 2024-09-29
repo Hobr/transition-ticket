@@ -166,7 +166,7 @@ class SettingCli:
                 default=["系统提醒", "音频提醒"],
             )
             for i in select:
-                if i=="smtp":
+                if i == "smtp":
                     continue
                 dist[i] = True
 

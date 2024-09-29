@@ -33,7 +33,7 @@ jobs:
           poetry config virtualenvs.in-project true --local
 
       - name: Install Dependencies
-        run: poetry install
+        run: poetry install --with dev
 
       - name: Package
         run: poetry run pyinstaller --clean --noconfirm --log-level WARN cli.spec

@@ -93,7 +93,7 @@ class Notice:
             "template": "html",
             "channel": "wechat",
         }
-        
+
         self.net.Response(method="post", url=url, params=data, isJson=False)
 
     @logger.catch
