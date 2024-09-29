@@ -290,11 +290,12 @@ class Bilibili:
         match code:
             # 成功
             case 0:
+                self.orderId = res["data"]["orderId"]
                 self.orderToken = res["data"]["token"]
 
             # 存在订单
             case 100079:
-                self.orderId = res["data"]["order_id"]
+                self.orderId = res["data"]["orderId"]
 
         return code, msg
 
@@ -303,12 +304,13 @@ class Bilibili:
         """
         创建订单状态
         """
-        url = f"https://show.bilibili.com/api/ticket/order/createstatus?token={self.orderToken}&project_id={self.projectId}"
+        url = f"https://show.bilibili.com/api/ticket/order/createstatus?token={self.orderToken}&project_id={self.projectId}&orderId={self.orderId}"
         res = self.net.Response(method="get", url=url)
         code = res["errno"]
 
-        if code == 0:
-            self.orderId = res["data"]["order_id"]
+        # 100012: 订单未完成,请等待 且 订单ID相同, 说明订单已经创建
+        if code == 100012 and self.orderId == res["data"]["order_id"]:
+            code = 0
 
         return code, res["msg"]
 

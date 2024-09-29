@@ -445,7 +445,7 @@ class Task:
 
             # 存在未付款订单
             case 100079:
-                logger.success("【创建订单】存在未付款/未完成订单! 无需再次创建")
+                logger.warning("【订单】存在冲突订单! 请先支付或取消这一单")
 
             # Token过期
             case x if 100050 <= x <= 100059:
