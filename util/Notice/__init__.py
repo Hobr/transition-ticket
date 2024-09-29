@@ -187,6 +187,6 @@ class Notice:
                 # 退出
                 smtpObj.quit()
                 # logger.info(i18n_format("send_success"))
-                logger.info("send_success")
+                logger.info("邮件提醒发送成功")
             except smtplib.SMTPException as e:
                 logger.error(e)  # 打印错误

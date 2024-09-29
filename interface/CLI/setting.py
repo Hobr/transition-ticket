@@ -233,7 +233,7 @@ class SettingCli:
                 )
                 smtp_receivers = self.data.Inquire(
                     type="Text",
-                    message="请输入收件人邮箱,可群发，按照'123456@123.com','123456@123.com'格式输入",
+                    message="请输入收件人邮箱,可群发，按照 123456@123.com,123456@123.com 的格式输入",
                     default="",
                 )
                 dist["smtp"]["mail_host"] = host
