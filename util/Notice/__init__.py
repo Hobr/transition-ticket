@@ -93,6 +93,7 @@ class Notice:
             "template": "html",
             "channel": "wechat",
         }
+        
         self.net.Response(method="post", url=url, params=data, isJson=False)
 
     @logger.catch
@@ -161,7 +162,7 @@ class Notice:
         # 邮件发送方邮箱地址
         sender = params["sender"]
         # 邮件接受方邮箱地址，注意需要[]包裹，这意味`着你可以写多个邮件地址群发
-        receivers = params["receivers"]
+        receivers = params["receiver"]
 
         # 设置email信息
         # 邮件内容设置
