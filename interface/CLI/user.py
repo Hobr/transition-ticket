@@ -82,7 +82,7 @@ class UserCli:
             try:
                 match mode:
                     case "扫描二维码":
-                        print("请使用B站手机客户端扫描二维码, 如果命令行内二维码无法正常显示, 请打开软件目录下的 qr.jpg 进行扫描")
+                        print("请使用B站手机客户端扫描二维码")
                         return login.QRCode()
 
                     case "浏览器登录":
