@@ -166,6 +166,8 @@ class SettingCli:
                 default=["系统提醒", "音频提醒"],
             )
             for i in select:
+                if i=="smtp":
+                    continue
                 dist[i] = True
 
             if "pushplus" in select:
@@ -238,7 +240,7 @@ class SettingCli:
                 dist["smtp"]["mail_user"] = user
                 dist["smtp"]["mail_pass"] = passwd
                 dist["smtp"]["sender"] = smtp_sender
-                dist["smtp"]["receivers"] = smtp_receivers
+                dist["smtp"]["receiver"] = smtp_receivers
 
             return dist
 
