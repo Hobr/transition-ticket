@@ -60,7 +60,7 @@ class SettingCli:
                     "smtp_mail_user": "",
                     "smtp_mail_pass": "",
                     "smtp_sender": "",
-                    "smtp_receiver": "",
+                    "smtp_receiver": [],
                 },
             },
             # 开发者
@@ -147,7 +147,7 @@ class SettingCli:
                     "mail_user": "",
                     "mail_pass": "",
                     "sender": "",
-                    "receiver": "",
+                    "receiver": [],
                 },
             }
             select = self.data.Inquire(
@@ -166,6 +166,8 @@ class SettingCli:
                 default=["系统提醒", "音频提醒"],
             )
             for i in select:
+                if i=="smtp":
+                    continue
                 dist[i] = True
 
             if "pushplus" in select:
@@ -231,14 +233,14 @@ class SettingCli:
                 )
                 smtp_receivers = self.data.Inquire(
                     type="Text",
-                    message="请输入收件人邮箱,可群发，按照['123456@123.com','123456@123.com']格式输入",
+                    message="请输入收件人邮箱,可群发，按照'123456@123.com','123456@123.com'格式输入",
                     default="",
                 )
                 dist["smtp"]["mail_host"] = host
                 dist["smtp"]["mail_user"] = user
                 dist["smtp"]["mail_pass"] = passwd
                 dist["smtp"]["sender"] = smtp_sender
-                dist["smtp"]["receivers"] = smtp_receivers
+                dist["smtp"]["receiver"] = list(smtp_receivers.split(","))
 
             return dist
 
