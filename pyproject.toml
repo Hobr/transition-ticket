@@ -25,13 +25,13 @@ py-machineid = "^0.5.1"
 plyer = "^2.1.0"
 pyaudio = "^0.2.14"
 pytz = "^2024.1"
-pyinstaller = "^6.7.0"
 psutil = "^6.0.0"
 
 [tool.poetry.group.dev]
 optional = true
 
 [tool.poetry.group.dev.dependencies]
+pyinstaller = "^6.7.0"
 ruff = "^0.5.0"
 pyupgrade = "^3.15.2"
 
