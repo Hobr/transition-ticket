@@ -4,7 +4,6 @@ on:
   push:
     tags:
       - "v*.*.*"
-  pull_request:
 
 permissions:
   contents: write
@@ -22,7 +21,7 @@ jobs:
       - name: Install Python
         uses: actions/setup-python@v5
         with:
-          python-version: '3.11'
+          python-version: '3.12'
 
       - name: Install Poetry
         uses: abatilo/actions-poetry@v2
