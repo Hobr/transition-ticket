@@ -110,16 +110,7 @@ class Task:
         self.machine.add_transition(
             trigger="WaitAvailable",
             source="等待开票",
-            dest="创建订单",
-            # 倒计时30s时已获取Token
-            conditions=lambda: self.skipToken,
-        )
-        self.machine.add_transition(
-            trigger="WaitAvailable",
-            source="等待开票",
             dest="获取Token",
-            # 无倒计时, 开始获取Token
-            conditions=lambda: not self.skipToken,
         )
 
         # 获取Token结束
@@ -161,6 +152,7 @@ class Task:
             conditions=lambda: self.riskProcessCode != 0,
         )
 
+        # 等待余票结束
         self.machine.add_transition(
             trigger="QueryTicket",
             source="等待余票",
@@ -279,13 +271,6 @@ class Task:
                     logger.info(f"【等待开票】准备开票! 需要等待 {countdown/60:.1f} 分钟")
                     sleep(5)
                     countdown -= 5
-
-                elif countdown == 30:
-                    logger.info("【等待开票】即将开票! 正在提前获取Token...")
-                    self.QueryTokenAction()
-                    self.skipToken = True
-                    if self.queryTokenCode == -401:
-                        self.RiskProcessAction()
 
                 elif 60 > countdown > 1:
                     logger.info(f"【等待开票】即将开票! 需要等待 {countdown-1} 秒")
