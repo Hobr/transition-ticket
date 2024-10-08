@@ -9,7 +9,7 @@ fake-useragent==1.5.1
 h11==0.14.0
 h2==4.1.0
 hpack==4.0.0
-httpcore==1.0.5
+httpcore==1.0.6
 httpx==0.27.2
 hyperframe==6.0.1
 idna==3.10
@@ -23,7 +23,7 @@ psutil==6.0.0
 py-machineid==0.5.1
 PyAudio==0.2.14
 pybrowsers==0.6.0
-pycryptodome==3.20.0
+pycryptodome==3.21.0
 pypng==0.20220715.0
 PySocks==1.7.1
 pytz==2024.2
