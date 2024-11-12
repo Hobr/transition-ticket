@@ -16,7 +16,7 @@ idna==3.10
 inquirer==3.4.0
 loguru==0.7.2
 outcome==1.3.0.post0
-packaging==24.1
+packaging==24.2
 pillow==10.4.0
 plyer==2.1.0
 psutil==6.1.0
@@ -30,10 +30,10 @@ pytz==2024.2
 pyxdg==0.28
 PyYAML==6.0.2
 qrcode==7.4.2
-readchar==4.2.0
+readchar==4.2.1
 runs==1.2.2
 selenium==4.26.1
-setuptools==75.3.0
+setuptools==75.4.0
 six==1.16.0
 sniffio==1.3.1
 socksio==1.0.0
