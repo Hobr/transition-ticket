@@ -154,6 +154,39 @@ class Info:
             buyers_info.append(buyer_info)
         return buyers_info
 
+    def Deliver(self) -> list:
+        """
+        收货地址
+
+        接口: GET https://show.bilibili.com/api/ticket/addr/list
+        """
+        response = self.net.Response(
+            method="get",
+            url="https://show.bilibili.com/api/ticket/addr/list",
+        )
+
+        lists = response["data"]["addr_list"]
+
+        if not lists:
+            raise InfoException("收货地址", "暂无收货地址信息, 请到会员购平台绑定后再次使用!")
+
+        delivers_info = []
+        data_info = {}
+        for _i, info in enumerate(lists):
+            data_info["name"] = info["name"]
+            data_info["tel"] = info["phone"]
+            data_info["addr_id"] = info["addr"]
+            data_info["addr"] = info["prov"] + info["city"] + info["area"] + info["addr"]
+
+            deliver_info = {
+                "收货人": data_info["name"],
+                "手机号": data_info["tel"],
+                "地址": data_info["addr"],
+                "数据": data_info,
+            }
+            delivers_info.append(deliver_info)
+        return delivers_info
+
     def UID(self) -> int:
         """
         UID

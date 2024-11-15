@@ -20,6 +20,7 @@ class Bilibili:
         screenId: int,
         skuId: int,
         buyer: dict,
+        deliver: dict,
         phone: str,
         orderType: int = 1,
         count: int = 1,
@@ -32,6 +33,8 @@ class Bilibili:
         screenId: 场次ID
         skuId: 商品ID
         buyer: 购买者信息
+        deliver: 收货信息
+        phone: 手机号
         orderType: 订单类型
         count: 购买数量
         """
@@ -55,6 +58,10 @@ class Bilibili:
         self.orderToken = ""
         self.risked = False
 
+        self.deliver = deliver
+        self.deliverNeed = False
+        self.deliverFee = 0
+
     @logger.catch
     def GetSaleStartTime(self) -> tuple:
         """
@@ -66,6 +73,9 @@ class Bilibili:
 
         # 成功
         if code == 0:
+            self.deliverNeed = res["data"]["has_paper_ticket"]
+            self.deliverFee = self.deliverFee = max(res["data"]["express_fee"], 0)
+
             for _i, screen in enumerate(res["data"]["screen_list"]):
                 if screen["id"] == self.screenId:
                     for _j, sku in enumerate(screen["ticket_list"]):
@@ -274,7 +284,7 @@ class Bilibili:
             "screen_id": self.screenId,
             "sku_id": self.skuId,
             "count": self.count,
-            "pay_money": self.cost * self.count,
+            "pay_money": self.cost * self.count + self.deliverFee,
             "order_type": self.orderType,
             "timestamp": timestamp,
             "buyer_info": json.dumps(self.buyer),
@@ -282,7 +292,9 @@ class Bilibili:
             "deviceId": "",
             "clickPosition": clickPosition,
             "requestSource": self.scene,
+            **({"deliver_info": json.dumps(self.deliver)} if self.deliverNeed else {}),
         }
+
         res = self.net.Response(method="post", url=url, params=params)
         code = res["errno"]
         msg = res["msg"]

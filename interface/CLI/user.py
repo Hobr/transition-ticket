@@ -35,6 +35,8 @@ class UserCli:
             "header": {},
             # 购买人
             "buyer": [],
+            # 收货信息
+            "deliver": {},
             # 绑定手机号
             "phone": "",
         }
@@ -159,6 +161,29 @@ class UserCli:
                 sys.exit()
 
         @logger.catch
+        def DeliverStep() -> dict:
+            """
+            收货信息
+            """
+            try:
+                deliver = Info(net=self.net).Deliver()
+                choice = {f"{i['收货人']} - {i['手机号']} - {i['地址']}": x for x, i in enumerate(deliver)}
+
+                select = self.data.Inquire(
+                    type="List",
+                    message="请选择收货信息",
+                    choices=list(choice.keys()),
+                )
+
+                id = choice[select]
+                return deliver[id]
+
+            except InfoException:
+                logger.error("选择错误! 请重新打开进行配置")
+                sleep(5)
+                sys.exit()
+
+        @logger.catch
         def PhoneStep() -> str:
             """
             绑定手机号
@@ -192,6 +217,7 @@ class UserCli:
         self.config["cookie"] = LoginStep()
         self.config["header"] = self.net.GetHeader()
         self.config["buyer"] = BuyerStep()
+        self.config["deliver"] = DeliverStep()
         self.config["phone"] = PhoneStep()
         self.conf.Save(FilenameStep(name=self.config["buyer"][0]["name"]), self.config, encrypt=self.isEncrypt)
         return self.config

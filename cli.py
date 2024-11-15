@@ -90,6 +90,7 @@ if __name__ == "__main__":
             skuId=productConfig["skuId"],
             buyer=userConfig["buyer"],
             count=len(userConfig["buyer"]),
+            deliver=userConfig["deliver"],
             phone=userConfig["phone"],
         )
 
