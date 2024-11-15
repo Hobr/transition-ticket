@@ -272,6 +272,10 @@ class Task:
                     sleep(5)
                     countdown -= 5
 
+                # 预处理
+                elif countdown == 60:
+                    self.api.QueryAmount()
+
                 elif 60 > countdown > 1:
                     logger.info(f"【等待开票】即将开票! 需要等待 {countdown-1} 秒")
                     sleep(1)
