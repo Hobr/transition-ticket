@@ -12,13 +12,13 @@
 
 本脚本仅适用于蹲回流票, 我们反对将其用于抢票,
 
-黄牛/收费代抢４０００＋.
+黄牛 / 收费代抢４０００＋
 
 ## 使用
 
 [下载地址](https://github.com/biliticket/transition-ticket/releases)
 
-注意:
+### 注意事项
 
 1. MacOS/Linux用户请根据*手动安装*流程安装进行使用;
 2. 如使用浏览器登录功能, 您的电脑里必须安装Chrome/Edge/Firefox浏览器, 如有安装还是提供无法启动, 则需要自行安装其中一个浏览器的Web Driver,
