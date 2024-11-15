@@ -609,8 +609,8 @@ class Task:
             "创建订单状态": "CreateStatus",
         }
         try:
-            while self.state != "完成":  # type: ignore
-                self.trigger(job[self.state])  # type: ignore
+            while self.state != "完成":
+                self.trigger(job[self.state])
             return True
 
         except KeyboardInterrupt:

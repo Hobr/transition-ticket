@@ -133,7 +133,7 @@ class Captcha:
         获取资源文件夹(涉及到Pyinstaller)
         """
         try:
-            base_path = sys._MEIPASS  # type: ignore
+            base_path = sys._MEIPASS
         except AttributeError:
             base_path = getcwd()
         return path.join(base_path, dir)
