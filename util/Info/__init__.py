@@ -175,7 +175,7 @@ class Info:
         for _i, info in enumerate(lists):
             data_info["name"] = info["name"]
             data_info["tel"] = info["phone"]
-            data_info["addr_id"] = info["addr"]
+            data_info["addr_id"] = info["addr_id"]
             data_info["addr"] = info["prov"] + info["city"] + info["area"] + info["addr"]
 
             deliver_info = {
