@@ -5,13 +5,13 @@ import platform
 
 hiddenimports = []
 if platform.system() == "Linux":
-    name="ticket-Linux"
+    name="Transition-Ticket-Linux"
     hiddenimports = ["plyer.platforms.linux.notification"]
 elif platform.system() == "Windows":
-    name="ticket-Windows"
+    name="Transition-Ticket-Windows"
     hiddenimports = ["plyer.platforms.win.notification"]
 elif platform.system() == "Darwin":
-    name="ticket-MacOS"
+    name="Transition-Ticket-MacOS"
     hiddenimports = ["plyer.platforms.macosx.notification"]
 
 datas = [("assest", "assest")]
