@@ -74,10 +74,9 @@ class Bilibili:
         # 成功
         if code == 0:
             self.deliverNeed = res["data"]["has_paper_ticket"]
-            self.deliverFee = self.deliverFee = max(res["data"]["express_fee"], 0)
-
             for _i, screen in enumerate(res["data"]["screen_list"]):
                 if screen["id"] == self.screenId:
+                    self.deliverFee = max(screen["express_fee"], 0)
                     for _j, sku in enumerate(screen["ticket_list"]):
                         if sku["id"] == self.skuId:
                             dist = sku["saleStart"]
