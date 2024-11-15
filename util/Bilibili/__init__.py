@@ -1,4 +1,5 @@
 import json
+import secrets
 from random import randint
 from time import time
 
@@ -288,7 +289,7 @@ class Bilibili:
             "timestamp": timestamp,
             "buyer_info": json.dumps(self.buyer),
             "token": self.token,
-            "deviceId": "",
+            "deviceId": secrets.token_hex(),
             "clickPosition": clickPosition,
             "requestSource": self.scene,
             **({"deliver_info": json.dumps(self.deliver, ensure_ascii=False)} if self.deliverNeed else {}),
