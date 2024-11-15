@@ -292,7 +292,7 @@ class Bilibili:
             "deviceId": secrets.token_hex(),
             "clickPosition": clickPosition,
             "requestSource": self.scene,
-            **({"deliver_info": json.dumps(self.deliver, ensure_ascii=False)} if self.deliverNeed else {}),
+            "deliver_info": json.dumps(self.deliver, ensure_ascii=False) if self.deliverNeed else {},
         }
 
         res = self.net.Response(method="post", url=url, params=params)
