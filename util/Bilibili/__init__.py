@@ -64,6 +64,7 @@ class Bilibili:
 
         self.deliver = deliver
         self.deliverNeed = False
+        self.ContactNeed = False
         self.deliverFee = 0
         self.payment = 0
 
@@ -298,10 +299,15 @@ class Bilibili:
             "requestSource": self.scene,
         }
 
-        # 适配: 邮寄票
+        # 邮寄票
         if self.deliverNeed:
             params["deliver_info"] = json.dumps(self.deliver, ensure_ascii=False)
             params["pay_money"] = max(self.cost * self.count + self.deliverFee, self.payment)
+            params["buyer"] = self.userinfo["username"]
+            params["tel"] = self.phone
+
+        # 联系人信息
+        if self.ContactNeed:
             params["buyer"] = self.userinfo["username"]
             params["tel"] = self.phone
 
@@ -326,6 +332,7 @@ class Bilibili:
 
             # 未预填收货联系人信息
             case 209001:
+                self.ContactNeed = True
                 tmp = self.net.Response(
                     method="post",
                     url="https://show.bilibili.com/api/ticket/buyer/saveContactInfo",
