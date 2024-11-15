@@ -62,6 +62,7 @@ class Bilibili:
         self.deliver = deliver
         self.deliverNeed = False
         self.deliverFee = 0
+        self.payment = 0
 
     @logger.catch
     def GetSaleStartTime(self) -> tuple:
@@ -284,7 +285,7 @@ class Bilibili:
             "screen_id": self.screenId,
             "sku_id": self.skuId,
             "count": self.count,
-            "pay_money": self.cost * self.count + self.deliverFee,
+            "pay_money": max(self.cost * self.count + self.deliverFee, self.payment),
             "order_type": self.orderType,
             "timestamp": timestamp,
             "buyer_info": json.dumps(self.buyer),
@@ -308,6 +309,11 @@ class Bilibili:
             # 存在订单
             case 100079:
                 self.orderId = res["data"]["orderId"]
+                
+            # 票价错误
+            case 100034:
+                self.payment = res["data"]["pay_money"]
+                logger.info(f'【创建订单】更新票价为：{self.payment / 100}')
 
         return code, msg
 
