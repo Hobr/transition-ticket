@@ -176,7 +176,7 @@ class UserCli:
                 )
 
                 id = choice[select]
-                return deliver[id]
+                return deliver[id]["数据"]
 
             except InfoException:
                 logger.error("选择错误! 请重新打开进行配置")
