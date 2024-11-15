@@ -23,6 +23,7 @@ class Bilibili:
         buyer: dict,
         deliver: dict,
         phone: str,
+        userinfo: dict,
         orderType: int = 1,
         count: int = 1,
     ):
@@ -36,6 +37,7 @@ class Bilibili:
         buyer: 购买者信息
         deliver: 收货信息
         phone: 手机号
+        userinfo: 用户信息
         orderType: 订单类型
         count: 购买数量
         """
@@ -46,6 +48,7 @@ class Bilibili:
         self.skuId = skuId
         self.buyer = buyer
         self.phone = phone
+        self.userinfo = userinfo
 
         self.orderType = orderType
         self.count = count
@@ -285,7 +288,7 @@ class Bilibili:
             "screen_id": self.screenId,
             "sku_id": self.skuId,
             "count": self.count,
-            "pay_money": max(self.cost * self.count + self.deliverFee, self.payment),
+            "pay_money": self.cost * self.count + self.deliverFee,
             "order_type": self.orderType,
             "timestamp": timestamp,
             "buyer_info": json.dumps(self.buyer),
@@ -293,8 +296,14 @@ class Bilibili:
             "deviceId": secrets.token_hex(),
             "clickPosition": clickPosition,
             "requestSource": self.scene,
-            "deliver_info": json.dumps(self.deliver, ensure_ascii=False) if self.deliverNeed else {},
         }
+
+        # 适配: 邮寄票
+        if self.deliverNeed:
+            params["deliver_info"] = json.dumps(self.deliver, ensure_ascii=False)
+            params["pay_money"] = max(self.cost * self.count + self.deliverFee, self.payment)
+            params["buyer"] = self.userinfo["username"]
+            params["tel"] = self.phone
 
         res = self.net.Response(method="post", url=url, params=params)
         code = res["errno"]
@@ -309,11 +318,21 @@ class Bilibili:
             # 存在订单
             case 100079:
                 self.orderId = res["data"]["orderId"]
-                
+
             # 票价错误
             case 100034:
                 self.payment = res["data"]["pay_money"]
                 logger.info(f'【创建订单】更新票价为：{self.payment / 100}')
+
+            # 未预填收货联系人信息
+            case 209001:
+                tmp = self.net.Response(
+                    method="post",
+                    url="https://show.bilibili.com/api/ticket/buyer/saveContactInfo",
+                    params={"username": self.userinfo["username"], "tel": self.phone}
+                    )
+                if tmp["errno"] == 0:
+                    logger.info(f'【创建订单】已自动设置收货联系人信息')
 
         return code, msg
 

@@ -156,7 +156,7 @@ class SettingCli:
                 choices=[
                     ("系统提醒", "system"),
                     ("音频提醒", "sound"),
-                    ("微信提醒(Push Plus)", "pushplus"),
+                    ("PushPlus提醒", "pushplus"),
                     ("bark推送", "bark"),
                     ("钉钉推送", "dingding"),
                     ("企业微信推送", "wx"),

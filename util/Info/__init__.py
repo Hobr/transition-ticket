@@ -187,14 +187,19 @@ class Info:
             delivers_info.append(deliver_info)
         return delivers_info
 
-    def UID(self) -> int:
+    def Userinfo(self) -> dict:
         """
-        UID
+        UID Username
 
-        接口: GET https://show.bilibili.com/api/ticket/project/getV2?version=134&id=${pid}
+        接口: GET https://api.bilibili.com/x/space/myinfo
         """
         res = self.net.Response(
             method="get",
-            url=f"https://show.bilibili.com/api/ticket/project/getV2?version=134&id={self.pid}",
+            url="https://api.bilibili.com/x/space/myinfo",
         )
-        return res["data"]["mid"]
+        
+        userinfo = {
+            "uid": res["data"]["mid"],
+            "username": res["data"]["name"],
+        }
+        return userinfo

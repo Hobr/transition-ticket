@@ -26,6 +26,7 @@ class UserCli:
 
         self.data = Data()
         self.net = Request()
+        self.info = Info(net=self.net)
 
         # 配置
         self.config = {
@@ -136,7 +137,7 @@ class UserCli:
             购买人
             """
             try:
-                buyerInfo = Info(net=self.net).Buyer()
+                buyerInfo = self.info.Buyer()
                 choice = {f"{i['购买人']} - {i['身份证']} - {i['手机号']}": x for x, i in enumerate(buyerInfo)}
 
                 select = self.data.Inquire(
@@ -166,7 +167,7 @@ class UserCli:
             收货信息
             """
             try:
-                deliver = Info(net=self.net).Deliver()
+                deliver = self.info.Deliver()
                 choice = {f"{i['收货人']} - {i['手机号']} - {i['地址']}": x for x, i in enumerate(deliver)}
 
                 select = self.data.Inquire(
@@ -219,5 +220,6 @@ class UserCli:
         self.config["buyer"] = BuyerStep()
         self.config["deliver"] = DeliverStep()
         self.config["phone"] = PhoneStep()
+        self.config["userinfo"] = self.info.Userinfo()
         self.conf.Save(FilenameStep(name=self.config["buyer"][0]["name"]), self.config, encrypt=self.isEncrypt)
         return self.config
