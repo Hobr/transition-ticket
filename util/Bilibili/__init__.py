@@ -328,18 +328,14 @@ class Bilibili:
             # 票价错误
             case 100034:
                 self.payment = res["data"]["pay_money"]
-                logger.info(f'【创建订单】更新票价为：{self.payment / 100}')
+                logger.info(f"【创建订单】更新票价为：{self.payment / 100}")
 
             # 未预填收货联系人信息
             case 209001:
                 self.ContactNeed = True
-                tmp = self.net.Response(
-                    method="post",
-                    url="https://show.bilibili.com/api/ticket/buyer/saveContactInfo",
-                    params={"username": self.userinfo["username"], "tel": self.phone}
-                    )
+                tmp = self.net.Response(method="post", url="https://show.bilibili.com/api/ticket/buyer/saveContactInfo", params={"username": self.userinfo["username"], "tel": self.phone})
                 if tmp["errno"] == 0:
-                    logger.info(f'【创建订单】已自动设置收货联系人信息')
+                    logger.info("【创建订单】已自动设置收货联系人信息")
 
         return code, msg
 

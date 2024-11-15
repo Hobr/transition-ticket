@@ -197,7 +197,7 @@ class Info:
             method="get",
             url="https://api.bilibili.com/x/space/myinfo",
         )
-        
+
         userinfo = {
             "uid": res["data"]["mid"],
             "username": res["data"]["name"],

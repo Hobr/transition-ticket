@@ -92,7 +92,7 @@ if __name__ == "__main__":
             count=len(userConfig["buyer"]),
             deliver=userConfig["deliver"],
             phone=userConfig["phone"],
-            userinfo=userConfig["userinfo"]
+            userinfo=userConfig["userinfo"],
         )
 
         job = Task(
