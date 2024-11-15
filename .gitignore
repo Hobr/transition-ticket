@@ -422,3 +422,4 @@ doc/locale/
 *.jpg
 config/**/**.yaml
 upx
+supermode.patch
