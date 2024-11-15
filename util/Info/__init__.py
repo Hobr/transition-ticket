@@ -38,24 +38,24 @@ class Info:
 
         接口: GET https://show.bilibili.com/api/ticket/project/getV2?version=134&id=${pid}
         """
-        response = self.net.Response(
+        res = self.net.Response(
             method="get",
             url=f"https://show.bilibili.com/api/ticket/project/getV2?version=134&id={self.pid}",
         )
 
         base_info_id = 0
-        for i, item in enumerate(response["data"]["performance_desc"]["list"]):
+        for i, item in enumerate(res["data"]["performance_desc"]["list"]):
             if item["module"] == "base_info":
                 base_info_id = i
                 break
 
         dist = {
-            "id": response["data"]["id"],
-            "name": response["data"]["name"],
-            "time": response["data"]["performance_desc"]["list"][base_info_id]["details"][0]["content"],
-            "start": self.data.TimestampFormat(int(response["data"]["sale_begin"])),
-            "end": self.data.TimestampFormat(int(response["data"]["sale_end"])),
-            "countdown": self.data.TimestampFormat(int(response["data"]["count_down"]), "s", countdown=True),
+            "id": res["data"]["id"],
+            "name": res["data"]["name"],
+            "time": res["data"]["performance_desc"]["list"][base_info_id]["details"][0]["content"],
+            "start": self.data.TimestampFormat(int(res["data"]["sale_begin"])),
+            "end": self.data.TimestampFormat(int(res["data"]["sale_end"])),
+            "countdown": self.data.TimestampFormat(int(res["data"]["count_down"]), "s", countdown=True),
         }
         return dist
 
@@ -65,12 +65,12 @@ class Info:
 
         接口: GET https://show.bilibili.com/api/ticket/project/getV2?version=134&id=${pid}
         """
-        response = self.net.Response(
+        res = self.net.Response(
             method="get",
             url=f"https://show.bilibili.com/api/ticket/project/getV2?version=134&id={self.pid}",
         )
 
-        screens = response["data"]["screen_list"]
+        screens = res["data"]["screen_list"]
         if not screens:
             raise InfoException("活动详情", "该活动暂未开放票务信息")
 
@@ -93,13 +93,13 @@ class Info:
 
         sid: 场次ID
         """
-        response = self.net.Response(
+        res = self.net.Response(
             method="get",
             url=f"https://show.bilibili.com/api/ticket/project/getV2?version=134&id={self.pid}",
         )
 
         skus = {}
-        for i in response["data"]["screen_list"]:
+        for i in res["data"]["screen_list"]:
             if i["id"] == sid:
                 skus = i["ticket_list"]
                 break
@@ -122,12 +122,12 @@ class Info:
 
         接口: GET https://show.bilibili.com/api/ticket/buyer/list?is_default&projectId=${pid}
         """
-        response = self.net.Response(
+        res = self.net.Response(
             method="get",
             url="https://show.bilibili.com/api/ticket/buyer/list",
         )
 
-        lists = response["data"]["list"]
+        lists = res["data"]["list"]
 
         if not lists:
             raise InfoException("购买人", "暂无购买人信息, 请到会员购平台绑定后再次使用!")
@@ -160,12 +160,12 @@ class Info:
 
         接口: GET https://show.bilibili.com/api/ticket/addr/list
         """
-        response = self.net.Response(
+        res = self.net.Response(
             method="get",
             url="https://show.bilibili.com/api/ticket/addr/list",
         )
 
-        lists = response["data"]["addr_list"]
+        lists = res["data"]["addr_list"]
 
         if not lists:
             raise InfoException("收货地址", "暂无收货地址信息, 请到会员购平台绑定后再次使用!")
@@ -193,8 +193,8 @@ class Info:
 
         接口: GET https://show.bilibili.com/api/ticket/project/getV2?version=134&id=${pid}
         """
-        response = self.net.Response(
+        res = self.net.Response(
             method="get",
             url=f"https://show.bilibili.com/api/ticket/project/getV2?version=134&id={self.pid}",
         )
-        return response["data"]["mid"]
+        return res["data"]["mid"]

@@ -428,10 +428,6 @@ class Task:
                 logger.success(f"【创建订单】订单创建成功! {msg}")
                 self.availableTime = int(time())
 
-            # 存在未付款订单
-            case 100079:
-                logger.warning("【订单】存在冲突订单! 请先支付或取消这一单")
-
             # Token过期
             case x if 100050 <= x <= 100059:
                 logger.warning("【创建订单】Token过期! 即将重新获取")
@@ -460,6 +456,10 @@ class Task:
                 logger.warning("程序正在准备退出...")
                 sleep(5)
                 sys.exit()
+
+            # 存在未付款订单
+            case 100079:
+                logger.warning("【创建订单】存在冲突订单! 请先支付或取消这一单")
 
             # 超过购买数量
             case 100098:
