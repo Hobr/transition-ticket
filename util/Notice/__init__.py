@@ -102,7 +102,11 @@ class Notice:
         钉钉
         """
         url = f"https://oapi.dingtalk.com/robot/send?access_token={token}"
-        data = {"msgtype": "text", "text": {"content": self.message}, "at": {"isAtAll": False}}
+        data = {
+            "msgtype": "text",
+            "text": {"content": self.message},
+            "at": {"isAtAll": False},
+        }
         self.net.Response(method="post", url=url, params=data)
 
     @logger.catch

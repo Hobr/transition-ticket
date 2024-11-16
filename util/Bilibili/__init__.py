@@ -278,8 +278,7 @@ class Bilibili:
         url = f"https://show.bilibili.com/api/ticket/project/getV2?version=134&id={self.projectId}&project_id={self.projectId}&requestSource={self.scene}"
         res = self.net.Response(method="get", url=url)
         code = res["errno"]
-        msg = res["msg"]
-        
+
         match code:
             # 成功
             case 0:
@@ -297,16 +296,15 @@ class Bilibili:
 
                 # 没保存Screen/Sku位置
                 else:
-                    for i, screen in enumerate(data["screen_list"]):
+                    for _i, screen in enumerate(data["screen_list"]):
                         if screen["id"] == self.screenId:
-
                             self.deliverFee = max(screen["express_fee"], 0)
 
-                            for j, sku in enumerate(screen["ticket_list"]):
+                            for _j, sku in enumerate(screen["ticket_list"]):
                                 if sku["id"] == self.skuId:
-                                    
                                     self.cost = sku["price"]
                                     break
+
                             break
             case _:
                 self.cost = 0
@@ -374,7 +372,11 @@ class Bilibili:
             # 未预填收货联系人信息
             case 209001:
                 self.ContactNeed = True
-                tmp = self.net.Response(method="post", url="https://show.bilibili.com/api/ticket/buyer/saveContactInfo", params={"username": self.userinfo["username"], "tel": self.phone})
+                tmp = self.net.Response(
+                    method="post",
+                    url="https://show.bilibili.com/api/ticket/buyer/saveContactInfo",
+                    params={"username": self.userinfo["username"], "tel": self.phone},
+                )
                 if tmp["errno"] == 0:
                     logger.info("【创建订单】已自动设置收货联系人信息")
 

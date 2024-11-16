@@ -221,5 +221,9 @@ class UserCli:
         self.config["deliver"] = DeliverStep()
         self.config["phone"] = PhoneStep()
         self.config["userinfo"] = self.info.Userinfo()
-        self.conf.Save(FilenameStep(name=self.config["buyer"][0]["name"]), self.config, encrypt=self.isEncrypt)
+        self.conf.Save(
+            FilenameStep(name=self.config["buyer"][0]["name"]),
+            self.config,
+            encrypt=self.isEncrypt,
+        )
         return self.config

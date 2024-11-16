@@ -249,7 +249,11 @@ class SettingCli:
             """
             文件名
             """
-            default = re.sub(r'[\\/*?:"<>|]', "_", time.strftime("%Y-%m-%d %H:%M:%S", time.localtime()))
+            default = re.sub(
+                r'[\\/*?:"<>|]',
+                "_",
+                time.strftime("%Y-%m-%d %H:%M:%S", time.localtime()),
+            )
             filename = self.data.Inquire(
                 type="Text",
                 message="保存的设置文件名称",

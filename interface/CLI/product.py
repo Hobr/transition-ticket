@@ -166,6 +166,9 @@ class ProductCli:
         skuId, skuSelected = SkuStep(screenId=self.config["screenId"])
         self.config["skuId"] = skuId
 
-        self.conf.Save(FilenameStep(name=f"{self.info.Project()['name']} ({skuSelected})"), self.config)
+        self.conf.Save(
+            FilenameStep(name=f"{self.info.Project()['name']} ({skuSelected})"),
+            self.config,
+        )
         logger.info("【商品配置初始化】配置已保存!")
         return self.config

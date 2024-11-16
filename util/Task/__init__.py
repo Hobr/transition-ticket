@@ -255,7 +255,7 @@ class Task:
         if countdown > 0:
             logger.warning("【等待开票】请确保本机时间是北京时间, 服务器用户尤其要注意!")
             self.countdownOver = False
-            
+
             while countdown > 0:
                 countdown = start_time - int(time())
 
@@ -283,7 +283,7 @@ class Task:
                 elif countdown < 1:
                     logger.info("【等待开票】即将开票!")
                     sleep(countdown)
-                    
+
                 # 预处理
                 if countdown == 30:
                     self.api.QueryPrice()
@@ -336,7 +336,6 @@ class Task:
             self.api.QueryPrice()
             self.queryCache = True
             logger.info("【获取Token】已缓存商品信息")
-
 
     @logger.catch
     def RiskProcessAction(self) -> None:
