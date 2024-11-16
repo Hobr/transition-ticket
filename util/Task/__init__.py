@@ -68,6 +68,7 @@ class Task:
 
         # Code
         self.skipToken = False
+        self.countdownOver = False
         self.queryTokenCode = 114514
         self.riskProcessCode = 114514
         self.queryTicketCode = False
@@ -253,7 +254,8 @@ class Task:
 
         if countdown > 0:
             logger.warning("【等待开票】请确保本机时间是北京时间, 服务器用户尤其要注意!")
-
+            self.countdownOver = False
+            
             while countdown > 0:
                 countdown = start_time - int(time())
 
@@ -274,7 +276,7 @@ class Task:
 
                 # 预处理
                 elif countdown == 60:
-                    self.api.QueryAmount()
+                    self.api.QueryPrice()
 
                 elif 60 > countdown > 1:
                     logger.info(f"【等待开票】即将开票! 需要等待 {countdown-1} 秒")
@@ -286,10 +288,13 @@ class Task:
                     logger.info("【等待开票】即将开票!")
                     sleep(countdown)
 
-            if countdown == 0:
-                logger.info("【等待开票】等待结束! 开始抢票")
+        elif countdown == 0:
+            logger.info("【等待开票】等待结束! 开始抢票")
+            self.countdownOver = True
+
         else:
             logger.info("【等待开票】已开票! 开始进入抢票模式")
+            self.countdownOver = True
 
     @logger.catch
     def QueryTokenAction(self) -> None:
@@ -326,10 +331,11 @@ class Task:
                 logger.error(f"【获取Token】{self.queryTokenCode}: {msg}")
 
         # 顺路
-        if not self.queryCache:
-            logger.info("【获取Token】已缓存商品信息")
-            self.api.QueryAmount()
+        if not self.queryCache and self.countdownOver:
+            self.api.QueryPrice()
             self.queryCache = True
+            logger.info("【获取Token】已缓存商品信息")
+
 
     @logger.catch
     def RiskProcessAction(self) -> None:
@@ -461,9 +467,10 @@ class Task:
                 sleep(5)
                 sys.exit()
 
-            # 存在未付款订单
-            case 100079:
+            # 存在未付款订单/有尚未完成订单
+            case 100079 | 100048:
                 logger.warning("【创建订单】存在冲突订单! 请先支付或取消这一单")
+                self.AutoSleepInterval()
 
             # 超过购买数量
             case 100098:

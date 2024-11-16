@@ -82,7 +82,6 @@ class Bilibili:
             self.deliverNeed = res["data"]["has_paper_ticket"]
             for _i, screen in enumerate(res["data"]["screen_list"]):
                 if screen["id"] == self.screenId:
-                    self.deliverFee = max(screen["express_fee"], 0)
                     for _j, sku in enumerate(screen["ticket_list"]):
                         if sku["id"] == self.skuId:
                             dist = sku["saleStart"]
@@ -246,7 +245,6 @@ class Bilibili:
 
                 # 有保存Sku位置
                 if path["id"] == self.skuId:
-                    self.cost = path["price"]
                     clickable = path["clickable"]
                     salenum = path["sale_flag_number"]
                     num = path["num"]
@@ -257,7 +255,6 @@ class Bilibili:
                         if screen["id"] == self.screenId:
                             for j, sku in enumerate(screen["ticket_list"]):
                                 if sku["id"] == self.skuId:
-                                    self.cost = sku["price"]
                                     clickable = sku["clickable"]
                                     salenum = sku["sale_flag_number"]
                                     num = sku["num"]
@@ -270,6 +267,50 @@ class Bilibili:
                 num = 0
 
         return code, msg, clickable, salenum, num
+
+    @logger.catch
+    def QueryPrice(self) -> None:
+        """
+        获取价格
+        self.cost: 票价
+        self.deliverFee: 邮费
+        """
+        url = f"https://show.bilibili.com/api/ticket/project/getV2?version=134&id={self.projectId}&project_id={self.projectId}&requestSource={self.scene}"
+        res = self.net.Response(method="get", url=url)
+        code = res["errno"]
+        msg = res["msg"]
+        
+        match code:
+            # 成功
+            case 0:
+                data = res["data"]
+                screen = data["screen_list"][self.screenPath]
+                sku = data["screen_list"][self.screenPath]["ticket_list"][self.skuPath]
+
+                # 有保存Screen位置
+                if screen["id"] == self.skuId:
+                    self.deliverFee = max(screen["express_fee"], 0)
+
+                # 有保存Sku位置
+                if sku["id"] == self.skuId:
+                    self.cost = sku["price"]
+
+                # 没保存Screen/Sku位置
+                else:
+                    for i, screen in enumerate(data["screen_list"]):
+                        if screen["id"] == self.screenId:
+
+                            self.deliverFee = max(screen["express_fee"], 0)
+
+                            for j, sku in enumerate(screen["ticket_list"]):
+                                if sku["id"] == self.skuId:
+                                    
+                                    self.cost = sku["price"]
+                                    break
+                            break
+            case _:
+                self.cost = 0
+                self.deliverFee = 0
 
     @logger.catch
     def CreateOrder(self) -> tuple:
