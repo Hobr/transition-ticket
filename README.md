@@ -64,7 +64,7 @@ poetry install --with dev,graph
 pre-commit install
 
 # 更新
-poetry update
+poetry update --with dev,graph --sync
 pip freeze > requirements.txt
 pre-commit autoupdate
 

@@ -1008,13 +1008,13 @@ xmod = "*"
 
 [[package]]
 name = "selenium"
-version = "4.26.1"
+version = "4.27.1"
 description = "Official Python bindings for Selenium WebDriver"
 optional = false
 python-versions = ">=3.8"
 files = [
-    {file = "selenium-4.26.1-py3-none-any.whl", hash = "sha256:1db3f3a0cd5bb07624fa8a3905a6fdde1595a42185a0617077c361dc53d104fb"},
-    {file = "selenium-4.26.1.tar.gz", hash = "sha256:7640f3f08ae7f4e450f895678e8a10a55eb4e4ca18311ed675ecc4684b96b683"},
+    {file = "selenium-4.27.1-py3-none-any.whl", hash = "sha256:b89b1f62b5cfe8025868556fe82360d6b649d464f75d2655cb966c8f8447ea18"},
+    {file = "selenium-4.27.1.tar.gz", hash = "sha256:5296c425a75ff1b44d0d5199042b36a6d1ef76c04fb775b97b40be739a9caae2"},
 ]
 
 [package.dependencies]
@@ -1263,13 +1263,13 @@ dev = ["black (>=19.3b0)", "pytest (>=4.6.2)"]
 
 [[package]]
 name = "winregistry"
-version = "1.1.1"
+version = "2.0.1"
 description = "Library aimed at working with Windows registry"
 optional = false
-python-versions = ">=3.7,<4.0"
+python-versions = ">=3.8"
 files = [
-    {file = "winregistry-1.1.1-py3-none-any.whl", hash = "sha256:ad4be5a488838266b4bf826712d640db3daadd1f97ba46820f834a98868b3bc1"},
-    {file = "winregistry-1.1.1.tar.gz", hash = "sha256:942fecad3751c1b78b9e6b0a520266903c3023f104668ce1bdbf381ec993ad8b"},
+    {file = "winregistry-2.0.1-py3-none-any.whl", hash = "sha256:6401d65abc2cf52f55896559bfd915a6caf78c6032c8ff2d45f1e0df0592fc27"},
+    {file = "winregistry-2.0.1.tar.gz", hash = "sha256:02931655fb0421b65385990e8472b1f49a43c7c1ff96c2b2ad489e5627ee3363"},
 ]
 
 [[package]]
