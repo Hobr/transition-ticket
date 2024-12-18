@@ -1,8 +1,8 @@
 anyio==4.7.0
-attrs==24.2.0
+attrs==24.3.0
 bili_ticket_gt_python==0.2.7
 blessed==1.20.0
-certifi==2024.8.30
+certifi==2024.12.14
 cffi==1.17.1
 cfgv==3.4.0
 distlib==0.3.8
