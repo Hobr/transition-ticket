@@ -260,22 +260,22 @@ class Task:
                 countdown = start_time - int(time())
 
                 if countdown >= 3600:
-                    logger.info(f"【等待开票】需要等待 {countdown/60:.1f} 分钟")
+                    logger.info(f"【等待开票】需要等待 {countdown / 60:.1f} 分钟")
                     sleep(600)
                     countdown -= 600
 
                 elif 3600 > countdown >= 600:
-                    logger.info(f"【等待开票】需要等待 {countdown/60:.1f} 分钟")
+                    logger.info(f"【等待开票】需要等待 {countdown / 60:.1f} 分钟")
                     sleep(60)
                     countdown -= 60
 
                 elif 600 > countdown > 60:
-                    logger.info(f"【等待开票】准备开票! 需要等待 {countdown/60:.1f} 分钟")
+                    logger.info(f"【等待开票】准备开票! 需要等待 {countdown / 60:.1f} 分钟")
                     sleep(5)
                     countdown -= 5
 
                 elif 60 > countdown > 1:
-                    logger.info(f"【等待开票】即将开票! 需要等待 {countdown-1} 秒")
+                    logger.info(f"【等待开票】即将开票! 需要等待 {countdown - 1} 秒")
                     sleep(1)
                     countdown -= 1
 
