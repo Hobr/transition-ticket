@@ -255,7 +255,7 @@ class Task:
         """
         等待开票
         """
-        code, start_time = self.api.QuerySaleStartTime()
+        code, msg, start_time = self.api.QuerySaleStartTime()
 
         match code:
             # 成功
@@ -265,7 +265,7 @@ class Task:
 
             # 不知道
             case _:
-                logger.error("【获取开票时间】获取失败!")
+                logger.error(f"【获取开票时间】获取失败! {msg}")
 
         countdown = start_time - int(time())
         logger.info("【等待开票】本机时间已校准!")
