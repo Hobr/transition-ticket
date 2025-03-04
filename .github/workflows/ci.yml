@@ -41,7 +41,7 @@ jobs:
         run: |
           $tag = $env:GITHUB_REF -replace 'refs/tags/', ''
           Get-ChildItem -Path dist | ForEach-Object {
-            Rename-Item -Path $_.FullName -NewName "$tag-$($_.Name)"
+            Rename-Item -Path $_.FullName -NewName "$tag-Stable-$($_.Name)"
           }
 
       - name: Release
