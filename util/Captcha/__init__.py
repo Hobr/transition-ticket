@@ -86,9 +86,7 @@ class Captcha:
 
         driver.maximize_window()
         try:
-            filepath = (
-                "file://" + self.geetest_path + "?gt=" + self.gt + "&challenge=" + challenge
-            )
+            filepath = "file://" + self.geetest_path + "?gt=" + self.gt + "&challenge=" + challenge
             driver.get(filepath)
             wait = WebDriverWait(driver, 30)
 

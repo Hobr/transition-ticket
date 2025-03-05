@@ -63,9 +63,7 @@ if __name__ == "__main__":
         # 读取配置
         settingList = settingData.List()
         settingConfig = (
-            SettingCli(conf=settingData).Select(selects=settingList)
-            if settingList != []
-            else SettingCli(conf=settingData).Generate()
+            SettingCli(conf=settingData).Select(selects=settingList) if settingList != [] else SettingCli(conf=settingData).Generate()
         )
 
         userList = userData.List()
@@ -83,9 +81,7 @@ if __name__ == "__main__":
 
         productList = productData.List()
         productConfig = (
-            ProductCli(conf=productData).Select(selects=productList)
-            if productList != []
-            else ProductCli(conf=productData).Generate()
+            ProductCli(conf=productData).Select(selects=productList) if productList != [] else ProductCli(conf=productData).Generate()
         )
 
         net = Request(

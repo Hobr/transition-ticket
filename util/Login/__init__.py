@@ -117,9 +117,7 @@ class Login:
         try:
             driver.get("https://show.bilibili.com/")
             wait = WebDriverWait(driver, 30)
-            event = wait.until(
-                EC.element_to_be_clickable((By.CLASS_NAME, "nav-header-register"))
-            )
+            event = wait.until(EC.element_to_be_clickable((By.CLASS_NAME, "nav-header-register")))
             driver.execute_script("arguments[0].click();", event)
 
         except Exception:
@@ -298,9 +296,7 @@ class Login:
             reverify = self.net.Response(method="post", url=url, params=data)
 
             if reverify["code"] != 0:
-                raise LoginException(
-                    f"验证码登录失败 {reverify['code']}: {reverify['message']}"
-                )
+                raise LoginException(f"验证码登录失败 {reverify['code']}: {reverify['message']}")
 
             logger.success("【登录】验证码登录成功")
             self.net.Response(

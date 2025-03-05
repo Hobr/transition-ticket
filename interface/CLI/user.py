@@ -155,10 +155,7 @@ class UserCli:
             """
             try:
                 buyerInfo = self.info.Buyer()
-                choice = {
-                    f"{i['购买人']} - {i['身份证']} - {i['手机号']}": x
-                    for x, i in enumerate(buyerInfo)
-                }
+                choice = {f"{i['购买人']} - {i['身份证']} - {i['手机号']}": x for x, i in enumerate(buyerInfo)}
 
                 select = self.data.Inquire(
                     type="Checkbox",
@@ -188,10 +185,7 @@ class UserCli:
             """
             try:
                 deliver = self.info.Deliver()
-                choice = {
-                    f"{i['name']} - {i['phone']} - {i['addr']}": x
-                    for x, i in enumerate(deliver)
-                }
+                choice = {f"{i['name']} - {i['phone']} - {i['addr']}": x for x, i in enumerate(deliver)}
 
                 select = self.data.Inquire(
                     type="List",
