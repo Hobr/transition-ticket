@@ -237,64 +237,6 @@ class Bilibili:
         return code, msg
 
     @logger.catch
-    def GenerateToken(self) -> tuple[int, str]:
-        """
-        生成Token
-
-        Base64: URLSafeBase64
-        """
-
-        def encrypt(char: int, type: str) -> str:
-            """
-            加密
-            """
-            match type:
-                # 6 位 timestamp 参数
-                case "timestamp":
-                    v1 = char.to_bytes(8, "big")
-                    v2 = urlsafe_b64encode(v1).decode("utf-8")
-                    v3 = v2[5:11]
-                    return v3
-                # 3 位 projectId 参数
-                case "projectId":
-                    v1 = char.to_bytes(3, "big")
-                    v2 = urlsafe_b64encode(v1).decode("utf-8")
-                    v3 = v2[1:4]
-                    return v3
-                # 4 位 screenId 参数
-                case "screenId":
-                    v1 = char.to_bytes(4, "big")
-                    v2 = urlsafe_b64encode(v1).decode("utf-8")
-                    v3 = v2[2:6]
-                    return v3
-                # 3 位 skuId 参数
-                case "skuId":
-                    v1 = char.to_bytes(4, "big")
-                    v2 = v1[2:4] + b"\x20"
-                    v3 = urlsafe_b64encode(v2).decode("utf-8")
-                    v4 = v3[0:3]
-                    return v4
-                case _:
-                    return ""
-
-        p1 = "999999"
-        # p1 = encrypt(int(time()), "timestamp")
-        p2 = encrypt(self.projectId, "projectId")
-        p3 = encrypt(self.screenId, "screenId")
-        p4 = encrypt(self.skuId, "skuId")
-        token = "w" + p1 + "AA" + p2 + "AA" + p3 + "EAAQAJ" + p4 + "."
-
-        if token[7:] == self.token[7:]:
-            code = 0
-            msg = ""
-            self.token = token
-        else:
-            code = -1
-            msg = token
-
-        return code, msg
-
-    @logger.catch
     def QueryAmount(self) -> tuple[int, str, bool, int, int]:
         """
         获取票数
