@@ -17,6 +17,7 @@
 ## 下载使用
 
 对于大型漫展活动, 请使用 Stable 版
+
 对于小型活动, 可以使用 Nightly 版本
 
 [Releases](https://github.com/biliticket/transition-ticket/releases)
