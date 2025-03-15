@@ -218,16 +218,17 @@ class UserCli:
             return phone
 
         @logger.catch
-        def FilenameStep(name: str) -> str:
+        def FilenameStep(name: list) -> str:
             """
             文件名
 
             name: 实名名称
             """
+            default = " ".join(i[0] + "X" + i[-1] for i in name)
             filename = self.data.Inquire(
                 type="Text",
                 message="保存的用户文件名称",
-                default=name[0] + "X" + name[-1],
+                default=default,
             )
             return filename
 
@@ -238,8 +239,10 @@ class UserCli:
         self.config["deliver"] = DeliverStep()
         self.config["phone"] = PhoneStep()
         self.config["userinfo"] = self.info.Userinfo()
+
+        name = [i["name"] for i in self.config["buyer"]]
         self.conf.Save(
-            FilenameStep(name=self.config["buyer"][0]["name"]),
+            FilenameStep(name=name),
             self.config,
             encrypt=self.isEncrypt,
         )
