@@ -479,7 +479,7 @@ class Task:
 
             # 硬控
             case 3:
-                logger.error("【创建订单】ERR 3! 请不要开多个脚本给同一实名制购票人(身份证)抢票, 否则会被B站限流")
+                logger.warning("【创建订单】ERR 3! 服务器卡卡卡咔咔咔咔卡卡卡")
                 # 刷新
                 self.AutoSleepInterval()
 
