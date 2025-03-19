@@ -22,9 +22,9 @@
 
 [Releases](https://github.com/biliticket/transition-ticket/releases)
 
-[Nightly Release](https://github.com/biliticket/transition-ticket/releases/tag/v6.191.9810)
+[Nightly Release](https://github.com/biliticket/transition-ticket/releases/tag/v7.191.9810)
 
-[Stable Release](https://github.com/biliticket/transition-ticket/releases/tag/v6.114.514)
+[Stable Release](https://github.com/biliticket/transition-ticket/releases/tag/v7.114.514)
 
 ### 注意事项
 
