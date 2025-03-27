@@ -567,12 +567,12 @@ class Task:
         noticeThread = []
         t1 = threading.Thread(target=notice.Message)
         t2 = threading.Thread(target=notice.Sound)
-        t3 = threading.Thread(target=notice.PushPlus, args=(self.notice["pushplus"]))
-        t4 = threading.Thread(target=notice.Ding, args=(self.notice["dingding"]))
-        t5 = threading.Thread(target=notice.WX, args=(self.notice["wx"]))
-        t6 = threading.Thread(target=notice.FTQQ, args=(self.notice["ftqq"]))
-        t7 = threading.Thread(target=notice.Bark, args=(self.notice["bark"]))
-        t8 = threading.Thread(target=notice.Mail, args=(self.notice["smtp"]))
+        t3 = threading.Thread(target=notice.PushPlus, args=(self.notice["pushplus"],))
+        t4 = threading.Thread(target=notice.Ding, args=(self.notice["dingding"],))
+        t5 = threading.Thread(target=notice.WX, args=(self.notice["wx"],))
+        t6 = threading.Thread(target=notice.FTQQ, args=(self.notice["ftqq"],))
+        t7 = threading.Thread(target=notice.Bark, args=(self.notice["bark"],))
+        t8 = threading.Thread(target=notice.Mail, args=(self.notice["smtp"],))
 
         if self.notice["system"]:
             noticeThread.append(t1)
