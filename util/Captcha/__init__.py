@@ -43,6 +43,12 @@ class Captcha:
 
     @logger.catch
     def Geetest(self, challenge: str) -> str:
+        """
+        极验验证
+
+        challenge: 流水号
+        返回: validate
+        """
         match self.verify:
             case "Auto":
                 return self.Auto(challenge)
@@ -55,7 +61,7 @@ class Captcha:
     @logger.catch
     def Auto(self, challenge: str) -> str:
         """
-        极验自动验证
+        自动验证
         https://github.com/Amorter/biliTicker_gt
 
         challenge: 流水号
