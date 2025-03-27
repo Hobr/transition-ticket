@@ -39,7 +39,7 @@ class Captcha:
         self.gt = gt
         self.rt = "abcdefghijklmnop"  # rt固定16位字符串即可
 
-        self.geetest_path = self.AssestDir("geetest/index.html")
+        self.geetest_path = self.AssetsDir("geetest/index.html")
 
     @logger.catch
     def Geetest(self, challenge: str) -> str:
@@ -111,7 +111,7 @@ class Captcha:
         return ""
 
     @logger.catch
-    def AssestDir(self, dir: str):
+    def AssetsDir(self, dir: str):
         """
         获取资源文件夹(涉及到Pyinstaller)
         """

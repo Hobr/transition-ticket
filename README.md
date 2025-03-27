@@ -30,7 +30,7 @@
 
 1. MacOS / Linux 用户请根据 *手动安装* 流程安装进行使用
 2. 如使用浏览器登录功能, 您的电脑里必须安装 Edge 浏览器
-3. assest/alarm.wav 文件为语音提醒文件, 可自行更换其他提示音
+3. assets/alarm.wav 文件为语音提醒文件, 可自行更换其他提示音
 
 ### 手动安装
 
@@ -56,7 +56,7 @@ python cli.py
 
 ## 运行流程
 
-![FSM](assest/fsm.png)
+![FSM](assets/fsm.png)
 
 ## 开发
 

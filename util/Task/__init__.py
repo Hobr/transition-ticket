@@ -626,7 +626,7 @@ class Task:
         """
         状态机图输出
         """
-        self.machine.get_graph().draw("./assest/fsm.png", prog="dot")
+        self.machine.get_graph().draw("./assets/fsm.png", prog="dot")
 
     @logger.catch
     def Run(self) -> bool:

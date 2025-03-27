@@ -28,14 +28,14 @@ class Notice:
         self.login = Login(net=self.net)
 
         self.appName = "Transition-Ticket"
-        self.appIconPath = self.AssestDir("assest/icon.ico")
-        self.audioPath = self.AssestDir("assest/alarm.wav")
+        self.appIconPath = self.AssetsDir("assets/icon.ico")
+        self.audioPath = self.AssetsDir("assets/alarm.wav")
 
         self.title = title
         self.message = message
 
     @logger.catch
-    def AssestDir(self, dir: str):
+    def AssetsDir(self, dir: str):
         """
         获取资源文件夹(涉及到Pyinstaller)
         """

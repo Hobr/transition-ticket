@@ -14,7 +14,7 @@ elif platform.system() == "Darwin":
     name="Transition-Ticket-MacOS"
     hiddenimports = ["plyer.platforms.macosx.notification"]
 
-datas = [("assest", "assest")]
+datas = [("assets", "assets")]
 datas += [("geetest", "geetest")]
 datas += collect_data_files("fake_useragent")
 datas += copy_metadata("readchar")
@@ -53,5 +53,5 @@ exe = EXE(
     target_arch=None,
     codesign_identity=None,
     entitlements_file=None,
-    icon=["assest\\icon.ico"],
+    icon=["assets\\icon.ico"],
 )
