@@ -18,11 +18,11 @@
 
 对于大型漫展活动, 请使用 Stable 版
 
-对于小型活动, 可以使用 Nightly 版本
+对于小型活动, 推荐使用 Nightly 版本
 
 [Releases](https://github.com/biliticket/transition-ticket/releases)
 
-[Nightly Release](https://github.com/biliticket/transition-ticket/releases/tag/v8.191.9810)
+[Nightly Release](https://github.com/biliticket/transition-ticket/releases/tag/v8.1919.810)
 
 [Stable Release](https://github.com/biliticket/transition-ticket/releases/tag/v8.114.514)
 
